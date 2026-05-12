@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
 
-  //TÍTULO
+  // TÍTULO
   titleContainer: {
     paddingHorizontal: theme.spacing.md,
     marginTop: 10,
@@ -29,6 +29,36 @@ export const styles = StyleSheet.create({
     color: theme.colors.textPrimary,          
     textTransform: 'uppercase',
     lineHeight: 36,
+  },
+
+  //HEADER DE HIDRATAÇÃO
+  progressContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: theme.spacing.lg,
+    position: 'relative',
+  },
+  textContainer: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  consumedText: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 48,
+    color: theme.colors.textPrimary,
+    lineHeight: 56,
+  },
+  unitText: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 20,
+    color: theme.colors.textSecondary,
+  },
+  goalText: {
+    fontFamily: theme.fonts.bodyMedium,
+    fontSize: 14,
+    color: theme.colors.textLight,
+    marginTop: 4,
   },
 
   // CARD ESTRATÉGIA
@@ -129,7 +159,7 @@ export const styles = StyleSheet.create({
     marginTop: 6,
   },
 
-  //HIDRATAÇÃO
+  // HIDRATAÇÃO CARD (Barra)
   hydrationValueRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
@@ -174,7 +204,7 @@ export const styles = StyleSheet.create({
     color: theme.colors.textLight,         
   },
 
-  //MÉTRICAS
+  // MÉTRICAS
   metricsContainer: {
     flexDirection: 'column',
     gap: 24,

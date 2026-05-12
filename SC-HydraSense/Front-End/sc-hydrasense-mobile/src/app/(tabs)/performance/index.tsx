@@ -4,17 +4,16 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
-  ActivityIndicator, // Adicionado para feedback visual
 } from 'react-native';
 import { Screen } from '../../../components/Screen';
 import { Header } from '../../../components/Header';
 import { styles } from './styles';
 import { theme } from '../../../global/themas';
 import { LineChart } from 'react-native-chart-kit';
-//import { api } from '../../../services/api'; // Importe sua instância do axios
 
 // TIPOS
 type FilterType = 'TODOS' | 'CORRIDA' | 'CICLISMO';
+
 type StatusType = 'OPTIMAL' | 'WARNING' | 'CRITICAL';
 
 interface Session {
@@ -26,17 +25,27 @@ interface Session {
   status: StatusType;
 }
 
+// DADOS MOCK (substituir por API depois)
+const MOCK_SESSIONS: Session[] = [
+  { id: '1', day: '12', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.1, status: 'OPTIMAL'  },
+  { id: '2', day: '10', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.4, status: 'WARNING'  },
+  { id: '3', day: '08', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.9, status: 'CRITICAL' },
+  { id: '4', day: '05', month: 'JAN', type: 'CICLISMO', sweatRate: 0.8, status: 'OPTIMAL'  },
+  { id: '5', day: '02', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.3, status: 'WARNING'  },
+  { id: '6', day: '28', month: 'DEZ', type: 'CICLISMO', sweatRate: 1.0, status: 'OPTIMAL'  },
+];
+
+// HELPERS
 const STATUS_COLOR: Record<StatusType, string> = {
-  OPTIMAL:  theme.colors.success,
-  WARNING:  theme.colors.warning,
-  CRITICAL: theme.colors.primary,
+  OPTIMAL:  theme.colors.success,   // #16A34A
+  WARNING:  theme.colors.warning,   // #F59E0B
+  CRITICAL: theme.colors.primary,   // #D90429
 };
 
-// HELPERS (Mantidos conforme seu código)
 function getTrend(data: number[]): string {
   if (data.length < 2) return 'ESTÁVEL';
-  const last = data[data.length - 1];
-  const prev = data[data.length - 2];
+  const last  = data[data.length - 1];
+  const prev  = data[data.length - 2];
   if (last > prev) return 'RISING';
   if (last < prev) return 'FALLING';
   return 'STABLE';
@@ -50,36 +59,35 @@ function getAvgRate(sessions: Session[]): string {
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-export default function Performance() {
-  const [filter, setFilter] = useState<FilterType>('TODOS');
-  const [sessions, setSessions] = useState<Session[]>([]); // Inicia vazio
-  const [loading, setLoading] = useState(true); // Estado de carregamento
 
-  // ── BUSCA REAL DE DADOS DA API ──
+export default function Performance() {
+  const [filter, setFilter]       = useState<FilterType>('TODOS');
+  const [sessions, setSessions]   = useState<Session[]>(MOCK_SESSIONS);
+
+  // ── Buscar dados da API ──
   useEffect(() => {
     async function fetchSessions() {
       try {
-        setLoading(true);
-        // Ajuste a rota conforme o nome da sua pasta/endpoint no back-end
-        //const response = await api.get('/sessions'); 
-        //setSessions(response.data);
+        // TODO: substituir pela chamada real
+        // const response = await fetch('https://sua-api.com/sessions');
+        // const data = await response.json();
+        // setSessions(data);
       } catch (error) {
-        console.error('Erro ao buscar sessões do back-end:', error);
-      } finally {
-        setLoading(false);
+        console.error('Erro ao buscar sessões:', error);
       }
     }
     fetchSessions();
   }, []);
 
-  // ── Sessões filtradas ──
+  // Sessões filtradas 
   const filtered = filter === 'TODOS'
     ? sessions
     : sessions.filter(s => s.type === filter);
 
+  //Dados do gráfico (mais antiga → mais recente)
   const chartData = [...filtered].reverse().map(s => s.sweatRate);
-  const trend = getTrend(chartData);
-  const avgRate = getAvgRate(filtered);
+  const trend     = getTrend(chartData);
+  const avgRate   = getAvgRate(filtered);
 
   return (
     <Screen
@@ -109,15 +117,12 @@ export default function Performance() {
           <Text style={styles.chartLabel}>TAXA DE SUDORESE (L/H)</Text>
           <Text style={styles.chartTitle}>HISTÓRICO</Text>
 
+          {/* Badge de tendência */}
           <View style={styles.trendBadge}>
             <Text style={styles.trendText}>TREND: {trend}</Text>
           </View>
 
-          {loading ? (
-            <View style={[styles.emptyChart, { height: 160 }]}>
-              <ActivityIndicator color={theme.colors.primary} />
-            </View>
-          ) : chartData.length > 0 ? (
+          {chartData.length > 0 ? (
             <LineChart
               data={{
                 labels: [],
@@ -155,6 +160,7 @@ export default function Performance() {
             </View>
           )}
 
+          {/* Eixo X manual */}
           <View style={styles.chartXAxis}>
             <Text style={styles.chartAxisLabel}>SESSION 01</Text>
             <Text style={styles.chartAxisLabel}>LATEST SESSION</Text>
@@ -178,42 +184,44 @@ export default function Performance() {
 
         {/* ── LISTA DE SESSÕES ── */}
         <View style={styles.sessionList}>
-          {loading ? (
-             <ActivityIndicator color={theme.colors.primary} style={{ marginTop: 20 }} />
-          ) : (
-            filtered.map(session => (
-              <View key={session.id} style={styles.sessionCard}>
-                <View style={styles.sessionDate}>
-                  <Text style={styles.sessionDay}>{session.day}</Text>
-                  <Text style={styles.sessionMonth}>{session.month}</Text>
-                </View>
+          {filtered.map(session => (
+            <View key={session.id} style={styles.sessionCard}>
 
-                <View style={styles.sessionInfo}>
-                  <Text style={styles.sessionType}>{session.type}</Text>
-                  <Text style={styles.sessionSweat}>
-                    SUDORESE: {session.sweatRate.toFixed(1)} L/H
+              {/* Data */}
+              <View style={styles.sessionDate}>
+                <Text style={styles.sessionDay}>{session.day}</Text>
+                <Text style={styles.sessionMonth}>{session.month}</Text>
+              </View>
+
+              {/* Info */}
+              <View style={styles.sessionInfo}>
+                <Text style={styles.sessionType}>{session.type}</Text>
+                <Text style={styles.sessionSweat}>
+                  SUDORESE: {session.sweatRate.toFixed(1)} L/H
+                </Text>
+              </View>
+
+              {/* Status */}
+              <View style={styles.sessionStatus}>
+                <Text style={styles.sessionStatusLabel}>STATUS</Text>
+                <View style={styles.sessionStatusRow}>
+                  <Text style={[styles.sessionStatusValue, { color: STATUS_COLOR[session.status] }]}>
+                    {session.status}
                   </Text>
-                </View>
-
-                <View style={styles.sessionStatus}>
-                  <Text style={styles.sessionStatusLabel}>STATUS</Text>
-                  <View style={styles.sessionStatusRow}>
-                    <Text style={[styles.sessionStatusValue, { color: STATUS_COLOR[session.status] }]}>
-                      {session.status}
-                    </Text>
-                    <View style={[styles.statusDot, { backgroundColor: STATUS_COLOR[session.status] }]} />
-                  </View>
+                  <View style={[styles.statusDot, { backgroundColor: STATUS_COLOR[session.status] }]} />
                 </View>
               </View>
-            ))
-          )}
 
-          {!loading && filtered.length === 0 && (
+            </View>
+          ))}
+
+          {filtered.length === 0 && (
             <View style={styles.emptyState}>
               <Text style={styles.emptyStateText}>Nenhuma sessão encontrada.</Text>
             </View>
           )}
         </View>
+
       </View>
     </Screen>
   );

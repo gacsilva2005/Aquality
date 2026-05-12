@@ -3,13 +3,22 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import { Feather, FontAwesome5 } from '@expo/vector-icons';
+import Svg, { Circle } from 'react-native-svg';
 import { Screen } from '../../../components/Screen';
 import { Header } from '../../../components/Header';
 import { Divider } from '../../../components/Divider';
 import { styles } from './styles';
 import { theme } from '../../../global/themas';
+
+// CÁLCULOS DO CÍRCULO DE PROGRESSO
+const { width } = Dimensions.get('window');
+const CIRCLE_SIZE = width * 0.55;
+const STROKE_WIDTH = 12;
+const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function Dashboard() {
   const [hydrationLevel, setHydrationLevel] = useState(82);
@@ -17,11 +26,24 @@ export default function Dashboard() {
   const [waterBalance, setWaterBalance] = useState(-0.84);
   const [recoveryPercent, setRecoveryPercent] = useState(94);
 
+  //ESTADOS DO HEADER DE HIDRATAÇÃO
+  const [consumed, setConsumed] = useState(1500); 
+  const goal = 3000;
+
+  //LÓGICA DO PREENCHIMENTO SVG
+  const progressPercentage = Math.min(consumed / goal, 1);
+  const strokeDashoffset = CIRCUMFERENCE - (progressPercentage * CIRCUMFERENCE);
+  const isGoalMet = consumed >= goal;
+  
+
+  const trackColor = theme.colors.primaryLight; 
+  const progressColor = isGoalMet ? theme.colors.success : theme.colors.primary; 
+
   // API
   useEffect(() => {
     async function buscarDadosDaAPI() {
       try {
-
+        // Chamada da API
       } catch (error) {}
     }
     buscarDadosDaAPI();
@@ -41,12 +63,54 @@ export default function Dashboard() {
           <Text style={styles.titleLine}>STATUS DO ATLETA</Text>
         </View>
 
+        {/* ── HEADER DE HIDRATAÇÃO (CÍRCULO SVG) ── */}
+        <View style={styles.progressContainer}>
+          <Svg width={CIRCLE_SIZE} height={CIRCLE_SIZE}>
+            {/* Círculo de Fundo (Track) */}
+            <Circle
+              cx={CIRCLE_SIZE / 2}
+              cy={CIRCLE_SIZE / 2}
+              r={RADIUS}
+              stroke={trackColor}
+              strokeWidth={STROKE_WIDTH}
+              fill="none"
+            />
+            {/* Círculo de Progresso (Fill) */}
+            <Circle
+              cx={CIRCLE_SIZE / 2}
+              cy={CIRCLE_SIZE / 2}
+              r={RADIUS}
+              stroke={progressColor}
+              strokeWidth={STROKE_WIDTH}
+              fill="none"
+              strokeDasharray={CIRCUMFERENCE}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              rotation="-90"
+              originX={CIRCLE_SIZE / 2}
+              originY={CIRCLE_SIZE / 2}
+            />
+          </Svg>
+
+          {/* Textos que ficam no centro do círculo */}
+          <View style={styles.textContainer}>
+            <Text style={styles.consumedText}>
+              {(consumed / 1000).toFixed(1)}<Text style={styles.unitText}>L</Text>
+            </Text>
+            {/* Cor inline ajustada para o theme.colors.success */}
+            <Text style={[styles.goalText, isGoalMet && { color: theme.colors.success, fontFamily: theme.fonts.headingBold }]}>
+              META: {(goal / 1000).toFixed(1)}L
+            </Text>
+          </View>
+        </View>
+
         {/* ── CARD: ESTRATÉGIA DO DIA ── */}
         <View style={styles.strategyCard}>
           <View style={styles.cardHeaderRow}>
             <View style={styles.redDot} />
             <Text style={styles.cardLabel}>ESTRATÉGIA DO DIA</Text>
-            <FontAwesome5 name="robot" size={40} color="#FCE7E9" style={styles.bgIcon} />
+            {/* Cor ajustada para theme.colors.primaryLight */}
+            <FontAwesome5 name="robot" size={40} color={theme.colors.primaryLight} style={styles.bgIcon} />
           </View>
 
           <Text style={styles.strategyText}>
@@ -82,15 +146,12 @@ export default function Dashboard() {
 
         {/* ── CARD: ÚLTIMO TREINO (métricas + recovery overlay) ── */}
         <View style={styles.infoCard}>
-          {/* Header do card */}
           <View style={styles.lastWorkoutHeader}>
             <Text style={styles.cardLabel}>ÚLTIMO TREINO</Text>
             <Text style={styles.dateText}>16 DE OUT, 08:30</Text>
           </View>
 
-          {/* Métricas empilhadas */}
           <View style={styles.metricsContainer}>
-
             {/* Taxa de Sudorese */}
             <View style={styles.metricBlock}>
               <Text style={styles.metricLabel}>TAXA DE SUDORESE</Text>
@@ -114,10 +175,9 @@ export default function Dashboard() {
                 <Text style={styles.tagRedText}>DÉFICIT CRÍTICO</Text>
               </View>
             </View>
-
           </View>
 
-          {/* Overlay de Recuperação — canto inferior direito */}
+          {/* Overlay de Recuperação */}
           <View style={styles.recoveryOverlay}>
             <FontAwesome5 name="bolt" size={20} color={theme.colors.primary} />
             <Text style={styles.recoveryValue}>{recoveryPercent}%</Text>
@@ -146,7 +206,8 @@ export default function Dashboard() {
 
         {/* ── BOTÃO INICIAR SESSÃO ── */}
         <TouchableOpacity style={styles.startSessionButton}>
-          <FontAwesome5 name="play" size={14} color="#FFF" />
+          {/* Cor ajustada para theme.colors.textWhite */}
+          <FontAwesome5 name="play" size={14} color={theme.colors.textWhite} />
           <Text style={styles.startSessionText}>INICIAR SESSÃO</Text>
         </TouchableOpacity>
 
