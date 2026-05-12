@@ -222,11 +222,13 @@ export function Home() {
             </div>
 
             <div className="form-options">
-              <label className="remember-me">
-                <input type="checkbox" /> Lembrar sessão
-              </label>
-              <button type="button" className="forgot-password">ESQUECI MINHA SENHA</button>
-            </div>
+  <label className="remember-me">
+    <input type="checkbox" /> Lembrar sessão
+  </label>
+  <button type="button" className="forgot-password" onClick={() => navigate('/recuperar-senha')}>
+    ESQUECI MINHA SENHA
+  </button>
+</div>
 
             {/* O aviso <p> antigo de erro foi removido, agora o Toast cuida disso */}
 

@@ -1,225 +1,226 @@
 import { StyleSheet } from 'react-native';
-
-const COLORS = {
-  background: '#F8F9FA',
-  headerBg: '#121214',
-  primary: '#D90429', // Vermelho Hydrasense
-  textMain: '#121214',
-  textSecondary: '#7C7C8A',
-  cardLight: '#F3F4F6',
-  white: '#FFFFFF',
-};
+import { theme } from '../../../global/themas';
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  header: {
-    backgroundColor: COLORS.headerBg,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 60, // Ajuste para SafeArea dependendo do device
-    paddingBottom: 20,
-  },
-  userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  avatarPlaceholder: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  headerLogoText: {
-    color: COLORS.white,
-    fontFamily: 'Inter_700Bold', // Usando as fontes do seu _layout
-    fontSize: 14,
-    letterSpacing: 2,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  syncedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#2A2A2A',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginRight: 16,
-  },
-  syncedText: {
-    color: '#A0A0A0',
-    fontSize: 10,
-    fontFamily: 'Inter_700Bold',
-    marginLeft: 6,
-    letterSpacing: 1,
-  },
-  scrollContent: {
-    padding: 24,
+
+  // ESTRUTURA PRINCIPAL
+  mainContent: {
     paddingBottom: 40,
+    flex: 1,
   },
-  pageTitleContainer: {
-    marginBottom: 24,
+
+  // TÍTULO
+  titleContainer: {
+    paddingHorizontal: theme.spacing.md,
+    marginTop: 10,
+    marginBottom: 16,
   },
   pageSubtitle: {
-    color: COLORS.primary,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: theme.fonts.bodyBold,         
     fontSize: 10,
+    color: theme.colors.primary,              
     letterSpacing: 1,
     marginBottom: 4,
+    textTransform: 'uppercase',
   },
-  pageTitle: {
-    color: COLORS.textMain,
-    fontFamily: 'SpaceGrotesk_700Bold', // Assumindo que você usa SpaceGrotesk para títulos grandes
-    fontSize: 28,
+  titleLine: {
+    fontSize: 32,
+    fontFamily: theme.fonts.headingBold,      
+    color: theme.colors.textPrimary,          
+    textTransform: 'uppercase',
+    lineHeight: 36,
   },
-  // ESTILOS COMPARTILHADOS DE CARDS
-  cardWhite: {
-    backgroundColor: COLORS.white,
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 16,
-    overflow: 'hidden',
-    elevation: 2, // Sombra para Android
-    shadowColor: '#000', // Sombra para iOS
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-  },
-  cardLight: {
-    backgroundColor: COLORS.cardLight,
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 16,
+
+  //HEADER DE HIDRATAÇÃO
+  progressContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: theme.spacing.lg,
     position: 'relative',
   },
-  cardTitleSmall: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 12,
-    color: '#4A4A4A',
-    letterSpacing: 0.5,
+  textContainer: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  // CARD 1: ESTRATÉGIA
+  consumedText: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 48,
+    color: theme.colors.textPrimary,
+    lineHeight: 56,
+  },
+  unitText: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 20,
+    color: theme.colors.textSecondary,
+  },
+  goalText: {
+    fontFamily: theme.fonts.bodyMedium,
+    fontSize: 14,
+    color: theme.colors.textLight,
+    marginTop: 4,
+  },
+
+  // CARD ESTRATÉGIA
+  strategyCard: {
+    backgroundColor: theme.colors.surface,   
+    borderWidth: 1,
+    borderColor: theme.colors.border,         
+    borderRadius: theme.borderRadius.md,     
+    paddingVertical: 20,
+    paddingHorizontal: theme.spacing.md,
+    marginHorizontal: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    overflow: 'hidden',
+    position: 'relative',
+  },
   cardHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
-    position: 'relative',
   },
   redDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: COLORS.primary,
+    backgroundColor: theme.colors.primary,   
     marginRight: 8,
   },
   bgIcon: {
     position: 'absolute',
-    right: -10,
-    top: -20,
+    right: -8,
+    top: -16,
     opacity: 0.5,
   },
   strategyText: {
-    fontFamily: 'Inter_500Medium',
+    fontFamily: theme.fonts.bodyRegular,      
     fontSize: 18,
-    color: COLORS.textMain,
-    lineHeight: 26,
+    color: theme.colors.textPrimary,          
+    lineHeight: 28,
     marginBottom: 24,
   },
   textHighlightRed: {
-    color: COLORS.primary,
-    fontFamily: 'Inter_700Bold',
+    color: theme.colors.primary,             
+    fontFamily: theme.fonts.bodyBold,        
   },
   strategyActionRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 16,
   },
   btnProtocol: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: theme.colors.primary,   
     paddingHorizontal: 20,
     paddingVertical: 12,
-    borderRadius: 8,
-    marginRight: 16,
+    borderRadius: theme.borderRadius.sm,     
+    minWidth: 130,
+    alignItems: 'center',
   },
   btnProtocolText: {
-    color: COLORS.white,
-    fontFamily: 'Inter_700Bold',
+    color: theme.colors.textWhite,           
+    fontFamily: theme.fonts.bodyBold,        
     fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   aiRecommendationText: {
-    color: COLORS.textSecondary,
-    fontFamily: 'Inter_500Medium',
+    color: theme.colors.textSecondary,       
+    fontFamily: theme.fonts.bodyRegular,     
     fontSize: 10,
     lineHeight: 14,
   },
-  // CARD 2: HIDRATAÇÃO
+
+  // INFO CARD
+  infoCard: {
+    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: theme.colors.border,        
+    borderRadius: theme.borderRadius.md,     
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    marginHorizontal: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    position: 'relative',
+  },
+
+  // LABELS 
+  cardLabel: {
+    fontFamily: theme.fonts.bodyBold,        
+    fontSize: 12,
+    color: theme.colors.textSecondary,       
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  cardSubText: {
+    fontFamily: theme.fonts.bodyRegular,     
+    fontSize: 12,
+    color: theme.colors.textLight,          
+    marginTop: 6,
+  },
+
+  // HIDRATAÇÃO CARD (Barra)
   hydrationValueRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    marginTop: 8,
+    marginTop: 4,
     marginBottom: 12,
   },
   hydrationValue: {
-    fontFamily: 'SpaceGrotesk_700Bold',
-    fontSize: 48,
-    color: COLORS.primary,
-    lineHeight: 52,
+    fontFamily: theme.fonts.headingBold,     
+    fontSize: 52,
+    color: theme.colors.primary,            
+    lineHeight: 56,
   },
   hydrationUnit: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 20,
-    color: COLORS.textMain,
+    fontFamily: theme.fonts.bodyBold,        
+    fontSize: 22,
+    color: theme.colors.textPrimary,       
     marginLeft: 4,
+    marginBottom: 6,
   },
   progressBarContainer: {
     height: 6,
-    backgroundColor: '#E4E4E7',
+    backgroundColor: theme.colors.border,   
     borderRadius: 3,
-    marginBottom: 12,
+    marginBottom: 8,
   },
   progressBarFill: {
     height: 6,
-    backgroundColor: COLORS.primary,
+    backgroundColor: theme.colors.primary,  
     borderRadius: 3,
   },
-  cardSubText: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-    color: COLORS.textSecondary,
-  },
-  // CARD 3: ÚLTIMO TREINO
+
+  // ── ÚLTIMO TREINO ──
   lastWorkoutHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   dateText: {
-    fontFamily: 'Inter_500Medium',
+    fontFamily: theme.fonts.bodyRegular,    
     fontSize: 10,
-    color: COLORS.textSecondary,
+    color: theme.colors.textLight,         
   },
-  metricsRow: {
+
+  // MÉTRICAS
+  metricsContainer: {
     flexDirection: 'column',
     gap: 24,
+    paddingRight: 110,   
+    paddingBottom: 20,
   },
-  metricColumn: {
+  metricBlock: {
     flexDirection: 'column',
   },
   metricLabel: {
-    fontFamily: 'Inter_700Bold',
+    fontFamily: theme.fonts.bodyBold,       
     fontSize: 10,
-    color: '#4A4A4A',
+    color: theme.colors.textSecondary,      
     marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   metricValueRow: {
     flexDirection: 'row',
@@ -227,113 +228,139 @@ export const styles = StyleSheet.create({
     marginBottom: 6,
   },
   metricValue: {
-    fontFamily: 'SpaceGrotesk_700Bold',
-    fontSize: 36,
-    color: COLORS.textMain,
-    lineHeight: 40,
+    fontFamily: theme.fonts.headingBold,    
+    fontSize: 38,
+    color: theme.colors.textPrimary,        
+    lineHeight: 42,
   },
   metricUnit: {
-    fontFamily: 'Inter_700Bold',
+    fontFamily: theme.fonts.bodyBold,       
     fontSize: 16,
-    color: COLORS.primary,
+    color: theme.colors.primary,            
     marginLeft: 4,
+    marginBottom: 2,
   },
+
+  // ── TAGS ──
   tagGreen: {
     alignSelf: 'flex-start',
     backgroundColor: '#E6F4EA',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: theme.borderRadius.sm,    
   },
   tagGreenText: {
-    color: '#1E8E3E',
-    fontFamily: 'Inter_700Bold',
+    color: theme.colors.success,            
+    fontFamily: theme.fonts.bodyBold,
     fontSize: 9,
+    letterSpacing: 0.5,
   },
   tagRed: {
     alignSelf: 'flex-start',
-    backgroundColor: '#FCE7E9',
+    backgroundColor: theme.colors.primaryLight, 
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: theme.borderRadius.sm,   
   },
   tagRedText: {
-    color: COLORS.primary,
-    fontFamily: 'Inter_700Bold',
+    color: theme.colors.primary,            
+    fontFamily: theme.fonts.bodyBold,
     fontSize: 9,
+    letterSpacing: 0.5,
   },
+
+  // ── RECOVERY OVERLAY ──
   recoveryOverlay: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: COLORS.white,
+    bottom: 16,
+    right: 16,
+    backgroundColor: theme.colors.surface, 
     padding: 16,
-    borderRadius: 12,
+    borderRadius: theme.borderRadius.lg,    
     alignItems: 'center',
+    width: 90,
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    width: 100,
   },
   recoveryValue: {
-    fontFamily: 'SpaceGrotesk_700Bold',
+    fontFamily: theme.fonts.headingBold,    
     fontSize: 20,
-    color: COLORS.textMain,
+    color: theme.colors.textPrimary,      
     marginTop: 8,
   },
   recoveryLabel: {
-    fontFamily: 'Inter_500Medium',
+    fontFamily: theme.fonts.bodyRegular,    
     fontSize: 9,
-    color: COLORS.textSecondary,
+    color: theme.colors.textSecondary,     
     marginTop: 2,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  // CARD 4: INSIGHTS
-  cardInsights: {
-    backgroundColor: COLORS.cardLight,
-    borderRadius: 8,
-    padding: 20,
+
+  // ── INSIGHTS ──
+  insightsCard: {
+    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: theme.colors.border,       
     borderLeftWidth: 4,
-    borderLeftColor: COLORS.primary,
-    marginBottom: 20,
+    borderLeftColor: theme.colors.primary,  
+    borderRadius: theme.borderRadius.md,    
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    marginHorizontal: theme.spacing.md,
+    marginBottom: theme.spacing.md,
   },
   insightsText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: theme.fonts.bodyRegular,    
     fontSize: 13,
-    color: COLORS.textSecondary,
+    color: theme.colors.textSecondary,      
     lineHeight: 20,
-    marginTop: 12,
+    marginTop: 8,
   },
-  // TAGS E BOTÃO INFERIOR
+
+  // TAGS INFERIORES
   bottomTagsRow: {
     flexDirection: 'row',
-    marginBottom: 24,
-    gap: 8,
+    paddingHorizontal: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
+    gap: theme.spacing.sm,
+    flexWrap: 'wrap',
   },
   bottomTag: {
-    backgroundColor: COLORS.cardLight,
+    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: theme.colors.border,     
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 4,
+    borderRadius: theme.borderRadius.sm,    
   },
   bottomTagText: {
-    fontFamily: 'Inter_700Bold',
+    fontFamily: theme.fonts.bodyBold,       
     fontSize: 10,
-    color: COLORS.textMain,
+    color: theme.colors.textPrimary,        
+    letterSpacing: 0.5,
   },
-  btnStartSession: {
-    backgroundColor: COLORS.primary,
+
+  // BOTÃO INICIAR SESSÃO
+  startSessionButton: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.primary,  
+    marginHorizontal: theme.spacing.md,
     paddingVertical: 18,
-    borderRadius: 8,
+    borderRadius: theme.borderRadius.sm,    
+    gap: 12,
+    marginBottom: theme.spacing.lg,
   },
-  btnStartSessionText: {
-    color: COLORS.white,
-    fontFamily: 'Inter_700Bold',
+  startSessionText: {
+    color: theme.colors.textWhite,         
+    fontFamily: theme.fonts.bodyBold,       
     fontSize: 14,
     letterSpacing: 1,
+    textTransform: 'uppercase',
   },
 });

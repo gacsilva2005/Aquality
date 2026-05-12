@@ -13,6 +13,11 @@ import { Equipes } from "./pages/PaginasSite/Equipes";
 import { RelatorioEquipe } from "./pages/PaginasSite/RelatorioEquipe";
 import { Relatorios } from "./pages/PaginasSite/Relatorios";
 import { Configuracoes } from "./pages/PaginasSite/Configuracoes";
+import { Recovery } from "./pages/Login/recovery";
+import { Code } from "./pages/Login/code";
+import { Password } from "./pages/Login/Password";
+import { Number } from "./pages/Login/number";
+import { Confirmation } from './pages/Login/Confirmation';
 
 function App() {
     return (
@@ -22,7 +27,12 @@ function App() {
             <Route path="/registro" element={<Register />} />
             <Route path="/identificador" element={<Identifier />} />
             <Route path="/equipe" element={<Team />} />
-            <Route path="/athlete" element={<Athlete />} />
+            <Route path="/atleta" element={<Athlete />} />
+            <Route path="/recuperar-senha" element={<Recovery />} />
+            <Route path="/codigo" element={<Code />} />
+            <Route path="/atualizar-senha" element={<Password />} />
+            <Route path="/recuperar-celular" element={<Number />} />
+            <Route path="/confirmacao" element={<Confirmation />} />
 
             {/* Rotas do Painel Web */}
             <Route path="/PageWeb" element={<PageWeb />}>
