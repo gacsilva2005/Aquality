@@ -3,10 +3,12 @@ import { Outlet } from "react-router-dom";
 
 import { HeaderPageWeb } from "./HeaderPageWeb";
 import { SideBarPageWeb } from "./SideBarPageWeb";
+import { SideBarPagePerfil } from "./SideBarPagePerfil";
 import "./PageWeb.css";
 
 export function PageWeb() {
     const [usuario, setUsuario] = useState<any>(null);
+    const [perfilAberto, setPerfilAberto] = useState(false);
 
     useEffect(() => {
         fetch("http://localhost:8080/auth/user", {
@@ -30,12 +32,20 @@ export function PageWeb() {
 
     return (
         <div className="pageweb">
-            <HeaderPageWeb usuario={usuario} />
+            <HeaderPageWeb
+                usuario={usuario}
+                onPerfilClick={() => setPerfilAberto(true)}
+            />
             <SideBarPageWeb />
 
             <main className="pageweb__main">
                 <Outlet />
             </main>
+
+            <SideBarPagePerfil
+                aberto={perfilAberto}
+                onFechar={() => setPerfilAberto(false)}
+            />
         </div>
     );
 }

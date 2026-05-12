@@ -1286,3 +1286,199 @@
 .dot-status.critico {
     background-color: var(--hydro-critical);
 }
+
+/* =========================================
+   SIDEBAR DE PERFIL (OVERLAY)
+   ========================================= */
+.perfil-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.perfil-overlay.aberto {
+    opacity: 1;
+    visibility: visible;
+}
+
+.perfil-painel {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100vh;
+    background-color: var(--hydro-bg-card);
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.12);
+    z-index: 101;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.perfil-painel.aberto {
+    right: 0;
+}
+
+.perfil-painel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 32px 0 32px;
+}
+
+.perfil-painel-titulo {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--hydro-text-primary);
+    font-family: var(--font-display);
+    margin: 0;
+}
+
+.perfil-btn-fechar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--hydro-text-muted);
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.perfil-btn-fechar:hover {
+    color: var(--hydro-critical);
+    background-color: #ffeaea;
+}
+
+.perfil-usuario-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 32px;
+}
+
+.perfil-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--hydro-bg-main);
+    border: 2px solid var(--hydro-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--hydro-text-muted);
+    flex-shrink: 0;
+}
+
+.perfil-usuario-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.perfil-usuario-nome {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--hydro-text-primary);
+    font-family: var(--font-display);
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.perfil-usuario-cargo {
+    font-size: 11px;
+    color: var(--hydro-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    margin: 4px 0 0 0;
+}
+
+.perfil-secao {
+    padding: 24px 32px;
+    border-top: 1px solid var(--hydro-border);
+}
+
+.perfil-secao-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--hydro-text-primary);
+    font-family: var(--font-display);
+    margin: 0 0 20px 0;
+}
+
+.perfil-campo {
+    margin-bottom: 20px;
+}
+
+.perfil-campo:last-child {
+    margin-bottom: 0;
+}
+
+.perfil-campo-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--hydro-text-muted);
+    margin: 0 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.perfil-campo-valor {
+    font-size: 14px;
+    color: var(--hydro-text-primary);
+    font-family: var(--font-body);
+    font-weight: 500;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--hydro-border);
+    margin: 0;
+}
+
+.perfil-campo select {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1px solid var(--hydro-border);
+    background: transparent;
+    font-size: 14px;
+    color: var(--hydro-text-primary);
+    font-family: var(--font-body);
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236C757D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0 center;
+}
+
+.perfil-campo select:focus {
+    border-bottom-color: var(--hydro-action);
+}
+
+.perfil-acoes {
+    padding: 24px 32px 32px 32px;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}

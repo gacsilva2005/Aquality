@@ -1,6 +1,12 @@
+import { User } from 'lucide-react';
 import logo from '../../assets/icone_petala.png';
 
-export function HeaderPageWeb() {
+interface HeaderPageWebProps {
+    usuario?: any;
+    onPerfilClick: () => void;
+}
+
+export function HeaderPageWeb({ usuario, onPerfilClick }: HeaderPageWebProps) {
     return (
         <header className="hydro-header">
             <div className="hydro-header-logo-container">
@@ -13,8 +19,7 @@ export function HeaderPageWeb() {
                         placeholder="Buscar..."
                         className="hydro-header-search" />
                     </li>
-                    <li>Notificações</li>
-                    <li>Perfil</li>
+                    <li onClick={onPerfilClick}><User size={18} /> Perfil</li>
                 </ul>
             </nav>
         </header>
