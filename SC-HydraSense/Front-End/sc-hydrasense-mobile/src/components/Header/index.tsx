@@ -1,17 +1,19 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useUser } from '../../contexts/UserContext';
 import { styles } from './styles';
 
-interface HeaderProps {
-  userPhoto?: string | null; // Adicione o | null aqui
-}
+// 1. REMOVEMOS A INTERFACE HeaderProps. 
+// O Header não precisa mais receber nada de fora.
 
-export function Header({ userPhoto }: HeaderProps) {
-  // Se existir userPhoto (URI da galeria), usamos ela. 
-  // Caso contrário, carregamos o arquivo local logo.png.
-  const imageSource = userPhoto 
-    ? { uri: userPhoto } 
+export function Header() {
+  // 2. PUXAMOS A FOTO DIRETO DO CONTEXTO GLOBAL
+  const { profileImage } = useUser();
+
+  // 3. USAMOS A profileImage NO LUGAR DO userPhoto
+  const imageSource = profileImage 
+    ? { uri: profileImage } 
     : require('../../assets/images/logo.png');
 
   return (

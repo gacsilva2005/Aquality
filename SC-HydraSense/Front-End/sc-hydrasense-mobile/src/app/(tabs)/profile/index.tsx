@@ -10,18 +10,18 @@ import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIc
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { Divider } from '@/src/components/Divider';
+import { useUser } from '../../../contexts/UserContext';
 
 export default function Profile() {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
-  const [userName, setUserName] = useState('SEU NOME');
+  const { profileImage, setProfileImage, userName, setUserName } = useUser();
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState<'M' | 'F' | null>('M');
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [equipe, setEquipe] = useState('SÃO PAULO FC');
-  const [time, setTime] = useState('SÃO PAULO FC - PROFISSIONAL');
+  const [equipe, setEquipe] = useState('S4OC4M!L0');
+  const [time, setTime] = useState('SÃO CAMILO FC - PROFISSIONAL');
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -50,7 +50,7 @@ export default function Profile() {
     <Screen
       backgroundColor={theme.colors.background}
       scrollable={true}
-      HeaderComponent={<Header userPhoto={profileImage} />}
+      HeaderComponent={<Header/>}
     >
       <View style={styles.mainContent}>
         <View style={styles.titleContainer}>
