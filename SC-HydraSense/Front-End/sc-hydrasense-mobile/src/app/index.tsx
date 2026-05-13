@@ -20,6 +20,7 @@ import Checkbox from 'expo-checkbox';
 import { theme } from '../global/themas';
 import { styles } from './styles';
 import { router } from 'expo-router';
+import Constants from 'expo-constants';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -28,7 +29,14 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [carregando, setCarregando] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    // === ATALHO PARA DESENVOLVIMENTO (Ignora o Backend) ===
+    if (__DEV__ && email.trim() === 'dev' && password === 'dev') {
+      console.log('Bypass de Login Ativado (Modo Dev)!');
+      router.replace('/(tabs)/dashboard');
+      return;
+    }
+
     const cleanEmail = email.trim();
     const cleanPassword = password.trim();
 
@@ -43,8 +51,40 @@ export default function LoginScreen() {
       return;
     }
 
-    console.log('Login validado com sucesso! Entrando com:', cleanEmail);
-    router.replace('/(tabs)/dashboard');
+    setCarregando(true);
+    try {
+      const hostUri = Constants?.expoConfig?.hostUri;
+      const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+      const API_URL = `http://${ip}:8080`;
+
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: cleanEmail, senha: cleanPassword }),
+      });
+
+      if (!response.ok) {
+        Alert.alert('Erro de Autenticação', 'E-mail ou senha inválidos. Tente novamente.');
+        setCarregando(false);
+        return;
+      }
+
+      const dados = await response.json();
+
+      if (dados.tipo === 'atleta') {
+        console.log('Login validado com sucesso! Atleta:', dados.usuario.nome);
+        router.replace('/(tabs)/dashboard');
+      } else {
+        Alert.alert('Acesso Restrito', 'Este aplicativo é exclusivo para atletas. Por favor, acesse o portal Web.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique sua rede.');
+    } finally {
+      setCarregando(false);
+    }
   };
 
   return (

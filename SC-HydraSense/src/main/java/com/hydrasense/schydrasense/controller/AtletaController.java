@@ -23,6 +23,11 @@ public class AtletaController {
         service.enviarConvite(dto);
     }
 
+    @PostMapping
+    public Atleta salvar(@RequestBody Atleta atleta) {
+        return service.salvar(atleta);
+    }
+
     @GetMapping
     public List<Atleta> listar() {
         return service.listarTodos();
