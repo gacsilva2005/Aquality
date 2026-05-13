@@ -41,6 +41,12 @@ public class Atleta {
 
     private String senha;
 
+    private String codigoEquipe;
+
+    private String codigoAcesso;
+
+    private Boolean ativado = false;
+
     //Relação 1:M com Profissional
     @ManyToOne
     @JoinColumn(name = "profissional_id")
