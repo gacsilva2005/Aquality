@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import Constants from 'expo-constants';
 import { useRouter, Stack } from 'expo-router'; 
 import { Screen } from '../../components/Screen';
 import { Button } from '../../components/Button';
@@ -21,7 +22,7 @@ export default function Cadastro() {
   // Estado para armazenar os erros de cada campo
   const [erros, setErros] = useState<Record<string, string>>({});
 
-  const handleCreateAccount = () => {
+  const handleCreateAccount = async () => {
     // 1. Limpamos os erros antigos
     let novosErros: Record<string, string> = {};
 
@@ -69,10 +70,49 @@ export default function Cadastro() {
       return; // Interrompe a função aqui!
     }
 
-    // Se chegou aqui, passou em todas as validações!
     setErros({}); // Limpa os erros
-    console.log("Tentativa de cadastro com sucesso:", { nome, email, senha, idade, peso, altura, time, codigo });
-    router.back(); 
+    
+    try {
+      const hostUri = Constants?.expoConfig?.hostUri; 
+      const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+      const API_URL = `http://${ip}:8080`;
+
+      // Transformando a idade em um ano de nascimento aproximado para o backend
+      const anoNascimento = new Date().getFullYear() - parseInt(idade);
+      const dataNascimentoStr = `${anoNascimento}-01-01`;
+
+      const atletaPayload = {
+        nome: nome.trim(),
+        email: email.trim(),
+        senha: senha.trim(),
+        dataNascimento: dataNascimentoStr,
+        pesoAtual: parseFloat(peso),
+        altura: parseFloat(altura),
+        clube: time.trim(),
+        codigoEquipe: codigo.trim(),
+        modalidadePrincipal: "Geral" // Padrão caso não haja o campo
+      };
+
+      const response = await fetch(`${API_URL}/Atleta`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(atletaPayload)
+      });
+
+      if (response.ok) {
+        Alert.alert('Sucesso!', 'Conta criada com sucesso. Um código foi enviado ao seu e-mail.');
+        router.back(); 
+      } else {
+        const errorText = await response.text();
+        Alert.alert('Erro no Cadastro', 'Não foi possível criar a conta. Verifique os dados ou se o e-mail já existe.');
+        console.error('Erro na API:', errorText);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique sua rede.');
+    }
   };
 
   // Função auxiliar para limpar o erro quando o usuário começa a digitar novamente
