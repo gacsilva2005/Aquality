@@ -1,12 +1,13 @@
-.recovery-page {
+.password-page {
     display: flex;
     width: 100vw;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     background-color: #FFFFFF;
     font-family: var(--font-body);
 }
 
-.recovery-main {
+.password-main {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -15,7 +16,7 @@
     padding: 80px 20px;
 }
 
-.recovery-content {
+.password-content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -23,15 +24,14 @@
     max-width: 480px;
 }
 
-.recovery-logo {
+.password-logo {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 44px;
-    margin-left: -6px;
 }
 
-.recovery-logo-text {
+.password-logo-text {
     font-family: var(--font-display);
     font-size: 17px;
     font-weight: 700;
@@ -39,7 +39,7 @@
     color: #111111;
 }
 
-.recovery-title {
+.password-title {
     font-family: var(--font-body);
     font-size: 34px;
     font-weight: 400;
@@ -50,17 +50,30 @@
     text-align: left;
 }
 
-.recovery-form {
+.password-description {
+    font-size: 15px;
+    color: #6F6F6F;
+    line-height: 1.7;
+    margin: 0 0 32px 0;
+}
+
+.password-form {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-.recovery-input {
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.password-input {
     width: 100%;
     border: 1px solid #D6D6D6;
     border-radius: 8px;
-    padding: 18px 20px;
+    padding: 18px 52px 18px 20px;
     font-size: 15px;
     font-family: var(--font-body);
     color: #111111;
@@ -68,102 +81,66 @@
     outline: none;
     box-sizing: border-box;
     transition: border-color 0.2s;
-    margin-bottom: 24px;
 }
 
-.recovery-input::placeholder {
+.password-input::placeholder {
     color: #9A9A9A;
 }
 
-.recovery-input:focus {
+.password-input:focus {
     border-color: #111111;
 }
 
-.recovery-terms {
-    font-size: 13px;
-    color: #757575;
-    line-height: 1.7;
-    margin: 0 0 28px 0;
-    text-align: left;
-    max-width: 430px;
-}
-
-.recovery-terms strong {
-    color: #111111;
-    font-weight: 600;
-}
-
-.recovery-link {
-    color: #111111;
-    font-weight: 500;
-    text-decoration: underline;
+.password-toggle {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
     cursor: pointer;
-    transition: opacity 0.15s;
+    color: #9A9A9A;
+    display: flex;
+    align-items: center;
+    padding: 0;
 }
 
-.recovery-link:hover {
-    opacity: 0.6;
+.password-match {
+    font-size: 13px;
+    margin: 0 0 12px 0;
+    min-height: 20px;
 }
 
-.recovery-actions {
+.password-match.hidden {
+    visibility: hidden;
+}
+
+.password-match.success {
+    color: #2e7d32;
+}
+
+.password-match.error {
+    color: #c0405a;
+}
+
+.password-info {
+    font-size: 13px;
+    color: #9A9A9A;
+    margin: 0 0 28px 0;
+}
+
+.password-actions {
     display: flex;
     justify-content: flex-end;
     width: 100%;
-    margin-top: 4px;
 }
 
-.recovery-btn-primary {
+.password-btn-primary {
     min-width: 130px;
     background-color: var(--cor-vermelho-critico);
     color: #FFFFFF;
     border: none;
-    border-radius: 999px;
-    padding: 15px 28px;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: var(--font-display);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
-}
-
-.recovery-btn-primary:hover {
-    background-color: var(--cor-vermelho-acao);
-    transform: translateY(-1px);
-}
-
-.recovery-btn-primary:active {
-    transform: translateY(0);
-}
-
-@media (max-width: 600px) {
-    .recovery-main {
-        padding: 40px 24px;
-    }
-
-    .recovery-title {
-        font-size: 28px;
-    }
-
-    .recovery-btn-primary {
-        width: 100%;
-        border-radius: 10px;
-    }
-
-    .recovery-actions {
-        justify-content: stretch;
-    }
-}
-.recovery-btn-primary {
-    min-width: 130px;
-    background-color: var(--cor-vermelho-critico);
-    color: #FFFFFF;
-    border: none;
-    border-radius: 6px; 
+    border-radius: 6px;
     padding: 15px 28px;
     font-size: 15px;
     font-weight: 700;
@@ -175,4 +152,37 @@
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.2s, transform 0.2s;
+}
+
+.password-btn-primary:hover {
+    background-color: var(--cor-vermelho-acao);
+    transform: translateY(-1px);
+}
+
+.password-btn-primary:active {
+    transform: translateY(0);
+}
+
+.password-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 600px) {
+    .password-main {
+        padding: 40px 24px;
+    }
+
+    .password-title {
+        font-size: 28px;
+    }
+
+    .password-btn-primary {
+        width: 100%;
+    }
+
+    .password-actions {
+        justify-content: stretch;
+    }
 }

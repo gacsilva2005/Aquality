@@ -20,9 +20,7 @@ export function Password() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
         if (!passwordsMatch) return;
-
         navigate('/confirmacao');
     };
 
@@ -47,80 +45,52 @@ export function Password() {
                         Certifique-se de utilizar uma senha segura.
                     </p>
 
-                    <form
-                        className="password-form"
-                        onSubmit={handleSubmit}
-                    >
+                    <form className="password-form" onSubmit={handleSubmit}>
 
                         <div className="password-input-wrapper">
-
                             <input
                                 type={showPassword ? 'text' : 'password'}
                                 className="password-input"
                                 placeholder="Nova senha*"
                                 value={password}
-                                onChange={(e) =>
-                                    setPassword(e.target.value)
-                                }
+                                onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
-
                             <button
                                 type="button"
                                 className="password-toggle"
-                                onClick={() =>
-                                    setShowPassword(!showPassword)
-                                }
+                                onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? (
-                                    <EyeOff size={20} />
-                                ) : (
-                                    <Eye size={20} />
-                                )}
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
-
                         </div>
 
                         <div className="password-input-wrapper">
-
                             <input
                                 type={showConfirmPassword ? 'text' : 'password'}
                                 className="password-input"
                                 placeholder="Confirmar senha*"
                                 value={confirmPassword}
-                                onChange={(e) =>
-                                    setConfirmPassword(e.target.value)
-                                }
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
                             />
-
                             <button
                                 type="button"
                                 className="password-toggle"
-                                onClick={() =>
-                                    setShowConfirmPassword(!showConfirmPassword)
-                                }
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             >
-                                {showConfirmPassword ? (
-                                    <EyeOff size={20} />
-                                ) : (
-                                    <Eye size={20} />
-                                )}
+                                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
-
                         </div>
 
-                        {confirmPassword && (
-                            <p
-                                className={`password-match ${
-                                    passwordsMatch ? 'success' : 'error'
-                                }`}
-                            >
-                                {passwordsMatch
+                        <p className={`password-match ${!confirmPassword ? 'hidden' : passwordsMatch ? 'success' : 'error'}`}>
+                            {confirmPassword
+                                ? passwordsMatch
                                     ? 'As senhas coincidem.'
-                                    : 'As senhas não coincidem.'}
-                            </p>
-                        )}
+                                    : 'As senhas não coincidem.'
+                                : '\u00A0'
+                            }
+                        </p>
 
                         <p className="password-info">
                             Utilize pelo menos 8 caracteres para maior segurança.
