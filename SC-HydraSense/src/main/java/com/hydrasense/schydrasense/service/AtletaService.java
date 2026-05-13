@@ -2,6 +2,7 @@ package com.hydrasense.schydrasense.service;
 
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.repository.AtletaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
