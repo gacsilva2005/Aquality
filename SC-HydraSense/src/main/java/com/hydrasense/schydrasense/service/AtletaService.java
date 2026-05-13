@@ -10,15 +10,37 @@ import java.util.Optional;
 @Service
 public class AtletaService {
 
+    @Autowired
+    private EmailService emailService;
+
     private final AtletaRepository repository;
 
     public AtletaService(AtletaRepository repository) {
         this.repository = repository;
     }
 
+    private String gerarCodigo() {
+
+        int numero = (int)(Math.random() * 900000) + 100000;
+
+        return String.valueOf(numero);
+    }
+
     // Salvar atleta
     public Atleta salvar(Atleta atleta) {
-        return repository.save(atleta);
+
+        String codigo = gerarCodigo();
+
+        atleta.setCodigoAcesso(codigo);
+
+        Atleta atletaSalvo = repository.save(atleta);
+
+        emailService.enviarCodigo(
+                atleta.getEmail(),
+                codigo
+        );
+
+        return atletaSalvo;
     }
 
     // Listar todos os atletas
