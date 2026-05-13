@@ -1,5 +1,6 @@
 package com.hydrasense.schydrasense.service;
 
+import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.repository.AtletaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,26 @@ public class AtletaService {
     // Deletar atleta
     public void deletar(Long id) {
         repository.deleteById(id);
+    }
+
+    // Enviar email para atleta
+    public void enviarConvite(ConviteAtletaDTO dto) {
+
+        String mensagem = """
+            Oi %s!
+            
+            Parabéns, atleta!
+            Você foi convidado para participar da equipe Engenharia Mauá.
+
+            O seu código da equipe para cadastro no nosso aplicativo é: %s
+            """
+                .formatted(dto.getNome(), dto.getCodigoEquipe());
+
+        emailService.enviarEmail(
+                dto.getEmail(),
+                "Convite HydraSense",
+                mensagem
+        );
     }
 
     // Atualizar dados do atleta
