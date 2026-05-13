@@ -1,7 +1,9 @@
 package com.hydrasense.schydrasense.service;
 
+import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.repository.AtletaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,15 +12,37 @@ import java.util.Optional;
 @Service
 public class AtletaService {
 
+    @Autowired
+    private EmailService emailService;
+
     private final AtletaRepository repository;
 
     public AtletaService(AtletaRepository repository) {
         this.repository = repository;
     }
 
+    private String gerarCodigo() {
+
+        int numero = (int)(Math.random() * 900000) + 100000;
+
+        return String.valueOf(numero);
+    }
+
     // Salvar atleta
     public Atleta salvar(Atleta atleta) {
-        return repository.save(atleta);
+
+        String codigo = gerarCodigo();
+
+        atleta.setCodigoAcesso(codigo);
+
+        Atleta atletaSalvo = repository.save(atleta);
+
+        emailService.enviarCodigo(
+                atleta.getEmail(),
+                codigo
+        );
+
+        return atletaSalvo;
     }
 
     // Listar todos os atletas
@@ -34,6 +58,26 @@ public class AtletaService {
     // Deletar atleta
     public void deletar(Long id) {
         repository.deleteById(id);
+    }
+
+    // Enviar email para atleta
+    public void enviarConvite(ConviteAtletaDTO dto) {
+
+        String mensagem = """
+            Oi %s!
+            
+            Parabéns, atleta!
+            Você foi convidado para participar da equipe Engenharia Mauá.
+
+            O seu código da equipe para cadastro no nosso aplicativo é: %s
+            """
+                .formatted(dto.getNome(), dto.getCodigoEquipe());
+
+        emailService.enviarEmail(
+                dto.getEmail(),
+                "Convite HydraSense",
+                mensagem
+        );
     }
 
     // Atualizar dados do atleta

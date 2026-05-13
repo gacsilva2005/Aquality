@@ -1,5 +1,6 @@
 package com.hydrasense.schydrasense.controller;
 
+import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.service.AtletaService;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,9 @@ public class AtletaController {
         this.service = service;
     }
 
-    @PostMapping
-    public Atleta salvar(@RequestBody Atleta atleta) {
-        return service.salvar(atleta);
+    @PostMapping("/convite")
+    public void enviarConvite(@RequestBody ConviteAtletaDTO dto) {
+        service.enviarConvite(dto);
     }
 
     @GetMapping

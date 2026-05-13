@@ -25,7 +25,7 @@ export function NovoAtleta({ onBack }: NovoAtletaProps) {
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:8080/Atleta", {
+            const response = await fetch("http://localhost:8080/Atleta/convite", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -38,13 +38,14 @@ export function NovoAtleta({ onBack }: NovoAtletaProps) {
             });
 
             if (!response.ok) {
-                alert("Erro ao cadastrar atleta");
+                const erro = await response.text();
+                console.log(erro);
+
+                alert("Erro ao enviar convite");
                 return;
             }
 
-            const atletaSalvo = await response.json();
-            console.log("Atleta salvo:", atletaSalvo);
-            alert("Atleta cadastrado com sucesso!");
+            alert("Convite enviado com sucesso!");
             onBack();
 
         } catch (error) {
