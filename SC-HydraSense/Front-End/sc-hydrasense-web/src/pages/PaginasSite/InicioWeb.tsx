@@ -3,7 +3,7 @@ import { Copy, CheckCircle2, Users, Activity, FileBarChart, Droplet } from 'luci
 
 export function InicioWeb() {
     // Estado para o mock do usuário e do código da equipe
-    const nomeProfissional = "Alex Mercer";
+    const nomeProfissional = localStorage.getItem("nomeProfissional") || "Profissional";
     const codigoEquipe = "ALPHA-SQUAD-01";
     
     const [copiado, setCopiado] = useState(false);
