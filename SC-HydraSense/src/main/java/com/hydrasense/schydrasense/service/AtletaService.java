@@ -2,9 +2,13 @@ package com.hydrasense.schydrasense.service;
 
 import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.model.Atleta;
+import com.hydrasense.schydrasense.model.Clube;
 import com.hydrasense.schydrasense.repository.AtletaRepository;
+import com.hydrasense.schydrasense.repository.ClubeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +20,11 @@ public class AtletaService {
     private EmailService emailService;
 
     private final AtletaRepository repository;
+    private final ClubeRepository clubeRepository;
 
-    public AtletaService(AtletaRepository repository) {
+    public AtletaService(AtletaRepository repository, ClubeRepository clubeRepository) {
         this.repository = repository;
+        this.clubeRepository = clubeRepository;
     }
 
     private String gerarCodigo() {
@@ -31,16 +37,29 @@ public class AtletaService {
     // Salvar atleta
     public Atleta salvar(Atleta atleta) {
 
+        if (atleta.getCodigoEquipe() == null || atleta.getCodigoEquipe().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Código de equipe é obrigatório.");
+        }
+
+        Clube clube = clubeRepository.findByCodigo(atleta.getCodigoEquipe())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Código de equipe inválido ou inexistente."));
+
+        atleta.setClube(clube);
+
         String codigo = gerarCodigo();
 
         atleta.setCodigoAcesso(codigo);
 
         Atleta atletaSalvo = repository.save(atleta);
 
-        emailService.enviarCodigo(
-                atleta.getEmail(),
-                codigo
-        );
+        try {
+            emailService.enviarCodigo(
+                    atleta.getEmail(),
+                    codigo
+            );
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar email: " + e.getMessage());
+        }
 
         return atletaSalvo;
     }

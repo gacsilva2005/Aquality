@@ -20,10 +20,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults()) // Mantém o CORS do seu amigo
+                .cors(Customizer.withDefaults()) // Mantém o CORS do    seu amigo
                 .authorizeHttpRequests(auth -> auth
                         // Une as rotas de ambos
-                        .requestMatchers("/", "/auth/**", "/profissionais/**", "/Atleta/**", "/login/**").permitAll()
+                        .requestMatchers("/", "/auth/**", "/profissionais/**", "/Atleta/**", "/login/**", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth
