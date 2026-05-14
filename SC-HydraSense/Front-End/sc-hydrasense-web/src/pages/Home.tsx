@@ -97,7 +97,7 @@ export function Home() {
 
       const dados = await response.json();
       console.log("Login realizado:", dados);
-      localStorage.setItem("nomeProfissional", dados.nome);
+      localStorage.setItem("usuarioLogado", JSON.stringify(dados.usuario));
 
       if (dados.tipo === "profissional") {
         setToast({
