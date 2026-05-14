@@ -1,4 +1,4 @@
-.password-page {
+.recovery-page {
     display: flex;
     width: 100vw;
     height: 100vh;
@@ -7,7 +7,7 @@
     font-family: var(--font-body);
 }
 
-.password-main {
+.recovery-main {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,7 +16,7 @@
     padding: 80px 20px;
 }
 
-.password-content {
+.recovery-content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -24,14 +24,14 @@
     max-width: 480px;
 }
 
-.password-logo {
+.recovery-logo {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 44px;
 }
 
-.password-logo-text {
+.recovery-logo-text {
     font-family: var(--font-display);
     font-size: 17px;
     font-weight: 700;
@@ -39,7 +39,7 @@
     color: #111111;
 }
 
-.password-title {
+.recovery-title {
     font-family: var(--font-body);
     font-size: 34px;
     font-weight: 400;
@@ -50,30 +50,17 @@
     text-align: left;
 }
 
-.password-description {
-    font-size: 15px;
-    color: #6F6F6F;
-    line-height: 1.7;
-    margin: 0 0 32px 0;
-}
-
-.password-form {
+.recovery-form {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-.password-input-wrapper {
-    position: relative;
-    width: 100%;
-    margin-bottom: 16px;
-}
-
-.password-input {
+.recovery-input {
     width: 100%;
     border: 1px solid #D6D6D6;
     border-radius: 8px;
-    padding: 18px 52px 18px 20px;
+    padding: 18px 20px;
     font-size: 15px;
     font-family: var(--font-body);
     color: #111111;
@@ -81,61 +68,44 @@
     outline: none;
     box-sizing: border-box;
     transition: border-color 0.2s;
+    margin-bottom: 16px;
 }
 
-.password-input::placeholder {
+.recovery-input::placeholder {
     color: #9A9A9A;
 }
 
-.password-input:focus {
+.recovery-input:focus {
     border-color: #111111;
 }
 
-.password-toggle {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
+.recovery-terms {
+    font-size: 15px;
+    color: #6F6F6F;
+    line-height: 1.7;
+    margin: 2px 0 30px 0;
+    text-align: left;
+}
+
+.recovery-link {
+    color: #111111;
+    font-weight: 600;
+    text-decoration: underline;
     cursor: pointer;
-    color: #9A9A9A;
-    display: flex;
-    align-items: center;
-    padding: 0;
+    transition: opacity 0.15s;
 }
 
-.password-match {
-    font-size: 13px;
-    margin: 0 0 12px 0;
-    min-height: 20px;
+.recovery-link:hover {
+    opacity: 0.6;
 }
 
-.password-match.hidden {
-    visibility: hidden;
-}
-
-.password-match.success {
-    color: #2e7d32;
-}
-
-.password-match.error {
-    color: #c0405a;
-}
-
-.password-info {
-    font-size: 13px;
-    color: #9A9A9A;
-    margin: 0 0 28px 0;
-}
-
-.password-actions {
+.recovery-actions {
     display: flex;
     justify-content: flex-end;
     width: 100%;
 }
 
-.password-btn-primary {
+.recovery-btn-primary {
     min-width: 130px;
     background-color: var(--cor-vermelho-critico);
     color: #FFFFFF;
@@ -154,35 +124,36 @@
     transition: background-color 0.2s, transform 0.2s;
 }
 
-.password-btn-primary:hover {
+.recovery-btn-primary:hover {
     background-color: var(--cor-vermelho-acao);
     transform: translateY(-1px);
 }
 
-.password-btn-primary:active {
+.recovery-btn-primary:active {
     transform: translateY(0);
 }
 
-.password-btn-primary:disabled {
+.recovery-btn-primary:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
 }
 
 @media (max-width: 600px) {
-    .password-main {
+    .recovery-main {
         padding: 40px 24px;
     }
 
-    .password-title {
+    .recovery-title {
         font-size: 28px;
     }
 
-    .password-btn-primary {
+    .recovery-btn-primary {
         width: 100%;
+        border-radius: 10px;
     }
 
-    .password-actions {
+    .recovery-actions {
         justify-content: stretch;
     }
 }
