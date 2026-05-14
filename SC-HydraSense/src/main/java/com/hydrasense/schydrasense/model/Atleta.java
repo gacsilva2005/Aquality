@@ -28,7 +28,7 @@ public class Atleta {
     private String email;
 
     @Column(length = 100)
-    private String clube;
+    private String modalidade;
 
     @Column(nullable = false, length = 50)
     private String modalidadePrincipal;
@@ -41,7 +41,12 @@ public class Atleta {
 
     private String senha;
 
+    @Transient
     private String codigoEquipe;
+
+    @ManyToOne
+    @JoinColumn(name = "clube_id")
+    private Clube clube;
 
     private String codigoAcesso;
 
@@ -69,14 +74,14 @@ public class Atleta {
     public Atleta(String nome,
                   LocalDate dataNascimento,
                   String email,
-                  String clube,
+                  String modalidade,
                   String modalidadePrincipal,
                   Float pesoAtual,
                   Float altura) {
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.email = email;
-        this.clube = clube;
+        this.modalidade = modalidade;
         this.modalidadePrincipal = modalidadePrincipal;
         this.pesoAtual = pesoAtual;
         this.altura = altura;

@@ -22,7 +22,10 @@ public class Profissional {
     private String registro;
     private String uf;
     private String especialidade;
-    private String clube;
+    
+    @ManyToOne
+    @JoinColumn(name = "clube_id")
+    private Clube clube;
     private String perfil;
 
     private String telefone;
