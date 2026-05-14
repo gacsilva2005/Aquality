@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, TextInput, Alert, Modal } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg'; // <-- Importação do SVG
 import { Screen } from '../../../components/Screen';
@@ -75,9 +75,47 @@ export default function Hydration() {
   // Estados para o campo personalizado
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customAmount, setCustomAmount] = useState('');
+  // ... seus estados de consumed, history, customAmount, etc.
+
+  // --- ESTADOS DE EDIÇÃO ---
+  const [editingRecord, setEditingRecord] = useState<HydrationRecord | null>(null);
+  const [editAmount, setEditAmount] = useState('');
+
+  // --- LÓGICA DE SALVAR EDIÇÃO ---
+  const handleSaveEdit = () => {
+    const newAmount = parseInt(editAmount);
+    
+    // Validação básica
+    if (isNaN(newAmount) || newAmount <= 0) {
+      Alert.alert("Valor Inválido", "Por favor, insira um valor maior que zero.");
+      return;
+    }
+
+    if (editingRecord) {
+      // 1. Calcula a diferença (pode ser positiva ou negativa)
+      // Ex: Tinha 500, mudou para 200. A diferença é -300.
+      const difference = newAmount - editingRecord.amount;
+
+      // 2. Atualiza a lista do histórico
+      setHistory(prevHistory => 
+        prevHistory.map(item => 
+          item.id === editingRecord.id 
+            ? { ...item, amount: newAmount } // Substitui o valor do item editado
+            : item // Mantém os outros iguais
+        )
+      );
+
+      // 3. Atualiza o total consumido somando a diferença
+      setConsumed(prevConsumed => Math.max(0, prevConsumed + difference));
+
+      // 4. Limpa e fecha o modal
+      setEditingRecord(null);
+      setEditAmount('');
+    }
+  };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex : 1}}>
       <Screen backgroundColor="#FAFAFA" scrollable={true} HeaderComponent={<Header />}>
         <View style={styles.container}>
 
@@ -217,10 +255,25 @@ export default function Hydration() {
                   </View>
 
                   {/* 3. AÇÕES DA DIREITA (Hora e Lixeira) */}
+                  {/* 3. AÇÕES DA DIREITA (Hora, Editar e Lixeira) */}
                   <View style={styles.historyRightAction}>
                     <Text style={styles.historyTime}>{item.time}</Text>
+                    
+                    {/* BOTÃO DE EDITAR */}
                     <TouchableOpacity 
-                      style={styles.deleteButton}
+                      style={styles.actionButton}
+                      onPress={() => {
+                        setEditingRecord(item); // Diz qual item estamos editando
+                        setEditAmount(item.amount.toString()); // Preenche o input com o valor atual
+                      }}
+                      activeOpacity={0.6}
+                    >
+                      <MaterialCommunityIcons name="pencil-outline" size={20} color="#888" />
+                    </TouchableOpacity>
+
+                    {/* BOTÃO DE DELETAR (que você já tinha) */}
+                    <TouchableOpacity 
+                      style={styles.actionButton}
                       onPress={() => handleRemoveWater(item.id, item.amount)}
                       activeOpacity={0.6}
                     >
@@ -235,10 +288,47 @@ export default function Hydration() {
 
         </View>
       </Screen>
+      {/* --- MODAL DE EDIÇÃO --- */}
+      <Modal
+        visible={editingRecord !== null}
+        transparent={true}
+        animationType="fade"
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Editar Registro</Text>
+            <Text style={styles.modalSubtitle}>{editingRecord?.description}</Text>
 
-      <TouchableOpacity style={styles.fab} onPress={() => console.log('Adicionar')}>
-        <MaterialCommunityIcons name="plus" size={32} color="#FFF" />
-      </TouchableOpacity>
+            <View style={styles.modalInputContainer}>
+              <TextInput
+                style={styles.modalInput}
+                value={editAmount}
+                onChangeText={setEditAmount}
+                keyboardType="numeric"
+                autoFocus={true}
+                maxLength={4}
+              />
+              <Text style={styles.modalUnit}>ml</Text>
+            </View>
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={[styles.modalBtn, styles.modalBtnCancel]} 
+                onPress={() => setEditingRecord(null)}
+              >
+                <Text style={styles.modalBtnCancelText}>Cancelar</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.modalBtn, styles.modalBtnSave]} 
+                onPress={handleSaveEdit}
+              >
+                <Text style={styles.modalBtnSaveText}>Salvar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

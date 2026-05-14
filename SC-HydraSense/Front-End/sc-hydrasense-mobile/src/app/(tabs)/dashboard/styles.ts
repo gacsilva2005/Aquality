@@ -17,18 +17,19 @@ export const styles = StyleSheet.create({
   },
   pageSubtitle: {
     fontFamily: theme.fonts.bodyBold,         
-    fontSize: 10,
+    fontSize: 12,
     color: theme.colors.primary,              
     letterSpacing: 1,
-    marginBottom: 4,
+    marginTop: 20,
     textTransform: 'uppercase',
   },
   titleLine: {
-    fontSize: 32,
+    fontSize: 40,
+    letterSpacing: -2,
     fontFamily: theme.fonts.headingBold,      
     color: theme.colors.textPrimary,          
     textTransform: 'uppercase',
-    lineHeight: 36,
+    lineHeight: 50,
   },
 
   //HEADER DE HIDRATAÇÃO
@@ -63,16 +64,22 @@ export const styles = StyleSheet.create({
 
   // CARD ESTRATÉGIA
   strategyCard: {
-    backgroundColor: theme.colors.surface,   
-    borderWidth: 1,
-    borderColor: theme.colors.border,         
+    backgroundColor: theme.colors.surface,    
     borderRadius: theme.borderRadius.md,     
     paddingVertical: 20,
     paddingHorizontal: theme.spacing.md,
     marginHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    marginTop: 30,
+    marginBottom: 40,
     overflow: 'hidden',
     position: 'relative',
+    // iOS / Web (React Native Web)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    // Android
+    elevation: 4
   },
   cardHeaderRow: {
     flexDirection: 'row',
@@ -106,15 +113,24 @@ export const styles = StyleSheet.create({
   strategyActionRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 16,
   },
   btnProtocol: {
     backgroundColor: theme.colors.primary,   
     paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: theme.borderRadius.sm,     
+    paddingVertical: 13,
+    borderRadius: theme.borderRadius.md,     
     minWidth: 130,
     alignItems: 'center',
+    justifyContent: 'center',
+    // iOS / Web (React Native Web)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 }, // ← joga a sombra pra baixo
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    // Android
+    elevation: 8,
   },
   btnProtocolText: {
     color: theme.colors.textWhite,           
@@ -132,15 +148,20 @@ export const styles = StyleSheet.create({
 
   // INFO CARD
   infoCard: {
-    backgroundColor: '#F5F5F5',
-    borderWidth: 1,
-    borderColor: theme.colors.border,        
+    backgroundColor: theme.colors.surface,     
     borderRadius: theme.borderRadius.md,     
     paddingVertical: theme.spacing.md,
     paddingHorizontal: theme.spacing.md,
     marginHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    marginBottom: 40,
     position: 'relative',
+    // iOS / Web (React Native Web)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    // Android
+    elevation: 4
   },
 
   // LABELS 
@@ -276,9 +297,11 @@ export const styles = StyleSheet.create({
     right: 16,
     backgroundColor: theme.colors.surface, 
     padding: 16,
-    borderRadius: theme.borderRadius.lg,    
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 3,
+    borderColor: theme.colors.textLight,    
     alignItems: 'center',
-    width: 90,
+    width: 100,
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -293,7 +316,7 @@ export const styles = StyleSheet.create({
   },
   recoveryLabel: {
     fontFamily: theme.fonts.bodyRegular,    
-    fontSize: 9,
+    fontSize: 7,
     color: theme.colors.textSecondary,     
     marginTop: 2,
     textTransform: 'uppercase',
@@ -302,9 +325,7 @@ export const styles = StyleSheet.create({
 
   // ── INSIGHTS ──
   insightsCard: {
-    backgroundColor: '#F5F5F5',
-    borderWidth: 1,
-    borderColor: theme.colors.border,       
+    backgroundColor: theme.colors.surface,       
     borderLeftWidth: 4,
     borderLeftColor: theme.colors.primary,  
     borderRadius: theme.borderRadius.md,    
@@ -312,6 +333,13 @@ export const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     marginHorizontal: theme.spacing.md,
     marginBottom: theme.spacing.md,
+    // iOS / Web (React Native Web)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    // Android
+    elevation: 4
   },
   insightsText: {
     fontFamily: theme.fonts.bodyRegular,    
@@ -330,8 +358,7 @@ export const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   bottomTag: {
-    backgroundColor: '#F5F5F5',
-    borderWidth: 1,
+    backgroundColor: theme.colors.surface,
     borderColor: theme.colors.border,     
     paddingHorizontal: 12,
     paddingVertical: 8,

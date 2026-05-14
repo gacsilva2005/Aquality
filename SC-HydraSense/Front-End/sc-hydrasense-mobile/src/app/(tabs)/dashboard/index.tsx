@@ -63,54 +63,13 @@ export default function Dashboard() {
           <Text style={styles.titleLine}>STATUS DO ATLETA</Text>
         </View>
 
-        {/* ── HEADER DE HIDRATAÇÃO (CÍRCULO SVG) ── */}
-        <View style={styles.progressContainer}>
-          <Svg width={CIRCLE_SIZE} height={CIRCLE_SIZE}>
-            {/* Círculo de Fundo (Track) */}
-            <Circle
-              cx={CIRCLE_SIZE / 2}
-              cy={CIRCLE_SIZE / 2}
-              r={RADIUS}
-              stroke={trackColor}
-              strokeWidth={STROKE_WIDTH}
-              fill="none"
-            />
-            {/* Círculo de Progresso (Fill) */}
-            <Circle
-              cx={CIRCLE_SIZE / 2}
-              cy={CIRCLE_SIZE / 2}
-              r={RADIUS}
-              stroke={progressColor}
-              strokeWidth={STROKE_WIDTH}
-              fill="none"
-              strokeDasharray={CIRCUMFERENCE}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              rotation="-90"
-              originX={CIRCLE_SIZE / 2}
-              originY={CIRCLE_SIZE / 2}
-            />
-          </Svg>
-
-          {/* Textos que ficam no centro do círculo */}
-          <View style={styles.textContainer}>
-            <Text style={styles.consumedText}>
-              {(consumed / 1000).toFixed(1)}<Text style={styles.unitText}>L</Text>
-            </Text>
-            {/* Cor inline ajustada para o theme.colors.success */}
-            <Text style={[styles.goalText, isGoalMet && { color: theme.colors.success, fontFamily: theme.fonts.headingBold }]}>
-              META: {(goal / 1000).toFixed(1)}L
-            </Text>
-          </View>
-        </View>
-
         {/* ── CARD: ESTRATÉGIA DO DIA ── */}
         <View style={styles.strategyCard}>
           <View style={styles.cardHeaderRow}>
             <View style={styles.redDot} />
             <Text style={styles.cardLabel}>ESTRATÉGIA DO DIA</Text>
             {/* Cor ajustada para theme.colors.primaryLight */}
-            <FontAwesome5 name="robot" size={40} color={theme.colors.primaryLight} style={styles.bgIcon} />
+            <FontAwesome5 name="robot" size={40} color={theme.colors.textSecondary} style={styles.bgIcon} />
           </View>
 
           <Text style={styles.strategyText}>
@@ -121,11 +80,8 @@ export default function Dashboard() {
 
           <View style={styles.strategyActionRow}>
             <TouchableOpacity style={styles.btnProtocol}>
-              <Text style={styles.btnProtocolText}>VER PROTOCOLO</Text>
+              <Text style={styles.btnProtocolText}>RECOMENDAÇÃO BASEADA EM IA</Text>
             </TouchableOpacity>
-            <Text style={styles.aiRecommendationText}>
-              RECOMENDAÇÃO{'\n'}BASEADA EM IA
-            </Text>
           </View>
         </View>
 
