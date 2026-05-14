@@ -252,11 +252,23 @@ export function Register() {
               {mostrarSugestoes && buscaClube.length > 0 && (
                 <ul className="sugestoes-clubes">
                   {clubesFiltrados.map((clube) => (
-                    <li key={clube} onClick={() => {
-                      setBuscaClube(clube);
-                      setFormData({ ...formData, clube });
-                      setMostrarSugestoes(false);
-                    }}>{clube}</li>
+                      <li
+                          key={clube.id}
+                          onClick={() => {
+                              setBuscaClube(clube.nome);
+
+                              setFormData(prev => ({
+                                  ...prev,
+                                  clube: {
+                                      id: clube.id
+                                  }
+                              }));
+
+                              setMostrarSugestoes(false);
+                          }}
+                      >
+                          {clube.nome}
+                      </li>
                   ))}
                 </ul>
               )}
