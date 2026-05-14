@@ -84,9 +84,9 @@ export function Register() {
         perfil: perfilAtivo
     });
 
-  const clubesFiltrados = CLUBES_DISPONIVEIS.filter(clube =>
-    clube.toLowerCase().includes(buscaClube.toLowerCase())
-  );
+    const clubesFiltrados = CLUBES_DISPONIVEIS.filter(clube =>
+        clube.nome.toLowerCase().includes(buscaClube.toLowerCase())
+    );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
