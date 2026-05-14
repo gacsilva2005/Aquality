@@ -10,16 +10,16 @@ const PERFIS = [
 ];
 
 const CLUBES_DISPONIVEIS = [
-  "América-SP", "Audax", "Água Santa", "Bandeirante", "Barretos",
-  "Botafogo-SP", "Bragantino", "Capivariano", "Catanduvense", "Comercial-SP",
-  "Corinthians", "Desportivo Brasil", "EC São Bernardo", "Ferroviária", "Francana",
-  "Gremio", "Guarani", "Inter de Limeira", "Ipiranga", "Itapirense",
-  "Ituano", "Juventus", "Linense", "Marília", "Matonense",
-  "Mogi Mirim", "Nacional", "Noroeste", "Novorizontino", "Oeste",
-  "Olímpia", "Palmeiras", "Paulista", "Penapolense", "Ponte Preta",
-  "Portuguesa", "Portuguesa Santista", "Primavera", "Rio Claro", "Santo André",
-  "Santos", "São Bento", "São Bernardo FC", "São Caetano", "São Paulo",
-  "Taubaté", "União Barbarense", "Velo Clube", "XV de Jaú", "XV de Piracicaba"
+    { id: 1, nome: "Corinthians" },
+    { id: 2, nome: "Palmeiras" },
+    { id: 3, nome: "Santos" },
+    { id: 4, nome: "São Paulo" },
+    { id: 5, nome: "América-SP" },
+    { id: 6, nome: "Guarani" },
+    { id: 7, nome: "Ponte Preta" },
+    { id: 8, nome: "Ituano" },
+    { id: 9, nome: "Juventus" },
+    { id: 10, nome: "Portuguesa" }
 ];
 
 const UFS = [
@@ -33,18 +33,20 @@ export function Register() {
   const [buscaClube, setBuscaClube] = useState('');
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
 
-  const [formData, setFormData] = useState({
-    nome: '',
-    registro: '',
-    uf: '',
-    especialidade: '',
-    clube: '',
-    perfil: perfilAtivo
-  });
+    const [formData, setFormData] = useState({
+        nome: '',
+        registro: '',
+        uf: '',
+        especialidade: '',
+        clube: {
+            id: 0
+        },
+        perfil: perfilAtivo
+    });
 
-  const clubesFiltrados = CLUBES_DISPONIVEIS.filter(clube =>
-    clube.toLowerCase().includes(buscaClube.toLowerCase())
-  );
+    const clubesFiltrados = CLUBES_DISPONIVEIS.filter(clube =>
+        clube.nome.toLowerCase().includes(buscaClube.toLowerCase())
+    );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -200,7 +202,6 @@ export function Register() {
                   onChange={(e) => {
                     setBuscaClube(e.target.value);
                     setMostrarSugestoes(true);
-                    setFormData({ ...formData, clube: e.target.value });
                   }}
                   onFocus={() => setMostrarSugestoes(true)}
                   required
@@ -210,11 +211,23 @@ export function Register() {
               {mostrarSugestoes && buscaClube.length > 0 && (
                 <ul className="sugestoes-clubes">
                   {clubesFiltrados.map((clube) => (
-                    <li key={clube} onClick={() => {
-                      setBuscaClube(clube);
-                      setFormData({ ...formData, clube });
-                      setMostrarSugestoes(false);
-                    }}>{clube}</li>
+                      <li
+                          key={clube.id}
+                          onClick={() => {
+                              setBuscaClube(clube.nome);
+
+                              setFormData(prev => ({
+                                  ...prev,
+                                  clube: {
+                                      id: clube.id
+                                  }
+                              }));
+
+                              setMostrarSugestoes(false);
+                          }}
+                      >
+                          {clube.nome}
+                      </li>
                   ))}
                 </ul>
               )}
