@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, Droplet } from 'lucide-react';
+import { ChevronDown, Droplet, ArrowLeft } from 'lucide-react';
 import './number.css';
 
 export function Number() {
@@ -114,8 +114,10 @@ export function Number() {
     return (
         <div className="number-page">
 
-            <main className="number-main">
-
+            <main className="number-main" style={{ position: 'relative' }}>
+                <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ position: 'absolute', top: '24px', left: '24px' }}>
+                    <ArrowLeft size={16} /> Voltar
+                </button>
                 <div className="number-content">
 
                     <div className="number-logo">

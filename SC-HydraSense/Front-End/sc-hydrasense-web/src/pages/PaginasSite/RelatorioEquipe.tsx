@@ -1,4 +1,4 @@
-import { Download, Filter, Thermometer, Droplets, ChevronRight } from 'lucide-react';
+import { Download, Filter, Thermometer, Droplets, ChevronRight, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export function RelatorioEquipe() {
@@ -7,6 +7,11 @@ export function RelatorioEquipe() {
     return (
         <div className="relatorio-container">
             {/* Breadcrumb e Cabeçalho */}
+            <div style={{ marginBottom: '16px' }}>
+                <button className="btn-ghost-back" onClick={() => navigate(-1)}>
+                    <ArrowLeft size={16} /> Voltar para Equipes
+                </button>
+            </div>
             <div className="relatorio-header">
                 <div className="relatorio-title-wrapper">
                     <div>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ArrowLeft, Save, User, Mail, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Save, User, Mail, Shield, AlertCircle, CheckCircle, X } from 'lucide-react';
 
 interface NovoAtletaProps {
     onBack: () => void;
@@ -12,6 +12,26 @@ export function NovoAtleta({ onBack }: NovoAtletaProps) {
         codigoEquipe: ''
     });
 
+    const [carregando, setCarregando] = useState(false);
+
+    // Estado para controlar a notificação Toast
+    const [toast, setToast] = useState({
+        visible: false,
+        type: 'error', // 'error' ou 'success'
+        title: '',
+        message: ''
+    });
+
+    // Efeito para fechar o toast automaticamente
+    useEffect(() => {
+        if (toast.visible) {
+            const timer = setTimeout(() => {
+                setToast((prev) => ({ ...prev, visible: false }));
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [toast.visible]);
+
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
@@ -23,6 +43,7 @@ export function NovoAtleta({ onBack }: NovoAtletaProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setCarregando(true);
 
         try {
             const response = await fetch("http://localhost:8080/Atleta/convite", {
@@ -40,27 +61,63 @@ export function NovoAtleta({ onBack }: NovoAtletaProps) {
             if (!response.ok) {
                 const erro = await response.text();
                 console.log(erro);
-
-                alert("Erro ao enviar convite");
+                setToast({
+                    visible: true,
+                    type: 'error',
+                    title: 'Erro de Validação',
+                    message: 'O código de equipe inserido não existe ou não pertence a você.'
+                });
+                setCarregando(false);
                 return;
             }
 
-            alert("Convite enviado com sucesso!");
-            onBack();
+            setToast({
+                visible: true,
+                type: 'success',
+                title: 'Convite Enviado',
+                message: 'Atleta vinculado! Um e-mail de convite foi enviado com as instruções.'
+            });
+
+            // Aguarda o toast de sucesso aparecer antes de voltar
+            setTimeout(() => {
+                onBack();
+            }, 2000);
 
         } catch (error) {
             console.error(error);
-            alert("Erro ao conectar ao servidor");
+            setToast({
+                visible: true,
+                type: 'error',
+                title: 'Erro de Conexão',
+                message: 'Não foi possível conectar ao servidor.'
+            });
+            setCarregando(false);
         }
     };
 
     return (
         <div className="novo-atleta-wrapper">
+            {/* --- INÍCIO DO COMPONENTE TOAST --- */}
+            <div className={`toast-notification ${toast.visible ? 'show' : ''} ${toast.type}`}>
+                <div className="toast-icon">
+                    {toast.type === 'error' ? <AlertCircle size={24} /> : <CheckCircle size={24} />}
+                </div>
+                <div className="toast-content">
+                    <span className="toast-title">{toast.title}</span>
+                    <span className="toast-message">{toast.message}</span>
+                </div>
+                <button className="toast-close" onClick={() => setToast({ ...toast, visible: false })}>
+                    <X size={18} />
+                </button>
+                <div className="toast-progress-bar"></div>
+            </div>
+            {/* --- FIM DO COMPONENTE TOAST --- */}
+
             {/* === CABEÇALHO DO FORMULÁRIO === */}
             <div className="atletas-header">
                 <div className="atletas-header__info">
-                    <button className="btn-back" onClick={onBack}>
-                        <ArrowLeft size={20} /> Voltar para a listagem
+                    <button className="btn-ghost-back" onClick={onBack} style={{ marginBottom: '16px' }}>
+                        <ArrowLeft size={16} /> Voltar para a listagem
                     </button>
                     <h1 className="pageweb__title" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '38px', color: 'var(--hydro-text-primary)', letterSpacing: '-0.5px' }}>
                         CADASTRAR NOVO ATLETA
@@ -90,7 +147,7 @@ export function NovoAtleta({ onBack }: NovoAtletaProps) {
 
                     {/* E-mail */}
                     <div className="filtro-grupo">
-                        <label style={{ fontSize: '12px', color: 'var(--hydro-action)', fontWeight: 700, letterSpacing: '0.5px' }}>E-MAIL DE CONTATO</label>
+                        <label style={{ fontSize: '12px', color: 'var(--hydro-action)', fontWeight: 700, letterSpacing: '0.5px' }}>E-MAIL DO ATLETA</label>
                         <div className="input-wrapper" style={{ height: '48px', backgroundColor: '#F8F9FA' }}>
                             <Mail size={18} className="icone-busca" />
                             <input
@@ -123,11 +180,15 @@ export function NovoAtleta({ onBack }: NovoAtletaProps) {
                 </div>
 
                 <div className="form-actions" style={{ paddingTop: '32px', borderTop: '1px solid var(--hydro-border)' }}>
-                    <button type="button" className="btn-secondary" style={{ padding: '12px 24px', fontSize: '14px' }} onClick={onBack}>
+                    <button type="button" className="btn-secondary" style={{ padding: '12px 24px', fontSize: '14px' }} onClick={onBack} disabled={carregando}>
                         CANCELAR
                     </button>
-                    <button type="submit" className="btn-primary" style={{ padding: '12px 24px', fontSize: '14px' }}>
-                        <Save size={18} /> SALVAR REGISTRO
+                    <button type="submit" className="btn-primary" style={{ padding: '12px 24px', fontSize: '14px', opacity: carregando ? 0.7 : 1, cursor: carregando ? 'not-allowed' : 'pointer' }} disabled={carregando}>
+                        {carregando ? (
+                            <>Aguarde...</>
+                        ) : (
+                            <><Save size={18} /> ENVIAR CONVITE</>
+                        )}
                     </button>
                 </div>
             </form>

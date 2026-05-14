@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Droplet, Eye, EyeOff } from 'lucide-react';
+import { Droplet, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import './password.css';
 
 export function Password() {
@@ -26,8 +26,10 @@ export function Password() {
 
     return (
         <div className="password-page">
-            <main className="password-main">
-
+            <main className="password-main" style={{ position: 'relative' }}>
+                <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ position: 'absolute', top: '24px', left: '24px' }}>
+                    <ArrowLeft size={16} /> Voltar
+                </button>
                 <div className="password-content">
 
                     <div className="password-logo">

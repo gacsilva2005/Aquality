@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, useEffect, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Rocket, Mail, Phone, Lock, Camera, FileText, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Rocket, Mail, Phone, Lock, Camera, FileText, User, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 
 import './Login.css';
 import './Identifier.css';
@@ -111,6 +111,9 @@ export function Identifier() {
       </aside>
 
       <main className="painel-principal">
+        <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ alignSelf: 'flex-start', marginBottom: '24px', marginLeft: '-12px' }}>
+          <ArrowLeft size={16} /> Voltar
+        </button>
         <header className="cabecalho-fluxo">
           <span className="texto-passo">PASSO 02 / IDENTIFICAÇÃO</span>
           <h1 className="titulo-pagina">DADOS DE ACESSO</h1>

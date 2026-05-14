@@ -168,3 +168,29 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* =========================================
+   BOTÕES DE NAVEGAÇÃO GHOST (VOLTAR/FECHAR)
+   ========================================= */
+.btn-ghost-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--hydro-text-muted);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.btn-ghost-back:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--hydro-text-primary);
+}
