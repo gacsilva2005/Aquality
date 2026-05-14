@@ -73,14 +73,16 @@ export function Register() {
   const [buscaClube, setBuscaClube] = useState('');
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
 
-  const [formData, setFormData] = useState({
-    nome: '',
-    registro: '',
-    uf: '',
-    especialidade: '',
-    clube: '',
-    perfil: perfilAtivo
-  });
+    const [formData, setFormData] = useState({
+        nome: '',
+        registro: '',
+        uf: '',
+        especialidade: '',
+        clube: {
+            id: 0
+        },
+        perfil: perfilAtivo
+    });
 
   const clubesFiltrados = CLUBES_DISPONIVEIS.filter(clube =>
     clube.toLowerCase().includes(buscaClube.toLowerCase())
