@@ -4,6 +4,10 @@ import Constants from 'expo-constants';
 import { useRouter, Stack } from 'expo-router';
 import { Screen } from '../../components/Screen';
 import { Button } from '../../components/Button';
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
+import Checkbox from 'expo-checkbox';
+import { theme } from '../../global/themas';
 import { InputCadastro } from '../../components/InputCadastro';
 import { styles } from './styles';
 
@@ -18,6 +22,7 @@ export default function Cadastro() {
   const [codigo, setCodigo] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [habilitarBiometria, setHabilitarBiometria] = useState(false);
 
   // Estado para armazenar os erros de cada campo
   const [erros, setErros] = useState<Record<string, string>>({});
@@ -102,6 +107,37 @@ export default function Cadastro() {
       });
 
       if (response.ok) {
+        // Se o usuário marcou para habilitar biometria
+        if (habilitarBiometria) {
+          const hasHardware = await LocalAuthentication.hasHardwareAsync();
+          const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+          if (hasHardware && isEnrolled) {
+            const authResult = await LocalAuthentication.authenticateAsync({
+              promptMessage: 'Confirme sua identidade para habilitar a biometria',
+              fallbackLabel: 'Usar senha',
+            });
+
+            if (authResult.success) {
+              await SecureStore.setItemAsync('biometriaAtiva', 'true');
+              await SecureStore.setItemAsync('biometric_email', email.trim());
+              await SecureStore.setItemAsync('biometric_password', senha.trim());
+              Alert.alert('Sucesso!', 'Conta criada e biometria habilitada com sucesso. Um código foi enviado ao seu e-mail.');
+              router.back();
+              return;
+            } else {
+              Alert.alert('Aviso', 'Biometria não confirmada. Você poderá tentar habilitar depois.');
+            }
+          } else {
+            Alert.alert('Aviso', 'Seu dispositivo não suporta ou não tem biometria cadastrada.');
+          }
+        } else {
+          // Se ele não marcou, garantimos que qualquer biometria anterior deste aparelho seja apagada
+          await SecureStore.deleteItemAsync('biometriaAtiva');
+          await SecureStore.deleteItemAsync('biometric_email');
+          await SecureStore.deleteItemAsync('biometric_password');
+        }
+
         Alert.alert('Sucesso!', 'Conta criada com sucesso. Um código foi enviado ao seu e-mail.');
         router.back();
       } else {
@@ -220,6 +256,18 @@ export default function Cadastro() {
           autoCorrect={false}
           errorMessage={erros.codigo}
         />
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 15 }}>
+          <Checkbox
+            value={habilitarBiometria}
+            onValueChange={setHabilitarBiometria}
+            color={habilitarBiometria ? theme.colors.primary : undefined}
+            style={{ marginRight: 10, width: 20, height: 20 }}
+          />
+          <Text style={{ color: '#4A4A4A', fontSize: 14, fontFamily: 'Inter_400Regular' }}>
+            Habilitar Login por Biometria
+          </Text>
+        </View>
 
         <View style={styles.buttonWrapper}>
           <Button title="CRIAR CONTA" onPress={handleCreateAccount} />

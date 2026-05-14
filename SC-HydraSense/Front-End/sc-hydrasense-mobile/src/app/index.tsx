@@ -1,5 +1,5 @@
 // src/app/index.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -19,8 +19,10 @@ import { Feather, FontAwesome5 } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import { theme } from '../global/themas';
 import { styles } from './styles';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import Constants from 'expo-constants';
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -29,16 +31,58 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [carregando, setCarregando] = useState(false);
 
-  const handleLogin = async () => {
+  const [biometryPrompted, setBiometryPrompted] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Reseta a flag sempre que a tela ganhar foco
+      setBiometryPrompted(false);
+    }, [])
+  );
+
+  const handleBiometricLogin = async () => {
+    if (biometryPrompted) return;
+    setBiometryPrompted(true);
+
+    try {
+      const isBiometriaAtiva = await SecureStore.getItemAsync('biometriaAtiva');
+      if (isBiometriaAtiva !== 'true') return;
+
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+      if (hasHardware && isEnrolled) {
+        const authResult = await LocalAuthentication.authenticateAsync({
+          promptMessage: 'Autentique-se para entrar',
+          fallbackLabel: 'Usar senha',
+        });
+
+        if (authResult.success) {
+          const savedEmail = await SecureStore.getItemAsync('biometric_email');
+          const savedPassword = await SecureStore.getItemAsync('biometric_password');
+
+          if (savedEmail && savedPassword) {
+            setEmail(savedEmail);
+            setPassword(savedPassword);
+            performLogin(savedEmail, savedPassword);
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Erro na biometria:', error);
+    }
+  };
+
+  const performLogin = async (loginEmail: string, loginPassword: string) => {
     // === ATALHO PARA DESENVOLVIMENTO (Ignora o Backend) ===
-    if (__DEV__ && email.trim() === 'dev' && password === 'dev') {
+    if (__DEV__ && loginEmail.trim() === 'dev' && loginPassword === 'dev') {
       console.log('Bypass de Login Ativado (Modo Dev)!');
       router.replace('/(tabs)/dashboard');
       return;
     }
 
-    const cleanEmail = email.trim();
-    const cleanPassword = password.trim();
+    const cleanEmail = loginEmail.trim();
+    const cleanPassword = loginPassword.trim();
 
     if (!cleanEmail || !cleanPassword) {
       Alert.alert('Campos Obrigatórios', 'Por favor, preencha o seu e-mail e a sua senha para acessar o portal.');
@@ -87,6 +131,10 @@ export default function LoginScreen() {
     }
   };
 
+  const handleLogin = () => {
+    performLogin(email, password);
+  };
+
   return (
     <Screen bgImage={require('../../assets/images/saocamilo.jpg')}
       backgroundColor="#4A0E17">
@@ -128,6 +176,7 @@ export default function LoginScreen() {
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
+          onFocus={handleBiometricLogin}
         />
 
         <Input
@@ -136,6 +185,7 @@ export default function LoginScreen() {
           isPassword={true}
           value={password}
           onChangeText={setPassword}
+          onFocus={handleBiometricLogin}
         />
 
         {/* Opções (Lembrar / Esqueci a senha) */}
