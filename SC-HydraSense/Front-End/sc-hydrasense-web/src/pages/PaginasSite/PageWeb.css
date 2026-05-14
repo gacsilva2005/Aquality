@@ -1480,5 +1480,448 @@
     margin-top: auto;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 12px;
+}
+
+/* =========================================
+   PERFIL — AVATAR EDIT BADGE
+   ========================================= */
+.perfil-avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.perfil-avatar-edit {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--hydro-bg-card);
+    border: 1.5px solid var(--hydro-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--hydro-text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.perfil-avatar-edit:hover {
+    background-color: var(--hydro-action);
+    color: var(--hydro-branco);
+    border-color: var(--hydro-action);
+    transform: scale(1.1);
+}
+
+/* =========================================
+   PERFIL — DISPLAY ROW (valor + lápis)
+   ========================================= */
+.perfil-display-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.perfil-display-row .perfil-campo-valor {
+    margin: 0;
+}
+
+.perfil-edit-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    border-radius: 4px;
+    color: var(--hydro-text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+}
+
+.perfil-campo:hover .perfil-edit-btn,
+.perfil-usuario-card:hover .perfil-edit-btn {
+    opacity: 1;
+}
+
+.perfil-edit-btn:hover {
+    color: var(--hydro-action);
+    background-color: rgba(217, 4, 41, 0.08);
+}
+
+/* =========================================
+   PERFIL — EDIT ROW (input + check)
+   ========================================= */
+.perfil-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.perfil-edit-input {
+    flex: 1;
+    font-size: 14px;
+    color: var(--hydro-text-primary);
+    font-family: var(--font-body);
+    font-weight: 500;
+    padding: 6px 8px;
+    border: none;
+    border-bottom: 2px solid var(--hydro-action);
+    background: transparent;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.perfil-edit-input:focus {
+    border-bottom-color: var(--hydro-action-hover);
+}
+
+.perfil-edit-input-nome {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: var(--font-display);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.perfil-edit-confirm {
+    background: none;
+    border: none;
+    padding: 4px;
+    border-radius: 4px;
+    color: var(--hydro-success);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.perfil-edit-confirm:hover {
+    background-color: rgba(40, 147, 72, 0.1);
+    transform: scale(1.1);
+}
+
+/* =========================================
+   SISTEMA DE TOAST (NOTIFICAÇÕES)
+   ========================================= */
+.toast-notification {
+    position: fixed;
+    top: 30px;
+    right: -450px;
+    width: 380px;
+    background-color: var(--hydro-bg-card);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    gap: 16px;
+    z-index: 9999;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+}
+
+.toast-notification.show {
+    right: 30px;
+    opacity: 1;
+    visibility: visible;
+}
+
+.toast-notification.error .toast-icon {
+    color: var(--hydro-action);
+}
+
+.toast-notification.success .toast-icon {
+    color: var(--hydro-success);
+}
+
+.toast-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.toast-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--hydro-text-primary);
+    margin-bottom: 4px;
+}
+
+.toast-message {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--hydro-text-muted);
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    color: var(--hydro-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.toast-close:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: var(--hydro-text-primary);
+}
+
+.toast-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+}
+
+.toast-notification.error .toast-progress-bar {
+    background-color: var(--hydro-action);
+}
+
+.toast-notification.success .toast-progress-bar {
+    background-color: var(--hydro-success);
+}
+
+.toast-notification.show .toast-progress-bar {
+    animation: progress 3s linear forwards;
+}
+
+@keyframes progress {
+    100% {
+        width: 0%;
+    }
+}
+
+/* =========================================
+   ONBOARDING (INÍCIO WEB)
+   ========================================= */
+.onboarding-container {
+    padding-bottom: 40px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.onboarding-header {
+    margin: 0 auto 56px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    max-width: 800px;
+}
+
+.onboarding-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 42px;
+    color: var(--hydro-text-primary);
+    letter-spacing: -1px;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.onboarding-title span {
+    color: var(--hydro-action);
+}
+
+.onboarding-subtitle {
+    color: var(--hydro-text-muted);
+    font-size: 18px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.onboarding-invite-card {
+    background-color: var(--hydro-bg-card);
+    border: 2px solid var(--hydro-border);
+    border-radius: 16px;
+    padding: 32px 48px; /* Padding generoso */
+    margin-bottom: 48px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 48px; /* Respiro entre esquerda e direita */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+.invite-card-info {
+    flex: 1; /* Permite que o texto ocupe o espaço disponível sem amassar a direita */
+}
+
+.invite-card-info h2 {
+    font-size: 20px;
+    color: var(--hydro-text-primary);
+    margin: 0 0 12px 0;
+}
+
+.invite-card-info p {
+    color: var(--hydro-text-muted);
+    font-size: 15px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+@media (max-width: 860px) {
+    .onboarding-invite-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+        gap: 24px;
+    }
+    
+    .invite-code-wrapper {
+        width: 100%;
+    }
+}
+
+.invite-code-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: #F8F9FA;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 1px solid var(--hydro-border);
+}
+
+.invite-code-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.invite-code-label {
+    font-size: 11px;
+    color: var(--hydro-text-muted);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.invite-code-value {
+    font-size: 24px;
+    color: var(--hydro-action);
+    font-weight: 800;
+    font-family: var(--mono);
+    letter-spacing: 2px;
+}
+
+.btn-copy-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--hydro-text-primary);
+    color: var(--hydro-branco);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    margin-left: 16px;
+}
+
+.btn-copy-code:hover {
+    background-color: var(--hydro-action);
+}
+
+.btn-copy-code.copied {
+    background-color: var(--hydro-success);
+}
+
+.onboarding-features {
+    /* Container features */
+}
+
+.features-title {
+    font-size: 22px;
+    color: var(--hydro-text-primary);
+    margin: 0 0 24px 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+}
+
+.onboarding-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.onboarding-card {
+    background-color: var(--hydro-bg-card);
+    border: 1px solid var(--hydro-border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+}
+
+.onboarding-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+}
+
+.onboarding-card h4 {
+    font-size: 18px;
+    margin: 0 0 12px 0;
+    color: var(--hydro-text-primary);
+}
+
+.onboarding-card p {
+    color: var(--hydro-text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.feature-icon.droplet {
+    background-color: rgba(217, 4, 41, 0.1);
+    color: var(--hydro-action);
+}
+
+.feature-icon.users {
+    background-color: rgba(43, 45, 66, 0.1);
+    color: var(--hydro-text-primary);
+}
+
+.feature-icon.chart {
+    background-color: rgba(40, 147, 72, 0.1);
+    color: var(--hydro-success);
+}
+
+.feature-icon.activity {
+    background-color: rgba(255, 166, 0, 0.1);
+    color: #FFA600;
 }

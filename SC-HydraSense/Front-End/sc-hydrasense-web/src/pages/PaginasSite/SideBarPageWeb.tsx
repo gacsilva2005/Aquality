@@ -1,7 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const menuItems = [
-    { label: 'Dashboard', path: '/PageWeb' },
+    { label: 'Início', path: '/PageWeb' },
+    { label: 'Dashboard', path: '/PageWeb/dashboard' },
     { label: 'Atletas', path: '/PageWeb/atletas' },
     { label: 'Equipes', path: '/PageWeb/equipes' }
 ];

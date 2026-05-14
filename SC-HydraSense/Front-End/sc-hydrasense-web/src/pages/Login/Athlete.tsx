@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Phone, Mail, ChevronUp, ChevronDown, AlertCircle } from 'lucide-react';
+import { User, Phone, Mail, ChevronUp, ChevronDown, AlertCircle, ArrowLeft } from 'lucide-react';
 import './Athlete.css';
 
 export function Athlete() {
@@ -22,7 +22,10 @@ export function Athlete() {
       <aside className="barra-vinho esquerda"></aside>
       <aside className="barra-vinho direita"></aside>
 
-      <main className="container-atleta-distribuido">
+      <main className="container-atleta-distribuido" style={{ position: 'relative' }}>
+        <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ position: 'absolute', top: '0', left: '0' }}>
+          <ArrowLeft size={16} /> Voltar
+        </button>
         {/* Header agora centralizado via CSS */}
         <header className="header-atleta">
           <span className="label-passo">CADASTRO DE ATLETA</span>

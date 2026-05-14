@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Microscope, Utensils, Activity, BriefcaseMedical, MapPin, Award, User, Hash, Trophy } from 'lucide-react';
+import { Microscope, Utensils, Activity, BriefcaseMedical, MapPin, Award, User, Hash, Trophy, ArrowLeft } from 'lucide-react';
 import './Login.css';
 
 const PERFIS = [
@@ -95,6 +95,9 @@ export function Register() {
       </aside>
 
       <main className="painel-principal">
+        <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ alignSelf: 'flex-start', marginBottom: '24px', marginLeft: '-12px' }}>
+          <ArrowLeft size={16} /> Voltar
+        </button>
         <header className="cabecalho-fluxo">
           <span className="texto-passo">PASSO 01 / CREDENCIAMENTO</span>
           <h1 className="titulo-pagina">CADASTRO PROFISSIONAL</h1>

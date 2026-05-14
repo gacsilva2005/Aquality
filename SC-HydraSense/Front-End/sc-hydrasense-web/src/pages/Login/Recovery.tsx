@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Droplet } from 'lucide-react';
+import { Droplet, ArrowLeft } from 'lucide-react';
 import './recovery.css';
 
 export function Recovery() {
@@ -15,8 +15,10 @@ export function Recovery() {
 
     return (
         <div className="recovery-page">
-            <main className="recovery-main">
-
+            <main className="recovery-main" style={{ position: 'relative' }}>
+                <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ position: 'absolute', top: '24px', left: '24px' }}>
+                    <ArrowLeft size={16} /> Voltar
+                </button>
                 <div className="recovery-content">
 
                     <div className="recovery-logo">

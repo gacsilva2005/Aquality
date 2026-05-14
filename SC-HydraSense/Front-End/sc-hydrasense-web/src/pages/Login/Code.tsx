@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Droplet } from 'lucide-react';
+import { Droplet, ArrowLeft } from 'lucide-react';
 import './code.css';
 
 export function Code() {
@@ -68,7 +68,10 @@ export function Code() {
 
     return (
         <div className="code-page">
-            <main className="code-main">
+            <main className="code-main" style={{ position: 'relative' }}>
+                <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ position: 'absolute', top: '24px', left: '24px' }}>
+                    <ArrowLeft size={16} /> Voltar
+                </button>
                 <div className="code-content">
 
                     <div className="code-logo">

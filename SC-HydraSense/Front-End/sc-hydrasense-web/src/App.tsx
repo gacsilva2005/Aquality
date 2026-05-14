@@ -9,6 +9,7 @@ import { Athlete } from "./pages/Login/Athlete";
 import { PageWeb } from "./pages/PaginasSite/PageWeb";
 import { Atletas } from "./pages/PaginasSite/Atletas";
 import { Dashboard } from "./pages/PaginasSite/Dashboard";
+import { InicioWeb } from "./pages/PaginasSite/InicioWeb";
 import { Equipes } from "./pages/PaginasSite/Equipes";
 import { RelatorioEquipe } from "./pages/PaginasSite/RelatorioEquipe";
 import { Relatorios } from "./pages/PaginasSite/Relatorios";
@@ -36,7 +37,8 @@ function App() {
 
             {/* Rotas do Painel Web */}
             <Route path="/PageWeb" element={<PageWeb />}>
-                <Route index element={<Dashboard />} />
+                <Route index element={<InicioWeb />} />
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="atletas" element={<Atletas />} />
                 <Route path="equipes" element={<Equipes />} />
                 <Route path="equipes/relatorio" element={<RelatorioEquipe />} />

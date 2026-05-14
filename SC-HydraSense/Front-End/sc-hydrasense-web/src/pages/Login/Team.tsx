@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, ArrowRight, ShieldCheck, Hash, ChevronLeft } from 'lucide-react';
+import { UserPlus, ArrowRight, ShieldCheck, Hash, ChevronLeft, ArrowLeft } from 'lucide-react';
 import './Team.css';
 
 export function Team() {
@@ -22,7 +22,10 @@ export function Team() {
 
   return (
     <div className="tela-registro-full">
-      <main className="painel-principal-central">
+      <main className="painel-principal-central" style={{ position: 'relative' }}>
+        <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ position: 'absolute', top: '0', left: '0' }}>
+          <ArrowLeft size={16} /> Voltar
+        </button>
         <header className="cabecalho-fluxo">
           <span className="texto-passo">PASSO 03 / EQUIPE</span>
           <h1 className="titulo-pagina">FORMAÇÃO DE EQUIPE</h1>

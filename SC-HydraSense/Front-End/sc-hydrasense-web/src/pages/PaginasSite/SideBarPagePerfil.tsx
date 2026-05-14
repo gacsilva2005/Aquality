@@ -1,4 +1,5 @@
-import { X, User, Mail, Hash, Shield, Users, Save, LogOut } from 'lucide-react';
+import { useState } from 'react';
+import { X, User, Mail, Phone, Calendar, Users, Save, Pencil, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface SideBarPagePerfilProps {
@@ -9,9 +10,20 @@ interface SideBarPagePerfilProps {
 export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) {
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        // Pode limpar os dados salvos antes de sair, ex: localStorage.clear();
-        navigate('/');
+    // Estado dos campos editáveis
+    const [nome, setNome] = useState('ALEX MERCER');
+    const [email, setEmail] = useState('a.mercer@hydroperform.com');
+    const [telefone, setTelefone] = useState('(11) 98765-4321');
+    const [idade, setIdade] = useState('38');
+    const [cargo, setCargo] = useState('treinador');
+
+    // Controle de qual campo está em modo de edição (null = nenhum)
+    const [editando, setEditando] = useState<string | null>(null);
+
+    const confirmarEdicao = () => setEditando(null);
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') confirmarEdicao();
     };
 
     return (
@@ -35,12 +47,43 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
 
                 {/* Card do Usuário */}
                 <div className="perfil-usuario-card">
-                    <div className="perfil-avatar">
-                        <User size={28} />
+                    <div className="perfil-avatar-wrapper">
+                        <div className="perfil-avatar">
+                            <User size={28} />
+                        </div>
+                        <button className="perfil-avatar-edit" title="Alterar Foto">
+                            <Pencil size={10} />
+                        </button>
                     </div>
                     <div className="perfil-usuario-info">
-                        <h3 className="perfil-usuario-nome">ALEX MERCER</h3>
-                        <p className="perfil-usuario-cargo">Treinador</p>
+                        {editando === 'nome' ? (
+                            <div className="perfil-edit-row">
+                                <input
+                                    className="perfil-edit-input perfil-edit-input-nome"
+                                    value={nome}
+                                    onChange={(e) => setNome(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    autoFocus
+                                />
+                                <button className="perfil-edit-confirm" onClick={confirmarEdicao} title="Confirmar">
+                                    <Check size={14} />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="perfil-display-row">
+                                <h3 className="perfil-usuario-nome">{nome}</h3>
+                                <button className="perfil-edit-btn" onClick={() => setEditando('nome')} title="Editar Nome">
+                                    <Pencil size={14} />
+                                </button>
+                            </div>
+                        )}
+                        <p className="perfil-usuario-cargo">
+                            {cargo === 'treinador' ? 'Treinador' :
+                             cargo === 'medico' ? 'Médico' :
+                             cargo === 'nutricionista' ? 'Nutricionista' :
+                             cargo === 'fisioterapeuta' ? 'Fisioterapeuta' :
+                             'Fisiologista'}
+                        </p>
                     </div>
                 </div>
 
@@ -48,25 +91,91 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
                 <section className="perfil-secao">
                     <h4 className="perfil-secao-titulo">Dados da Conta</h4>
 
+                    {/* E-mail */}
                     <div className="perfil-campo">
                         <p className="perfil-campo-label">
                             <Mail size={12} /> Endereço de E-mail
                         </p>
-                        <p className="perfil-campo-valor">a.mercer@hydroperform.com</p>
+                        {editando === 'email' ? (
+                            <div className="perfil-edit-row">
+                                <input
+                                    className="perfil-edit-input"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    autoFocus
+                                />
+                                <button className="perfil-edit-confirm" onClick={confirmarEdicao} title="Confirmar">
+                                    <Check size={14} />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="perfil-display-row">
+                                <p className="perfil-campo-valor">{email}</p>
+                                <button className="perfil-edit-btn" onClick={() => setEditando('email')} title="Editar E-mail">
+                                    <Pencil size={14} />
+                                </button>
+                            </div>
+                        )}
                     </div>
 
+                    {/* Telefone */}
                     <div className="perfil-campo">
                         <p className="perfil-campo-label">
-                            <Hash size={12} /> ID do Atleta
+                            <Phone size={12} /> Telefone
                         </p>
-                        <p className="perfil-campo-valor">HP-492-BX</p>
+                        {editando === 'telefone' ? (
+                            <div className="perfil-edit-row">
+                                <input
+                                    className="perfil-edit-input"
+                                    type="tel"
+                                    value={telefone}
+                                    onChange={(e) => setTelefone(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    autoFocus
+                                />
+                                <button className="perfil-edit-confirm" onClick={confirmarEdicao} title="Confirmar">
+                                    <Check size={14} />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="perfil-display-row">
+                                <p className="perfil-campo-valor">{telefone}</p>
+                                <button className="perfil-edit-btn" onClick={() => setEditando('telefone')} title="Editar Telefone">
+                                    <Pencil size={14} />
+                                </button>
+                            </div>
+                        )}
                     </div>
 
+                    {/* Idade */}
                     <div className="perfil-campo">
                         <p className="perfil-campo-label">
-                            <Shield size={12} /> Código da Equipe
+                            <Calendar size={12} /> Idade
                         </p>
-                        <p className="perfil-campo-valor">ALPHA-SQUAD-01</p>
+                        {editando === 'idade' ? (
+                            <div className="perfil-edit-row">
+                                <input
+                                    className="perfil-edit-input"
+                                    type="number"
+                                    value={idade}
+                                    onChange={(e) => setIdade(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    autoFocus
+                                />
+                                <button className="perfil-edit-confirm" onClick={confirmarEdicao} title="Confirmar">
+                                    <Check size={14} />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="perfil-display-row">
+                                <p className="perfil-campo-valor">{idade} anos</p>
+                                <button className="perfil-edit-btn" onClick={() => setEditando('idade')} title="Editar Idade">
+                                    <Pencil size={14} />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </section>
 
@@ -78,7 +187,7 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
                         <p className="perfil-campo-label">
                             <Users size={12} /> Cargo / Especialidade
                         </p>
-                        <select defaultValue="treinador">
+                        <select value={cargo} onChange={(e) => setCargo(e.target.value)}>
                             <option value="treinador">Treinador Principal</option>
                             <option value="medico">Médico Responsável</option>
                             <option value="nutricionista">Nutricionista Esportivo</option>
@@ -92,9 +201,6 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
                 <div className="perfil-acoes">
                     <button className="btn-primary">
                         <Save size={16} /> Salvar Parâmetros
-                    </button>
-                    <button className="btn-secondary" onClick={handleLogout}>
-                        <LogOut size={16} /> Encerrar Sessão
                     </button>
                 </div>
 
