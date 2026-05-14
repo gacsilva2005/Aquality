@@ -242,7 +242,6 @@ export function Register() {
                   onChange={(e) => {
                     setBuscaClube(e.target.value);
                     setMostrarSugestoes(true);
-                    setFormData({ ...formData, clube: e.target.value });
                   }}
                   onFocus={() => setMostrarSugestoes(true)}
                   required
