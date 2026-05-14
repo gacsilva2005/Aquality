@@ -161,27 +161,89 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12, // Dá um espacinho entre a hora e a lixeira
   },
-  deleteButton: {
+  actionButton: {
     padding: 4, // Facilita o clique do dedo na tela
   },
 
-  // --- FAB (Floating Action Button) ---
-  fab: {
-    position: 'absolute',
-    right: 20,
-    bottom: 20, // Pode precisar ajustar dependendo do tamanho da sua NavBar
-    backgroundColor: theme.colors.primary, // Vermelho do tema
-    width: 60,
-    height: 60,
-    borderRadius: 16, // Deixando levemente quadrado como na imagem
+  // --- MODAL DE EDIÇÃO ---
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)', // Fundo escuro transparente
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    padding: 20,
   },
+  modalContent: {
+    backgroundColor: '#FFF',
+    width: '100%',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 5,
+  },
+  modalSubtitle: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 12,
+    color: '#888',
+    marginBottom: 20,
+  },
+  modalInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#EFEFEF',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    height: 50,
+    width: '60%',
+    marginBottom: 25,
+  },
+  modalInput: {
+    flex: 1,
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 20,
+    color: theme.colors.primary,
+    textAlign: 'center',
+  },
+  modalUnit: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 16,
+    color: '#999',
+    marginLeft: 5,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    gap: 10,
+  },
+  modalBtn: {
+    flex: 1,
+    height: 45,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBtnCancel: {
+    backgroundColor: '#F4F4F4',
+  },
+  modalBtnCancelText: {
+    fontFamily: theme.fonts.bodyBold,
+    color: '#666',
+  },
+  modalBtnSave: {
+    backgroundColor: '#27ae60',
+  },
+  modalBtnSaveText: {
+    fontFamily: theme.fonts.bodyBold,
+    color: '#FFF',
+  },
+
   // --- VALOR PERSONALIZADO ---
   showCustomButton: {
     marginTop: 15,

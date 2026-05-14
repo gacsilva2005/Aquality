@@ -46,14 +46,11 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
   titleLine: {
-    fontSize: 48,
+    fontSize: 60,
     fontFamily: theme.fonts.headingBold,
     color: theme.colors.textPrimary,
     lineHeight: 50,
     textTransform: 'uppercase',
-  },
-  titleHighlight: {
-    color: theme.colors.primary,
   },
   description: {
     paddingHorizontal: 20,

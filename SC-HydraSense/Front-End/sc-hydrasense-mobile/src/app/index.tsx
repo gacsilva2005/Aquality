@@ -154,12 +154,6 @@ export default function LoginScreen() {
           performance e monitore sua evolução{'\n'}
           em tempo real.
         </Text>
-
-        <View style={styles.partnerContainer}>
-          <Text style={styles.partnerLabel}>PARCEIRO OFICIAL</Text>
-          <Text style={styles.partnerName}>HOSPITAL</Text>
-          <Text style={styles.partnerName}>SÃO CAMILO</Text>
-        </View>
       </View>
 
       {/* === CARD BRANCO DE LOGIN === */}

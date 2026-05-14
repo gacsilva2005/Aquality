@@ -23,15 +23,15 @@ export const styles = StyleSheet.create({
   mainTitle: {
     color: '#FFF',
     fontFamily: theme.fonts.headingBold,
-    fontSize: 40,
-    lineHeight: 44,
+    fontSize: 55,
+    lineHeight: 60,
   },
   subTitleHighlight: {
     color: '#D90429',
     fontFamily: theme.fonts.headingBold,
-    fontSize: 40,
+    fontSize: 55,
     lineHeight: 44,
-    marginBottom: 16,
+    marginBottom: 30,
   },
   description: {
     color: '#E0E0E0',
@@ -42,19 +42,6 @@ export const styles = StyleSheet.create({
   },
   partnerContainer: {
     marginTop: 20,
-  },
-  partnerLabel: {
-    color: '#A0A0A0',
-    fontFamily: theme.fonts.bodyMedium,
-    fontSize: 10,
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  partnerName: {
-    color: theme.colors.critical, 
-    fontFamily: theme.fonts.headingBold,
-    fontSize: 24,
-    lineHeight: 26,
   },
   bottomCard: {
     flex: 1,

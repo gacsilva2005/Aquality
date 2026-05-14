@@ -20,8 +20,8 @@ export default function Profile() {
   const [height, setHeight] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState<'M' | 'F' | null>('M');
-  const [equipe, setEquipe] = useState('S4OC4M!L0');
-  const [time, setTime] = useState('SÃO CAMILO FC - PROFISSIONAL');
+  const [equipe, setEquipe] = useState('S4-C4');
+  const [time, setTime] = useState('Camelinhos - PROFISSIONAL');
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -54,8 +54,8 @@ export default function Profile() {
     >
       <View style={styles.mainContent}>
         <View style={styles.titleContainer}>
-          <Text style={styles.titleLine}>O ESTADO</Text>
-          <Text style={[styles.titleLine, styles.titleHighlight]}>BASAL</Text>
+          <Text style={styles.titleLine}>SEU</Text>
+          <Text style={styles.titleLine}>PERFIL</Text>
         </View>
 
         <Text style={styles.description}>
