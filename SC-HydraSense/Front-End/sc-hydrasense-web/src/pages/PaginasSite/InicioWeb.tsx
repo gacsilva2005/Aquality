@@ -8,7 +8,8 @@ export function InicioWeb() {
     );
 
     const nomeProfissional = usuarioLogado.nome || "Profissional";
-    const codigoEquipe = "ALPHA-SQUAD-01";
+    const codigoEquipe =
+        usuarioLogado.clube?.codigo || "SEM-CODIGO";
     
     const [copiado, setCopiado] = useState(false);
 
