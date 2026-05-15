@@ -1,15 +1,26 @@
-import { User } from 'lucide-react';
+import { User, Menu } from 'lucide-react';
 import logo from '../../assets/icone_petala.png';
 
 interface HeaderPageWebProps {
     usuario?: any;
     onPerfilClick: () => void;
+    onMenuClick?: () => void;
 }
 
-export function HeaderPageWeb({ usuario, onPerfilClick }: HeaderPageWebProps) {
+export function HeaderPageWeb({ usuario, onPerfilClick, onMenuClick }: HeaderPageWebProps) {
     return (
         <header className="hydro-header">
             <div className="hydro-header-logo-container">
+                {onMenuClick && (
+                    <button
+                        type="button"
+                        className="btn-hamburger"
+                        onClick={onMenuClick}
+                        aria-label="Abrir menu"
+                    >
+                        <Menu size={22} />
+                    </button>
+                )}
                 <img src={logo} alt="Logo HydraSense" className="hydro-header-logo-img" />
                 <h1 className="hydro-header-title">HydraSense</h1>
             </div>

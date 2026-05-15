@@ -247,3 +247,47 @@
   text-align: center;
   margin-top: 15px;
 }
+
+/* =====================================================
+   RESPONSIVIDADE — MOBILE (Max 768px)
+   ===================================================== */
+@media (max-width: 768px) {
+  .tela-registro-full {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .painel-principal-central {
+    padding-top: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 140px;
+  }
+
+  .cabecalho-fluxo .titulo-pagina {
+    font-size: 30px;
+  }
+
+  .modal-equipe {
+    padding: 24px;
+    max-width: 100%;
+  }
+
+  .input-codigo-equipe {
+    font-size: 18px;
+    letter-spacing: 3px;
+  }
+
+  .progresso-footer-compacto {
+    padding: 20px 0;
+  }
+
+  .fluxo-progresso-wrapper {
+    gap: 10px;
+  }
+
+  .legenda-mini {
+    font-size: 8px;
+  }
+}

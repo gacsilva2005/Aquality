@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Droplet, ArrowLeft } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 import './recovery.css';
 
 export function Recovery() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
+    const { success } = useToast();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
+        success('Código Enviado', 'Verifique sua caixa de entrada e spam.');
         navigate('/codigo');
     };
 

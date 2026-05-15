@@ -1,4 +1,12 @@
+import { useToast } from '../../context/ToastContext';
+
 export function Configuracoes() {
+  const { success } = useToast();
+
+  const handleSave = () => {
+    success('Configurações Salvas', 'Suas preferências foram atualizadas com sucesso.');
+  };
+
   return (
     <>
       <div className="configuracoes-header">
@@ -10,6 +18,13 @@ export function Configuracoes() {
 
       <section className="configuracoes-content" style={{ marginTop: '40px' }}>
         <p>Configurações em desenvolvimento...</p>
+        <button 
+          className="btn-primary" 
+          style={{ marginTop: '20px' }}
+          onClick={handleSave}
+        >
+          SALVAR CONFIGURAÇÕES
+        </button>
       </section>
     </>
   );

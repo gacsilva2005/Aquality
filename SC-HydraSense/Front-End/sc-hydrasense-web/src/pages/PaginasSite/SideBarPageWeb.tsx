@@ -7,7 +7,12 @@ const menuItems = [
     { label: 'Equipes', path: '/PageWeb/equipes' }
 ];
 
-export function SideBarPageWeb() {
+interface SideBarPageWebProps {
+    aberta?: boolean;
+    onFechar?: () => void;
+}
+
+export function SideBarPageWeb({ aberta, onFechar }: SideBarPageWebProps) {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -22,15 +27,20 @@ export function SideBarPageWeb() {
         navigate('/');
     };
 
+    const handleNavigation = (path: string) => {
+        navigate(path);
+        onFechar?.();
+    };
+
     return (
-        <aside className="hydro-sidebar">
+        <aside className={`hydro-sidebar${aberta ? ' sidebar-mobile-aberta' : ''}`}>
             <nav>
                 <ul className="hydro-sidebar-menu">
                     {menuItems.map((item) => (
                         <li
                             key={item.label}
                             className={checkIsActive(item.path) ? 'active' : ''}
-                            onClick={() => navigate(item.path)}
+                            onClick={() => handleNavigation(item.path)}
                         >
                             {item.label}
                         </li>

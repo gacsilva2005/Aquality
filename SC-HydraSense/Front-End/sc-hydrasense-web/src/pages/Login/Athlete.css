@@ -210,3 +210,66 @@
 .link-voltar-atleta:hover {
   color: var(--cor-vermelho-acao);
 }
+
+/* =====================================================
+   RESPONSIVIDADE — TABLET (Max 1024px)
+   ===================================================== */
+@media (max-width: 1024px) {
+  .barra-vinho {
+    width: 50px;
+  }
+
+  .container-atleta-distribuido {
+    padding: 40px 60px 0 60px;
+  }
+
+  .titulo-hero-atleta {
+    font-size: 40px;
+  }
+}
+
+/* =====================================================
+   RESPONSIVIDADE — MOBILE (Max 768px)
+   ===================================================== */
+@media (max-width: 768px) {
+  .tela-atleta-background {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .barra-vinho {
+    display: none;
+  }
+
+  .container-atleta-distribuido {
+    padding: 30px 20px 120px 20px;
+    max-width: 100%;
+  }
+
+  .header-atleta {
+    margin-bottom: 30px;
+  }
+
+  .titulo-hero-atleta {
+    font-size: 32px;
+    letter-spacing: -1px;
+  }
+
+  .grid-campos-atleta {
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .wrapper-input-atleta {
+    padding: 14px 18px;
+  }
+
+  .wrapper-input-atleta input {
+    font-size: 16px;
+  }
+
+  .navegacao-vertical-container {
+    margin-top: 15px;
+  }
+}

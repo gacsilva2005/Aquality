@@ -410,3 +410,85 @@
   color: var(--hydro-action);
 }
 
+/* =====================================================
+   RESPONSIVIDADE — TABLET E MOBILE (Max 900px)
+   ===================================================== */
+@media (max-width: 900px) {
+  /* Empilha o layout lado-a-lado */
+  .tela-registro,
+  .tela-registro.layout-reverso {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* O painel vermelho vira cabeçalho */
+  .painel-lateral {
+    width: 100%;
+    padding: 30px 24px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .lateral-meio {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .lateral-textos-meio {
+    text-align: center;
+  }
+
+  /* O formulário ocupa 100% */
+  .painel-principal {
+    width: 100%;
+    padding: 40px 24px;
+    border-radius: 24px 24px 0 0;
+    margin-top: -20px;
+    background-color: var(--hydro-bg-main);
+    z-index: 10;
+  }
+
+  .titulo-pagina {
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .texto-passo {
+    text-align: center;
+    display: block;
+  }
+
+  /* Inputs lado a lado → empilha */
+  .linha-dupla {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Cards de perfil empilhados */
+  .grade-perfis {
+    flex-direction: column;
+  }
+
+  /* Botões do formulário */
+  .acoes-formulario {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .botao-acao-principal {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .bloco-login {
+    justify-content: center;
+    margin-top: 10px;
+  }
+}
+

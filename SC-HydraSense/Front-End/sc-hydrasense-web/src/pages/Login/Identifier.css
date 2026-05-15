@@ -128,3 +128,22 @@
 .tela-registro .lateral-texto {
   font-size: 10.5px;
 }
+
+/* =====================================================
+   RESPONSIVIDADE — MOBILE (Max 900px)
+   ===================================================== */
+@media (max-width: 900px) {
+  .tela-registro .painel-principal {
+    padding: 40px 24px;
+  }
+
+  .tela-registro .titulo-pagina {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .preview-foto-3x4 {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+}

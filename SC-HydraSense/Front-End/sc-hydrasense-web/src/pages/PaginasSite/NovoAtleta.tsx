@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, User, Mail, Shield, AlertCircle, CheckCircle, X } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 
 interface NovoAtletaProps {
     onBack: () => void;
@@ -14,23 +15,7 @@ export function NovoAtleta({ onBack }: NovoAtletaProps) {
 
     const [carregando, setCarregando] = useState(false);
 
-    // Estado para controlar a notificação Toast
-    const [toast, setToast] = useState({
-        visible: false,
-        type: 'error', // 'error' ou 'success'
-        title: '',
-        message: ''
-    });
-
-    // Efeito para fechar o toast automaticamente
-    useEffect(() => {
-        if (toast.visible) {
-            const timer = setTimeout(() => {
-                setToast((prev) => ({ ...prev, visible: false }));
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [toast.visible]);
+    const { success, error } = useToast();
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -61,57 +46,27 @@ export function NovoAtleta({ onBack }: NovoAtletaProps) {
             if (!response.ok) {
                 const erro = await response.text();
                 console.log(erro);
-                setToast({
-                    visible: true,
-                    type: 'error',
-                    title: 'Erro de Validação',
-                    message: 'O código de equipe inserido não existe ou não pertence a você.'
-                });
+                error('Erro de Validação', 'O código de equipe inserido não existe ou não pertence a você.');
                 setCarregando(false);
                 return;
             }
 
-            setToast({
-                visible: true,
-                type: 'success',
-                title: 'Convite Enviado',
-                message: 'Atleta vinculado! Um e-mail de convite foi enviado com as instruções.'
-            });
+            success('Convite Enviado', 'Atleta vinculado! Um e-mail de convite foi enviado com as instruções.');
 
             // Aguarda o toast de sucesso aparecer antes de voltar
             setTimeout(() => {
                 onBack();
             }, 2000);
 
-        } catch (error) {
-            console.error(error);
-            setToast({
-                visible: true,
-                type: 'error',
-                title: 'Erro de Conexão',
-                message: 'Não foi possível conectar ao servidor.'
-            });
+        } catch (err) {
+            console.error(err);
+            error('Erro de Conexão', 'Não foi possível conectar ao servidor.');
             setCarregando(false);
         }
     };
 
     return (
         <div className="novo-atleta-wrapper">
-            {/* --- INÍCIO DO COMPONENTE TOAST --- */}
-            <div className={`toast-notification ${toast.visible ? 'show' : ''} ${toast.type}`}>
-                <div className="toast-icon">
-                    {toast.type === 'error' ? <AlertCircle size={24} /> : <CheckCircle size={24} />}
-                </div>
-                <div className="toast-content">
-                    <span className="toast-title">{toast.title}</span>
-                    <span className="toast-message">{toast.message}</span>
-                </div>
-                <button className="toast-close" onClick={() => setToast({ ...toast, visible: false })}>
-                    <X size={18} />
-                </button>
-                <div className="toast-progress-bar"></div>
-            </div>
-            {/* --- FIM DO COMPONENTE TOAST --- */}
 
             {/* === CABEÇALHO DO FORMULÁRIO === */}
             <div className="atletas-header">

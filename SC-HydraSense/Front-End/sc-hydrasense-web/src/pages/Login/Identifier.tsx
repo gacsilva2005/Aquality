@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, useEffect, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Rocket, Mail, Phone, Lock, Camera, FileText, User, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 
 import './Login.css';
 import './Identifier.css';
@@ -9,6 +10,7 @@ export function Identifier() {
   const navigate = useNavigate();
   const location = useLocation();
   const dadosRegistro = location.state; // Dados que vieram do Register.tsx
+  const { success, error, warning } = useToast();
 
   const [concordaTermos, setConcordaTermos] = useState(false);
   const [receberAtualizacoes, setReceberAtualizacoes] = useState(false);
@@ -49,7 +51,7 @@ export function Identifier() {
     e.preventDefault();
     if (senha !== confirmarSenha) return;
     if (!concordaTermos) {
-      alert("Você precisa concordar com os termos.");
+      warning("Termos Obrigatórios", "Você precisa concordar com os termos.");
       return;
     }
 
@@ -67,14 +69,14 @@ export function Identifier() {
       });
 
       if (response.ok) {
-        alert('Cadastro realizado com sucesso!');
+        success("Cadastro Concluído", "Seu perfil profissional foi criado com sucesso!");
         navigate('/');
       } else {
-        alert('Erro ao realizar o cadastro no servidor.');
+        error("Falha no Cadastro", "Ocorreu um erro ao processar seu cadastro no servidor.");
       }
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao conectar com o servidor da API.');
+    } catch (err) {
+      console.error(err);
+      error("Erro de Conexão", "Não foi possível conectar ao servidor da API.");
     }
   };
 
