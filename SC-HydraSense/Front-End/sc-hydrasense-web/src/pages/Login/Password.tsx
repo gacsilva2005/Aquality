@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Droplet, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 import './password.css';
 
 export function Password() {
 
     const navigate = useNavigate();
+    const { success } = useToast();
 
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,6 +23,7 @@ export function Password() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!passwordsMatch) return;
+        success('Senha Alterada', 'Sua senha foi alterada com sucesso.');
         navigate('/confirmacao');
     };
 

@@ -9,6 +9,7 @@ import "./PageWeb.css";
 export function PageWeb() {
     const [usuario, setUsuario] = useState<any>(null);
     const [perfilAberto, setPerfilAberto] = useState(false);
+    const [sidebarAberta, setSidebarAberta] = useState(false);
 
     useEffect(() => {
         fetch("http://localhost:8080/auth/user", {
@@ -35,8 +36,20 @@ export function PageWeb() {
             <HeaderPageWeb
                 usuario={usuario}
                 onPerfilClick={() => setPerfilAberto(true)}
+                onMenuClick={() => setSidebarAberta(true)}
             />
-            <SideBarPageWeb />
+            <SideBarPageWeb
+                aberta={sidebarAberta}
+                onFechar={() => setSidebarAberta(false)}
+            />
+
+            {/* Overlay para fechar sidebar ao clicar fora */}
+            {sidebarAberta && (
+                <div
+                    className="sidebar-mobile-overlay"
+                    onClick={() => setSidebarAberta(false)}
+                />
+            )}
 
             <main className="pageweb__main">
                 <Outlet />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Unlock, ChevronRight, Globe, Apple, Droplet, X, AlertCircle, CheckCircle } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 import './Home.css';
 
 import logoFundo from '../assets/Logo-Fundo.png';
@@ -52,23 +53,7 @@ export function Home() {
       window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
-  // Estado para controlar a notificação Toast
-  const [toast, setToast] = useState({
-    visible: false,
-    type: 'error', // 'error' ou 'success'
-    title: '',
-    message: ''
-  });
-
-  // Efeito para fechar o toast automaticamente após 3 segundos
-  useEffect(() => {
-    if (toast.visible) {
-      const timer = setTimeout(() => {
-        setToast((prev) => ({ ...prev, visible: false }));
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast.visible]);
+  const { success, error } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,12 +71,7 @@ export function Home() {
       });
 
       if (!response.ok) {
-        setToast({
-          visible: true,
-          type: 'error',
-          title: 'Erro de Autenticação',
-          message: 'E-mail ou senha inválidos. Tente novamente.'
-        });
+        error('Erro de Autenticação', 'E-mail ou senha inválidos. Tente novamente.');
         return;
       }
 
@@ -100,60 +80,23 @@ export function Home() {
       localStorage.setItem("usuarioLogado", JSON.stringify(dados.usuario));
 
       if (dados.tipo === "profissional") {
-        setToast({
-          visible: true,
-          type: 'success',
-          title: 'Login Realizado!',
-          message: 'Bem-vindo ao painel HydraSense.'
-        });
+        success('Login Realizado!', 'Bem-vindo ao painel HydraSense.');
         setTimeout(() => navigate("/PageWeb"), 1500);
       } else if (dados.tipo === "atleta") {
-        setToast({
-          visible: true,
-          type: 'success',
-          title: 'Login Realizado!',
-          message: 'Redirecionando para o dashboard do atleta.'
-        });
+        success('Login Realizado!', 'Redirecionando para o dashboard do atleta.');
         setTimeout(() => navigate("/dashboardAtleta"), 1500);
       } else {
-        setToast({
-          visible: true,
-          type: 'error',
-          title: 'Acesso Negado',
-          message: 'Tipo de usuário inválido.'
-        });
+        error('Acesso Negado', 'Tipo de usuário inválido.');
       }
 
-    } catch (error) {
-      setToast({
-        visible: true,
-        type: 'error',
-        title: 'Erro de Conexão',
-        message: 'Erro ao conectar ao servidor.'
-      });
-      console.error(error);
+    } catch (err) {
+      error('Erro de Conexão', 'Erro ao conectar ao servidor.');
+      console.error(err);
     }
   };
 
   return (
     <>
-      {/* --- INÍCIO DO COMPONENTE TOAST --- */}
-      <div className={`toast-notification ${toast.visible ? 'show' : ''} ${toast.type}`}>
-        <div className="toast-icon">
-          {toast.type === 'error' ? <AlertCircle size={24} /> : <CheckCircle size={24} />}
-        </div>
-        <div className="toast-content">
-          <span className="toast-title">{toast.title}</span>
-          <span className="toast-message">{toast.message}</span>
-        </div>
-        <button className="toast-close" onClick={() => setToast({ ...toast, visible: false })}>
-          <X size={18} />
-        </button>
-        {/* Barra de progresso animada */}
-        <div className="toast-progress-bar"></div>
-      </div>
-      {/* --- FIM DO COMPONENTE TOAST --- */}
-
       <div className="login-container">
       {/* Lado Esquerdo: Branding */}
       <div
