@@ -17,8 +17,9 @@ export const theme = {
     textSecondary: '#7C7C8A', // Textos secundários, legendas e rótulos (cinza)
     textLight: '#C4C4CC',     // Textos de apoio ou placeholders
     textWhite: '#FFFFFF',     // Textos sobre fundos escuros ou botões
-    textBrown: '#5D3F3D',     // Textos marrons para destaque ou contraste (ex: descrição da tela de recuperação)
-    
+    textBrown: '#5D3F3D',
+    textBrownSoft: '#A08C8A', // Textos marrons para destaque ou contraste (ex: descrição da tela de recuperação)
+
     // Status (Feedback Visual)
     success: '#16A34A',       // Verde (Optimal, metas alcançadas)
     warning: '#F59E0B',       // Amarelo (Warning)
