@@ -6,10 +6,8 @@ import {
   Dimensions,
 } from 'react-native';
 import { Feather, FontAwesome5 } from '@expo/vector-icons';
-import Svg, { Circle } from 'react-native-svg';
 import { Screen } from '../../../components/Screen';
 import { Header } from '../../../components/Header';
-import { Divider } from '../../../components/Divider';
 import { ModalTreino } from '../../../components/ModalTreino';
 import { styles } from './styles';
 import { theme } from '../../../global/themas';
@@ -30,15 +28,13 @@ export default function Dashboard() {
 
   //Modal de seleção de treino
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const handleStartWorkout = (treinoSelecionado: string) => {
     setIsModalVisible(false); // 1. Fecha o modal
-    
-    console.log(`Bora treinar: ${treinoSelecionado}!`);
-    
-    // 2. Navega para a futura tela de treino ativo (vamos criar depois)
-    // O router.push envia o usuário para a nova rota e pode passar parâmetros
-    // router.push(`/active-workout?type=${treinoSelecionado}`); 
+    // Utilizamos a estrutura de objeto para enviar a rota e os parâmetros de forma tipada
+    router.push({
+      pathname: '/treinoAtivo' as any,
+      params: { type: treinoSelecionado }
+    });
   };
 
   //ESTADOS DO HEADER DE HIDRATAÇÃO

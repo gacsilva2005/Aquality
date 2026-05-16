@@ -136,7 +136,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <Screen bgImage={require('../../assets/images/saocamilo.jpg')}
+    <Screen bgImage={require('../assets/images/saocamilo.jpg')}
       backgroundColor="#4A0E17">
 
       {/* === CABEÇALHO ESCURO === */}
