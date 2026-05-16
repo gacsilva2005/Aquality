@@ -26,29 +26,27 @@ export default function Dashboard() {
   const [waterBalance, setWaterBalance] = useState(-0.84);
   const [recoveryPercent, setRecoveryPercent] = useState(94);
 
-  //Modal de seleção de treino
+  // Modal de seleção de treino
   const [isModalVisible, setIsModalVisible] = useState(false);
   const handleStartWorkout = (treinoSelecionado: string) => {
-    setIsModalVisible(false); // 1. Fecha o modal
-    // Utilizamos a estrutura de objeto para enviar a rota e os parâmetros de forma tipada
+    setIsModalVisible(false);
     router.push({
       pathname: '/treinoAtivo' as any,
       params: { type: treinoSelecionado }
     });
   };
 
-  //ESTADOS DO HEADER DE HIDRATAÇÃO
-  const [consumed, setConsumed] = useState(1500); 
+  // Estados do header de hidratação
+  const [consumed, setConsumed] = useState(1500);
   const goal = 3000;
 
-  //LÓGICA DO PREENCHIMENTO SVG
+  // Lógica do preenchimento SVG
   const progressPercentage = Math.min(consumed / goal, 1);
   const strokeDashoffset = CIRCUMFERENCE - (progressPercentage * CIRCUMFERENCE);
   const isGoalMet = consumed >= goal;
-  
 
-  const trackColor = theme.colors.primaryLight; 
-  const progressColor = isGoalMet ? theme.colors.success : theme.colors.primary; 
+  const trackColor = theme.colors.primaryLight;
+  const progressColor = isGoalMet ? theme.colors.success : theme.colors.primary;
 
   // API
   useEffect(() => {
@@ -79,7 +77,6 @@ export default function Dashboard() {
           <View style={styles.cardHeaderRow}>
             <View style={styles.redDot} />
             <Text style={styles.cardLabel}>ESTRATÉGIA DO DIA</Text>
-            {/* Cor ajustada para theme.colors.primaryLight */}
             <FontAwesome5 name="robot" size={40} color={theme.colors.textSecondary} style={styles.bgIcon} />
           </View>
 
@@ -90,7 +87,12 @@ export default function Dashboard() {
           </Text>
 
           <View style={styles.strategyActionRow}>
-            <TouchableOpacity style={styles.btnProtocol}>
+            {/* ── NAVEGAÇÃO PARA O ASSISTENTE IA ── */}
+            <TouchableOpacity
+              style={styles.btnProtocol}
+              onPress={() => router.push('/assistenteIA/assistente' as any)}
+              activeOpacity={0.8}
+            >
               <Text style={styles.btnProtocolText}>RECOMENDAÇÃO BASEADA EM IA</Text>
             </TouchableOpacity>
           </View>
@@ -119,7 +121,6 @@ export default function Dashboard() {
           </View>
 
           <View style={styles.metricsContainer}>
-            {/* Taxa de Sudorese */}
             <View style={styles.metricBlock}>
               <Text style={styles.metricLabel}>TAXA DE SUDORESE</Text>
               <View style={styles.metricValueRow}>
@@ -131,7 +132,6 @@ export default function Dashboard() {
               </View>
             </View>
 
-            {/* Balanço Hídrico */}
             <View style={styles.metricBlock}>
               <Text style={styles.metricLabel}>BALANÇO HÍDRICO</Text>
               <View style={styles.metricValueRow}>
@@ -144,7 +144,6 @@ export default function Dashboard() {
             </View>
           </View>
 
-          {/* Overlay de Recuperação */}
           <View style={styles.recoveryOverlay}>
             <FontAwesome5 name="bolt" size={20} color={theme.colors.primary} />
             <Text style={styles.recoveryValue}>{recoveryPercent}%</Text>
@@ -172,22 +171,24 @@ export default function Dashboard() {
         </View>
 
         {/* ── BOTÃO INICIAR SESSÃO ── */}
-        <TouchableOpacity style={styles.startSessionButton}
-        onPress={() => setIsModalVisible(true)} // <-- ABRE O MODAL
-        activeOpacity={0.8}>
-          {/* Cor ajustada para theme.colors.textWhite */}
+        <TouchableOpacity
+          style={styles.startSessionButton}
+          onPress={() => setIsModalVisible(true)}
+          activeOpacity={0.8}
+        >
           <FontAwesome5 name="play" size={14} color={theme.colors.textWhite} />
           <Text style={styles.startSessionText}>INICIAR SESSÃO</Text>
         </TouchableOpacity>
 
       </View>
-      {/* --- RENDERIZAÇÃO DO MODAL --- */}
-      {/* Ele só vai aparecer de verdade quando isModalVisible for true */}
-      <ModalTreino 
+
+      {/* ── MODAL DE TREINO ── */}
+      <ModalTreino
         visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)} // Função do botão X
-        onStart={handleStartWorkout} // Função do botão COMEÇAR TREINO
+        onClose={() => setIsModalVisible(false)}
+        onStart={handleStartWorkout}
       />
+
     </Screen>
   );
 }
