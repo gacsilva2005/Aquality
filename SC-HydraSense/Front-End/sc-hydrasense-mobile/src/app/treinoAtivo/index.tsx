@@ -33,15 +33,21 @@ export default function TreinoAtivo() {
     const [manualInputValue, setManualInputValue] = useState('');
 
     useEffect(() => {
-        let interval: NodeJS.Timeout;
-        if (isActive) {
-            interval = setInterval(() => {
-                setSeconds((prev) => prev + 1);
-            }, 1000);
-        }
-        return () => clearInterval(interval);
-    }, [isActive]);
+      // Pedimos para o TS pegar o tipo de retorno exato da função nativa
+      let interval: ReturnType<typeof setInterval>; 
 
+      if (isActive) {
+          interval = setInterval(() => {
+              setSeconds((prev) => prev + 1);
+          }, 1000);
+      }
+      
+      // Colocamos um 'if' por segurança, para ele só limpar se o intervalo existir
+      return () => {
+          if (interval) clearInterval(interval);
+      };
+  }, [isActive]);
+    
     // --- ANIMAÇÃO DO BOTÃO ENCERRAR ---
     // Começa em 0 (vazio)
     const fillAnimation = useRef(new Animated.Value(0)).current;
@@ -56,7 +62,7 @@ export default function TreinoAtivo() {
         }).start(({ finished }) => {
             // Se a animação chegou até o final (o usuário não soltou o dedo)
             if (finished) {
-                router.back(); // Volta para o Dashboard!
+                router.replace('./treinoFinalizado'); // Volta para o Dashboard!
             }
         });
     };
