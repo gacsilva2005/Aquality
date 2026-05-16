@@ -207,7 +207,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontFamily: theme.fonts.headingBold,
     fontSize: 20,
-    color: theme.colors.primary,
+    color: theme.colors.textPrimary,
     textAlign: 'center',
   },
   modalUnit: {

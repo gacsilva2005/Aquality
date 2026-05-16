@@ -24,8 +24,8 @@ export function Screen({
   HeaderComponent,
   scrollable = true,
   bgImage,
+  backgroundColor,
   style,
-  backgroundColor = '#FFFFFF'
 }: ScreenProps) {
 
   const content = scrollable ? (

@@ -43,7 +43,7 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <Screen bgImage={require('../../assets/images/saocamilo.jpg')}
+    <Screen bgImage={require('../assets/images/saocamilo.jpg')}
       backgroundColor="#4A0E17">
 
       {/* Reaproveitando o Cabeçalho */}
