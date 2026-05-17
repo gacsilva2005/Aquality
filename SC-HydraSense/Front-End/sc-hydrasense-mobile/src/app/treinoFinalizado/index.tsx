@@ -11,6 +11,7 @@ export default function TreinoFinalizado() {
     const handleRegistrarUrina = () => {
         // Futuramente, aqui vai navegar para a tela de registro de urina
         console.log("Navegar para registro de urina");
+        router.push('/urineColor' as any);
     };
 
     const handlePerfoarmance = () => {
