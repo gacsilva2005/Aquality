@@ -8,7 +8,8 @@ import {
   Platform,
   ImageBackground,
   ScrollView,
-  Alert,
+  Modal,
+  StyleSheet,
 } from 'react-native';
 import { Button } from '../components/Button';
 import { Screen } from '../components/Screen';
@@ -21,24 +22,37 @@ import { theme } from '../global/themas';
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
 
+  // ── Modal customizado ──
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle,   setModalTitle]   = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalOnOk,    setModalOnOk]    = useState<() => void>(() => () => setModalVisible(false));
+
+  function showModal(title: string, message: string, onOk?: () => void) {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalOnOk(() => () => { setModalVisible(false); onOk?.(); });
+    setModalVisible(true);
+  }
+
   const handleResetPassword = () => {
     const cleanEmail = email.trim();
 
     if (!cleanEmail) {
-      Alert.alert('Campo Obrigatório', 'Por favor, informe seu e-mail para recuperar a senha.');
+      showModal('Campo Obrigatório', 'Por favor, informe seu e-mail para recuperar a senha.');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(cleanEmail)) {
-      Alert.alert('E-mail Inválido', 'Insira um formato de e-mail válido.');
+      showModal('E-mail Inválido', 'Insira um formato de e-mail válido.');
       return;
     }
 
-    Alert.alert(
+    showModal(
       'Solicitação Enviada',
       'Se este e-mail estiver em nossa base, você receberá instruções para redefinir sua senha em instantes.',
-      [{ text: 'OK', onPress: () => router.back() }]
+      () => router.back()
     );
   };
 
@@ -102,6 +116,81 @@ export default function ForgotPasswordScreen() {
         </View>
       </View>
 
+      {/* ── MODAL CUSTOMIZADO ── */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={modalStyles.overlay}>
+          <View style={modalStyles.container}>
+            <View style={modalStyles.iconWrapper}>
+              <Feather name="mail" size={28} color={theme.colors.primary} />
+            </View>
+            <Text style={modalStyles.title}>{modalTitle}</Text>
+            <Text style={modalStyles.message}>{modalMessage}</Text>
+            <TouchableOpacity style={modalStyles.btnOk} onPress={modalOnOk} activeOpacity={0.8}>
+              <Text style={modalStyles.btnOkText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </Screen>
   );
 }
+
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.xl,
+  },
+  container: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.xl,
+    width: '100%',
+    alignItems: 'center',
+  },
+  iconWrapper: {
+    width: 56,
+    height: 56,
+    borderRadius: theme.borderRadius.full,
+    backgroundColor: theme.colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  title: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 18,
+    color: theme.colors.textPrimary,
+    textAlign: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  message: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: theme.spacing.lg,
+  },
+  btnOk: {
+    backgroundColor: theme.colors.primary,
+    width: '100%',
+    paddingVertical: 14,
+    borderRadius: theme.borderRadius.sm,
+    alignItems: 'center',
+  },
+  btnOkText: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 14,
+    color: theme.colors.textWhite,
+    letterSpacing: 1,
+  },
+});
