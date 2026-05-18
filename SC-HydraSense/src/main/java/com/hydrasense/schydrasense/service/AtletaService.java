@@ -1,5 +1,6 @@
 package com.hydrasense.schydrasense.service;
 
+import com.hydrasense.schydrasense.dto.AtletaRequestDTO;
 import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.Clube;
@@ -34,15 +35,29 @@ public class AtletaService {
         return String.valueOf(numero);
     }
 
-    // Salvar atleta
-    public Atleta salvar(Atleta atleta) {
+    public Atleta cadastrar(AtletaRequestDTO request) {
 
-        if (atleta.getCodigoEquipe() == null || atleta.getCodigoEquipe().trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Código de equipe é obrigatório.");
+        if (request.getCodigoEquipe() == null || request.getCodigoEquipe().trim().isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Código de equipe é obrigatório."
+            );
         }
 
-        Clube clube = clubeRepository.findByCodigo(atleta.getCodigoEquipe())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Código de equipe inválido ou inexistente."));
+        Clube clube = clubeRepository.findByCodigo(request.getCodigoEquipe())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Código de equipe inválido ou inexistente."
+                ));
+
+        Atleta atleta = new Atleta();
+
+        atleta.setNome(request.getNome());
+        atleta.setEmail(request.getEmail());
+        atleta.setSenha(request.getSenha());
+        atleta.setDataNascimento(request.getDataNascimento());
+        atleta.setModalidadePrincipal(request.getModalidadePrincipal());
+        atleta.setPesoAtual(request.getPesoAtual());
 
         atleta.setClube(clube);
 
