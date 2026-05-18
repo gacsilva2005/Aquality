@@ -1,25 +1,23 @@
 package com.hydrasense.schydrasense.controller;
 
 import com.hydrasense.schydrasense.model.Clube;
-import com.hydrasense.schydrasense.service.ClubeService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.hydrasense.schydrasense.repository.ClubeRepository;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/Clubes")
+@RequestMapping("/clubes")
 public class ClubeController {
 
-    private final ClubeService service;
+    private final ClubeRepository repository;
 
-    public ClubeController(ClubeService service) {
-        this.service = service;
+    public ClubeController(ClubeRepository repository) {
+        this.repository = repository;
     }
 
     @GetMapping
     public List<Clube> listar() {
-        return service.listarTodos();
+        return repository.findAll();
     }
 }
