@@ -34,7 +34,7 @@ public class Atleta {
     private String modalidadePrincipal;
 
     @Column(nullable = false)
-    private Float pesoAtual;
+    private Double pesoAtual;
 
     @Column
     private Float altura;
@@ -76,7 +76,7 @@ public class Atleta {
                   String email,
                   String modalidade,
                   String modalidadePrincipal,
-                  Float pesoAtual,
+                  Double pesoAtual,
                   Float altura) {
         this.nome = nome;
         this.dataNascimento = dataNascimento;
