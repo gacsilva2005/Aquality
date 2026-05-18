@@ -3,6 +3,8 @@ package com.hydrasense.schydrasense.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 public class AtletaRequestDTO {
@@ -14,4 +16,10 @@ public class AtletaRequestDTO {
     private String senha;
 
     private String codigoEquipe;
+
+    private LocalDate dataNascimento;
+
+    private String modalidadePrincipal;
+
+    private Double pesoAtual;
 }
