@@ -1,5 +1,6 @@
 package com.hydrasense.schydrasense.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -46,6 +47,7 @@ public class Atleta {
 
     @ManyToOne
     @JoinColumn(name = "clube_id")
+    @JsonBackReference
     private Clube clube;
 
     private String codigoAcesso;
