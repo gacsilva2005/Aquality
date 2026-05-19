@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Droplet, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import PlusA from '../../assets/Plus-AP.png';
 import './code.css';
 
 export function Code() {
@@ -75,8 +76,7 @@ export function Code() {
                 <div className="code-content">
 
                     <div className="code-logo">
-                        <Droplet size={28} fill="#111111" color="#111111" />
-                        <span className="code-logo-text">HYDRASENSE</span>
+                        <img src={PlusA} alt="Plus-AP Logo" className="code-logo-img" />
                     </div>
 
                     <h1 className="code-title">

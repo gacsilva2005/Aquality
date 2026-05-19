@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, Droplet, ArrowLeft } from 'lucide-react';
+import { ChevronDown, ArrowLeft } from 'lucide-react';
+import PlusA from '../../assets/Plus-AP.png';
 import './number.css';
 
 export function Number() {
@@ -32,7 +33,6 @@ export function Number() {
     { flag: '🇧🇴', ddd: '+591', name: 'Bolívia' },
     { flag: '🇻🇪', ddd: '+58', name: 'Venezuela' },
     { flag: '🇪🇨', ddd: '+593', name: 'Equador' },
-
     { flag: '🇵🇹', ddd: '+351', name: 'Portugal' },
     { flag: '🇪🇸', ddd: '+34', name: 'Espanha' },
     { flag: '🇫🇷', ddd: '+33', name: 'França' },
@@ -50,7 +50,6 @@ export function Number() {
     { flag: '🇵🇱', ddd: '+48', name: 'Polônia' },
     { flag: '🇺🇦', ddd: '+380', name: 'Ucrânia' },
     { flag: '🇷🇺', ddd: '+7', name: 'Rússia' },
-
     { flag: '🇯🇵', ddd: '+81', name: 'Japão' },
     { flag: '🇰🇷', ddd: '+82', name: 'Coreia do Sul' },
     { flag: '🇨🇳', ddd: '+86', name: 'China' },
@@ -60,15 +59,12 @@ export function Number() {
     { flag: '🇻🇳', ddd: '+84', name: 'Vietnã' },
     { flag: '🇮🇩', ddd: '+62', name: 'Indonésia' },
     { flag: '🇵🇭', ddd: '+63', name: 'Filipinas' },
-
     { flag: '🇦🇺', ddd: '+61', name: 'Austrália' },
     { flag: '🇳🇿', ddd: '+64', name: 'Nova Zelândia' },
-
     { flag: '🇿🇦', ddd: '+27', name: 'África do Sul' },
     { flag: '🇪🇬', ddd: '+20', name: 'Egito' },
     { flag: '🇳🇬', ddd: '+234', name: 'Nigéria' },
     { flag: '🇲🇦', ddd: '+212', name: 'Marrocos' },
-
     { flag: '🇸🇦', ddd: '+966', name: 'Arábia Saudita' },
     { flag: '🇦🇪', ddd: '+971', name: 'Emirados Árabes' },
     { flag: '🇮🇱', ddd: '+972', name: 'Israel' },
@@ -121,17 +117,7 @@ export function Number() {
                 <div className="number-content">
 
                     <div className="number-logo">
-
-                        <Droplet
-                            size={28}
-                            fill="#111111"
-                            color="#111111"
-                        />
-
-                        <span className="number-logo-text">
-                            HYDRASENSE
-                        </span>
-
+                        <img src={PlusA} alt="Plus-AP Logo" className="number-logo-img" />
                     </div>
 
                     <h1 className="number-title">

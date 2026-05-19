@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Droplet, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
+import PlusA from '../../assets/Plus-AP.png';
 import './password.css';
 
 export function Password() {
@@ -36,8 +37,7 @@ export function Password() {
                 <div className="password-content">
 
                     <div className="password-logo">
-                        <Droplet size={28} fill="#111111" color="#111111" />
-                        <span className="password-logo-text">HYDRASENSE</span>
+                        <img src={PlusA} alt="Plus-AP Logo" className="password-logo-img" />
                     </div>
 
                     <h1 className="password-title">

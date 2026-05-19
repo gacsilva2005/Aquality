@@ -1,7 +1,8 @@
 .confirmation-page {
     display: flex;
     width: 100vw;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     background-color: #FFFFFF;
     font-family: var(--font-body);
 }
@@ -11,8 +12,10 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 40px 24px;
+    height: 100%;
+    padding: 0 24px;
     box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .confirmation-content {
@@ -25,8 +28,6 @@
     text-align: center;
 }
 
-/* Logo */
-
 .confirmation-logo {
     display: flex;
     align-items: center;
@@ -34,15 +35,11 @@
     margin-bottom: 42px;
 }
 
-.confirmation-logo-text {
-    font-family: var(--font-display);
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: #111111;
+.confirmation-logo-img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
 }
-
-/* Ícone */
 
 .confirmation-icon {
     display: flex;
@@ -56,8 +53,6 @@
     margin-bottom: 34px;
 }
 
-/* Título */
-
 .confirmation-title {
     font-size: 36px;
     font-weight: 400;
@@ -67,8 +62,6 @@
     margin: 0 0 20px 0;
 }
 
-/* Texto */
-
 .confirmation-description {
     font-size: 15px;
     line-height: 1.8;
@@ -76,8 +69,6 @@
     max-width: 420px;
     margin: 0 0 38px 0;
 }
-
-/* Botão */
 
 .confirmation-btn {
     min-width: 260px;
@@ -108,9 +99,11 @@
     transform: translateY(0);
 }
 
-/* Responsivo */
-
 @media (max-width: 600px) {
+    .confirmation-main {
+        padding: 0 24px;
+        align-items: flex-start;
+    }
 
     .confirmation-title {
         font-size: 30px;

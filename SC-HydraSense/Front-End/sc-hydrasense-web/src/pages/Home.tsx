@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, Unlock, ChevronRight, Globe, Apple, Droplet, X, AlertCircle, CheckCircle } from 'lucide-react';
+import { Mail, Lock, Unlock, ChevronRight, Globe, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import './Home.css';
 
-import logoFundo from '../assets/Logo-Fundo.png';
+import logoFundo from '../assets/Icon-A.png';
+import logoTexto from '../assets/Text-A2.png';
+import logoM from '../assets/Logo-M.png';
 
 export function GoogleCallback() {
     const [usuario, setUsuario] = useState<any>(null);
@@ -80,7 +82,7 @@ export function Home() {
       localStorage.setItem("usuarioLogado", JSON.stringify(dados.usuario));
 
       if (dados.tipo === "profissional") {
-        success('Login Realizado!', 'Bem-vindo ao painel HydraSense.');
+        success('Login Realizado!', 'Bem-vindo ao painel Aquality.');
         setTimeout(() => navigate("/PageWeb"), 1500);
       } else if (dados.tipo === "atleta") {
         success('Login Realizado!', 'Redirecionando para o dashboard do atleta.');
@@ -98,27 +100,24 @@ export function Home() {
   return (
     <>
       <div className="login-container">
-      {/* Lado Esquerdo: Branding */}
       <div
         className="login-branding"
         style={{
-          backgroundImage: `linear-gradient(rgba(100, 18, 32, 0.85), rgba(100, 18, 32, 0.85)), url(${logoFundo})`
+          backgroundImage: `linear-gradient(rgba(100, 18, 32, 0.85), rgba(100, 18, 32, 0.85)), url(${logoFundo})`,
+          backgroundSize: '60%',
+          backgroundPosition: 'center',
         }}
       >
-        {/* Logo Superior Esquerdo */}
         <div className="logo-section">
-          <Droplet size={24} color="#FFFFFF" fill="#FFFFFF" />
-          <span className="logo-text">HYDRA SENSE</span>
+          <img src={logoTexto} alt="Logo" className="logo-texto-img" />
         </div>
 
-        {/* Rodapé Centralizado e na Base */}
         <div className="branding-footer">
           <h2 className="hospital-name">HOSPITAL</h2>
           <h3 className="brand-name">SÃO CAMILO</h3>
         </div>
       </div>
 
-      {/* Lado Direito: Formulário */}
       <div className="login-form-side">
         <div className="form-wrapper">
           <header className="form-header">
@@ -166,15 +165,13 @@ export function Home() {
             </div>
 
             <div className="form-options">
-  <label className="remember-me">
-    <input type="checkbox" /> Lembrar sessão
-  </label>
-  <button type="button" className="forgot-password" onClick={() => navigate('/recuperar-senha')}>
-    ESQUECI MINHA SENHA
-  </button>
-</div>
-
-            {/* O aviso <p> antigo de erro foi removido, agora o Toast cuida disso */}
+              <label className="remember-me">
+                <input type="checkbox" /> Lembrar sessão
+              </label>
+              <button type="button" className="forgot-password" onClick={() => navigate('/recuperar-senha')}>
+                ESQUECI MINHA SENHA
+              </button>
+            </div>
 
             <button type="submit" className="btn-login-primary">
               ACESSAR PORTAL <ChevronRight size={18} />
@@ -185,16 +182,16 @@ export function Home() {
             </div>
 
             <div className="social-login">
-                <button type="button" className="btn-social" onClick={handleGoogleLogin}>
-                    <Globe size={18} /> GOOGLE
-                </button>
+              <button type="button" className="btn-social" onClick={handleGoogleLogin}>
+                <Globe size={18} /> GOOGLE
+              </button>
               <button type="button" className="btn-social">
-                <Apple size={18} /> APPLE
+                <img src={logoM} alt="Logo M" style={{ width: 32, height: 32, objectFit: 'contain' }} /> APPLE
               </button>
             </div>
 
             <p className="signup-prompt">
-              Novo no Hydra Sense?
+              Novo no Aquality?
               <span onClick={() => navigate('/registro')} style={{ cursor: 'pointer' }}> Solicitar acesso ao Painel</span>
             </p>
           </form>

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Droplet } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import PlusAP from '../../assets/Plus-AP.png';
 import './Confirmation.css';
 
 export function Confirmation() {
@@ -14,17 +15,7 @@ export function Confirmation() {
                 <div className="confirmation-content">
 
                     <div className="confirmation-logo">
-
-                        <Droplet
-                            size={30}
-                            fill="#111111"
-                            color="#111111"
-                        />
-
-                        <span className="confirmation-logo-text">
-                            HYDRASENSE
-                        </span>
-
+                        <img src={PlusAP} alt="Plus-A Logo" className="confirmation-logo-img" />
                     </div>
 
                     <div className="confirmation-icon">
