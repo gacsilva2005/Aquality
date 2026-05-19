@@ -1,12 +1,5 @@
-/* =====================================================
-   LOGIN.CSS — Estilos compartilhados
-   Usado por: Login, Register, Identifier
-   NÃO redefinir :root aqui. Usar variáveis de index.css
-   ===================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap');
 
-/* =====================================================
-   LAYOUT GERAL
-   ===================================================== */
 .tela-registro {
   display: flex;
   width: 100vw;
@@ -20,9 +13,6 @@
   flex-direction: row-reverse;
 }
 
-/* =====================================================
-   PAINEL LATERAL (vermelho escuro)
-   ===================================================== */
 .painel-lateral {
   width: 30%;
   background-color: var(--hydro-critical);
@@ -81,7 +71,6 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Barra de progresso lateral */
 .trilhas-progresso {
   display: flex;
   gap: 8px;
@@ -115,9 +104,6 @@
   color: var(--hydro-bg-card);
 }
 
-/* =====================================================
-   PAINEL PRINCIPAL (conteúdo/formulário)
-   ===================================================== */
 .painel-principal {
   width: 70%;
   background-color: var(--hydro-bg-main);
@@ -154,9 +140,6 @@
   letter-spacing: 1px;
 }
 
-/* =====================================================
-   FORMULÁRIO
-   ===================================================== */
 .formulario-corpo {
   display: flex;
   flex-direction: column;
@@ -201,7 +184,6 @@
   border-bottom-color: var(--hydro-action);
 }
 
-/* Inputs com ícone lateral */
 .input-with-icon {
   display: flex;
   align-items: center;
@@ -243,7 +225,6 @@
   font-family: var(--font-body);
 }
 
-/* Select e Textarea */
 .select-custom,
 .textarea-custom {
   color: var(--hydro-text-primary);
@@ -266,9 +247,6 @@
   border-bottom-color: var(--hydro-action);
 }
 
-/* =====================================================
-   SELEÇÃO DE PERFIL (cards)
-   ===================================================== */
 .grade-perfis {
   display: flex;
   gap: 15px;
@@ -319,9 +297,6 @@
   letter-spacing: 0.5px;
 }
 
-/* =====================================================
-   RODAPÉ DO FORMULÁRIO (botões de ação)
-   ===================================================== */
 .acoes-formulario {
   display: flex;
   align-items: center;
@@ -378,9 +353,6 @@
   filter: brightness(1.2);
 }
 
-/* =====================================================
-   SUGESTÕES DE CLUBES (autocomplete)
-   ===================================================== */
 .sugestoes-clubes {
   position: absolute;
   top: 100%;
@@ -410,11 +382,18 @@
   color: var(--hydro-action);
 }
 
-/* =====================================================
-   RESPONSIVIDADE — TABLET E MOBILE (Max 900px)
-   ===================================================== */
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 900px) {
-  /* Empilha o layout lado-a-lado */
   .tela-registro,
   .tela-registro.layout-reverso {
     flex-direction: column;
@@ -423,7 +402,6 @@
     overflow-y: auto;
   }
 
-  /* O painel vermelho vira cabeçalho */
   .painel-lateral {
     width: 100%;
     padding: 30px 24px;
@@ -441,7 +419,6 @@
     text-align: center;
   }
 
-  /* O formulário ocupa 100% */
   .painel-principal {
     width: 100%;
     padding: 40px 24px;
@@ -462,18 +439,15 @@
     display: block;
   }
 
-  /* Inputs lado a lado → empilha */
   .linha-dupla {
     flex-direction: column;
     gap: 20px;
   }
 
-  /* Cards de perfil empilhados */
   .grade-perfis {
     flex-direction: column;
   }
 
-  /* Botões do formulário */
   .acoes-formulario {
     flex-direction: column;
     align-items: stretch;
@@ -491,4 +465,3 @@
     margin-top: 10px;
   }
 }
-

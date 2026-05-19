@@ -7,6 +7,7 @@ import './Home.css';
 import logoFundo from '../assets/Icon-A.png';
 import logoTexto from '../assets/Text-A2.png';
 import logoM from '../assets/Logo-M.png';
+import logoG from '../assets/Logo-G.png';
 
 export function GoogleCallback() {
     const [usuario, setUsuario] = useState<any>(null);
@@ -104,7 +105,7 @@ export function Home() {
         className="login-branding"
         style={{
           backgroundImage: `linear-gradient(rgba(100, 18, 32, 0.85), rgba(100, 18, 32, 0.85)), url(${logoFundo})`,
-          backgroundSize: '60%',
+          backgroundSize: '110%',
           backgroundPosition: 'center',
         }}
       >
@@ -183,7 +184,7 @@ export function Home() {
 
             <div className="social-login">
               <button type="button" className="btn-social" onClick={handleGoogleLogin}>
-                <Globe size={18} /> GOOGLE
+              <img src={logoG} alt="Google" style={{ width: 20, height: 20, objectFit: 'contain' }} /> GOOGLE
               </button>
               <button type="button" className="btn-social">
                 <img src={logoM} alt="Logo M" style={{ width: 32, height: 32, objectFit: 'contain' }} /> APPLE

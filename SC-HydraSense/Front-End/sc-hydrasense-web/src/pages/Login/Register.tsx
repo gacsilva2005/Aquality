@@ -1,12 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Microscope, Utensils, Activity, BriefcaseMedical, MapPin, Award, User, Hash, Trophy, ArrowLeft } from 'lucide-react';
+import { Microscope, Utensils, Activity, BriefcaseMedical, MapPin, Award, User, Hash, Trophy, ArrowLeft, Droplets, HeartPulse, ShieldCheck } from 'lucide-react';
 import './Login.css';
 
 const PERFIS = [
   { id: 'nutricionista', rotulo: 'NUTRICIONISTA', icone: <Utensils size={24} /> },
   { id: 'treinador', rotulo: 'TREINADOR', icone: <Activity size={24} /> },
   { id: 'medico', rotulo: 'MÉDICO', icone: <BriefcaseMedical size={24} /> },
+];
+
+const DESTAQUES = [
+  { icone: <Microscope size={28} strokeWidth={1.5} />, titulo: 'PRECISÃO CLÍNICA', texto: 'Cadastre suas credenciais profissionais para acessar logs de performance de alta densidade e análises de hidratação.' },
+  { icone: <Droplets size={28} strokeWidth={1.5} />, titulo: 'MONITORAMENTO HÍDRICO', texto: 'Acompanhe em tempo real os níveis de hidratação dos atletas com dados precisos e confiáveis.' },
+  { icone: <HeartPulse size={28} strokeWidth={1.5} />, titulo: 'SAÚDE EM FOCO', texto: 'Tome decisões baseadas em evidências clínicas para maximizar a performance e prevenir lesões.' },
+  { icone: <ShieldCheck size={28} strokeWidth={1.5} />, titulo: 'SEGURANÇA TOTAL', texto: 'Seus dados e os de seus atletas protegidos com os mais altos padrões de segurança.' },
 ];
 
 const CLUBES_DISPONIVEIS = [
@@ -19,7 +26,47 @@ const CLUBES_DISPONIVEIS = [
     { id: 7, nome: "Ponte Preta" },
     { id: 8, nome: "Ituano" },
     { id: 9, nome: "Juventus" },
-    { id: 10, nome: "Portuguesa" }
+    { id: 10, nome: "Portuguesa" },
+    { id: 11, nome: "Red Bull Bragantino" },
+    { id: 12, nome: "Mirassol" },
+    { id: 13, nome: "Novorizontino" },
+    { id: 14, nome: "Botafogo-SP" },
+    { id: 15, nome: "Ferroviária" },
+    { id: 16, nome: "Noroeste" },
+    { id: 17, nome: "XV de Piracicaba" },
+    { id: 18, nome: "São Bento" },
+    { id: 19, nome: "Oeste" },
+    { id: 20, nome: "São Caetano" },
+    { id: 21, nome: "Taubaté" },
+    { id: 22, nome: "Marília" },
+    { id: 23, nome: "Comercial-SP" },
+    { id: 24, nome: "Velo Clube" },
+    { id: 25, nome: "Inter de Limeira" },
+    { id: 26, nome: "Rio Claro" },
+    { id: 27, nome: "Santo André" },
+    { id: 28, nome: "Água Santa" },
+    { id: 29, nome: "Audax" },
+    { id: 30, nome: "Capivariano" },
+    { id: 31, nome: "Nacional-SP" },
+    { id: 32, nome: "Primavera" },
+    { id: 33, nome: "Linense" },
+    { id: 34, nome: "Mogi Mirim" },
+    { id: 35, nome: "Grêmio Prudente" },
+    { id: 36, nome: "Penapolense" },
+    { id: 37, nome: "Batatais" },
+    { id: 38, nome: "Barretos" },
+    { id: 39, nome: "Paulista" },
+    { id: 40, nome: "Jabaquara" },
+    { id: 41, nome: "Desportivo Brasil" },
+    { id: 42, nome: "EC São Bernardo" },
+    { id: 43, nome: "São José-SP" },
+    { id: 44, nome: "Monte Azul" },
+    { id: 45, nome: "Vocem" },
+    { id: 46, nome: "Francana" },
+    { id: 47, nome: "União Barbarense" },
+    { id: 48, nome: "Matonense" },
+    { id: 49, nome: "Araçatuba" },
+    { id: 50, nome: "Catanduvense" }
 ];
 
 const UFS = [
@@ -32,6 +79,14 @@ export function Register() {
   const [perfilAtivo, setPerfilAtivo] = useState('nutricionista');
   const [buscaClube, setBuscaClube] = useState('');
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
+  const [destaqueAtivo, setDestaqueAtivo] = useState(0);
+
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setDestaqueAtivo(prev => (prev + 1) % DESTAQUES.length);
+    }, 3000);
+    return () => clearInterval(intervalo);
+  }, []);
 
     const [formData, setFormData] = useState({
         nome: '',
@@ -64,20 +119,20 @@ export function Register() {
     <div className="tela-registro">
       <aside className="painel-lateral">
         <div className="lateral-topo">
-          <h2 className="lateral-titulo">SÃO CAMILO WEB</h2>
-          <span className="lateral-subtitulo">HYDRO SENSE PROTOCOLO V4.0</span>
+          <h2 className="lateral-titulo">AQUALITY COMPANY</h2>
+          <span className="lateral-subtitulo">PROTOCOLO V4.0</span>
         </div>
 
         <div className="lateral-meio">
-          <div className="lateral-icone">
-            <Microscope size={28} strokeWidth={1.5} />
+          <div className="lateral-icone" key={destaqueAtivo} style={{ animation: 'fadeSlide 0.5s ease' }}>
+            {DESTAQUES[destaqueAtivo].icone}
           </div>
           <div className="lateral-textos-meio">
-            <h3 className="lateral-destaque">PRECISÃO CLÍNICA</h3>
-            <p className="lateral-texto">
-              Cadastre suas credenciais profissionais<br />
-              para acessar logs de performance de alta<br />
-              densidade e análises de hidratação.
+            <h3 className="lateral-destaque" key={`titulo-${destaqueAtivo}`} style={{ animation: 'fadeSlide 0.5s ease' }}>
+              {DESTAQUES[destaqueAtivo].titulo}
+            </h3>
+            <p className="lateral-texto" key={`texto-${destaqueAtivo}`} style={{ animation: 'fadeSlide 0.5s ease' }}>
+              {DESTAQUES[destaqueAtivo].texto}
             </p>
           </div>
         </div>
@@ -215,14 +270,12 @@ export function Register() {
                           key={clube.id}
                           onClick={() => {
                               setBuscaClube(clube.nome);
-
                               setFormData(prev => ({
                                   ...prev,
                                   clube: {
                                       id: clube.id
                                   }
                               }));
-
                               setMostrarSugestoes(false);
                           }}
                       >
