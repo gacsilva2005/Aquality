@@ -1,5 +1,6 @@
 package com.hydrasense.schydrasense.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,12 +25,12 @@ public class Clube {
     private String codigo;
 
     @OneToMany(mappedBy = "clube", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Profissional> profissionais = new ArrayList<>();
+    @JsonManagedReference
+    private List<Atleta> atletas = new ArrayList<>();
 
     @OneToMany(mappedBy = "clube", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Atleta> atletas = new ArrayList<>();
+    @JsonManagedReference
+    private List<Profissional> profissionais = new ArrayList<>();
 
     public Clube() {}
 

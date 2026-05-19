@@ -1,5 +1,6 @@
 package com.hydrasense.schydrasense.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -34,18 +35,16 @@ public class Atleta {
     private String modalidadePrincipal;
 
     @Column(nullable = false)
-    private Float pesoAtual;
+    private Double pesoAtual;
 
     @Column
     private Float altura;
 
     private String senha;
 
-    @Transient
-    private String codigoEquipe;
-
     @ManyToOne
     @JoinColumn(name = "clube_id")
+    @JsonBackReference
     private Clube clube;
 
     private String codigoAcesso;
@@ -76,7 +75,7 @@ public class Atleta {
                   String email,
                   String modalidade,
                   String modalidadePrincipal,
-                  Float pesoAtual,
+                  Double pesoAtual,
                   Float altura) {
         this.nome = nome;
         this.dataNascimento = dataNascimento;

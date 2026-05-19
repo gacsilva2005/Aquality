@@ -1,5 +1,6 @@
 package com.hydrasense.schydrasense.controller;
 
+import com.hydrasense.schydrasense.dto.AtletaRequestDTO;
 import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.service.AtletaService;
@@ -23,11 +24,6 @@ public class AtletaController {
         service.enviarConvite(dto);
     }
 
-    @PostMapping
-    public Atleta salvar(@RequestBody Atleta atleta) {
-        return service.salvar(atleta);
-    }
-
     @GetMapping
     public List<Atleta> listar() {
         return service.listarTodos();
@@ -46,5 +42,10 @@ public class AtletaController {
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) {
         service.deletar(id);
+    }
+
+    @PostMapping
+    public Atleta cadastrar(@RequestBody AtletaRequestDTO request) {
+        return service.cadastrar(request);
     }
 }
