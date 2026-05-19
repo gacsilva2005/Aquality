@@ -60,7 +60,6 @@ public class AtletaService {
         atleta.setPesoAtual(request.getPesoAtual());
         atleta.setModalidade(request.getModalidade());
         atleta.setAltura(request.getAltura());
-        atleta.setCodigoEquipe(request.getCodigoEquipe());
 
         atleta.setClube(clube);
 
