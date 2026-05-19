@@ -32,49 +32,92 @@ interface Message {
   sources?: Source[];
 }
 
-// MOCK INICIAL
+// MENSAGEM DE BOAS-VINDAS
 const INITIAL_MESSAGES: Message[] = [
   {
     id:      '1',
-    role:    'user',
-    content: 'Qual a recomendação de carboidratos intra-treino para endurance?',
-  },
-  {
-    id:      '2',
     role:    'assistant',
-    content: 'Para exercícios de endurance prolongados, a recomendação de ingestão de carboidratos varia conforme a duração do esforço, visando poupar o glicogênio muscular e manter a glicemia.\n\n**RECOMENDAÇÕES POR DURAÇÃO**\n\n› 1 a 2 horas: 30 g/h (pode ser uma única fonte, como glicose ou polímeros).\n\n› 2 a 3 horas: 60 g/h (preferencialmente blends de carboidratos).\n\n› > 2.5 a 3 horas: 90 g/h (necessário uso de múltiplos transportadores, como Glicose:Frutose na proporção 2:1 ou 1:0.8).\n\nÉ crucial treinar o sistema digestório ("train the gut") durante as sessões preparatórias para tolerar essas quantidades sem desconforto gastrointestinal.',
-    sources: [
-      { id: 's1', title: 'Position Stand IOC (2024)' },
-      { id: 's2', title: 'Diretriz ABN' },
-    ],
+    content: 'Olá! Sou o Camilo, seu assistente de hidratação e performance esportiva.\n\nComo posso te ajudar hoje? Aqui vão algumas sugestões:\n\n– Qual a quantidade ideal de água para o meu treino?\n– Como repor eletrólitos após exercícios longos?\n– O que fazer para evitar câimbras durante a atividade física?',
   },
 ];
 
-// HELPER — renderiza bold e listas
+// HELPER — renderiza Markdown real (headings, bold inline, listas, tabelas)
 function renderContent(content: string) {
   const lines = content.split('\n');
   return lines.map((line, i) => {
-    if (!line.trim()) return <View key={i} style={{ height: 8 }} />;
+    const trimmed = line.trim();
 
-    if (line.startsWith('**') && line.endsWith('**')) {
+    // Linha vazia → espaçamento
+    if (!trimmed) return <View key={i} style={{ height: 6 }} />;
+
+    // Separador de tabela (|---|---|) → ignorar
+    if (/^\|[\s\-:|]+\|$/.test(trimmed)) return null;
+
+    // Linha de tabela (|col1|col2|) → texto limpo
+    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+      const cells = trimmed
+        .split('|')
+        .filter(c => c.trim())
+        .map(c => c.trim());
+      const cellText = cells.join('  •  ');
+      return <Text key={i} style={styles.msgText}>{stripBold(cellText)}</Text>;
+    }
+
+    // Heading ### → título de seção
+    if (trimmed.startsWith('#')) {
+      const text = trimmed.replace(/^#+\s*/, '').replace(/\*\*/g, '');
       return (
         <Text key={i} style={styles.msgSectionTitle}>
-          {line.replace(/\*\*/g, '')}
+          {text}
         </Text>
       );
     }
 
-    if (line.startsWith('›')) {
+    // Linha inteira em bold **TEXTO**
+    if (trimmed.startsWith('**') && trimmed.endsWith('**') && !trimmed.slice(2, -2).includes('**')) {
+      return (
+        <Text key={i} style={styles.msgSectionTitle}>
+          {trimmed.replace(/\*\*/g, '')}
+        </Text>
+      );
+    }
+
+    // Lista (*, -, › ou número.)
+    if (/^(\*|-|›|\d+\.)\s/.test(trimmed)) {
+      const text = trimmed.replace(/^(\*|-|›|\d+\.)\s*/, '');
       return (
         <View key={i} style={styles.listItem}>
           <View style={styles.listBullet} />
-          <Text style={styles.listText}>{line.replace('› ', '')}</Text>
+          <Text style={styles.listText}>{renderInlineBold(text)}</Text>
         </View>
       );
     }
 
-    return <Text key={i} style={styles.msgText}>{line}</Text>;
+    // Texto normal (com bold inline)
+    return <Text key={i} style={styles.msgText}>{renderInlineBold(trimmed)}</Text>;
   });
+}
+
+// Renderiza trechos **bold** inline misturados com texto normal
+function renderInlineBold(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  if (parts.length === 1) return stripBold(text);
+
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <Text key={i} style={{ fontFamily: theme.fonts.bodyBold }}>
+          {part.replace(/\*\*/g, '')}
+        </Text>
+      );
+    }
+    return <Text key={i}>{part}</Text>;
+  });
+}
+
+// Remove ** de uma string (fallback)
+function stripBold(text: string): string {
+  return text.replace(/\*\*/g, '');
 }
 
 // COMPONENTE PRINCIPAL
@@ -109,20 +152,27 @@ export default function AssistenteIA() {
     setLoading(true);
 
     try {
-      // TODO: substituir pelo fetch real
-      // const response = await fetch('https://SUA-API/assistente', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ message: text }),
-      // });
-      // const data = await response.json();
-      // setMessages(prev => [...prev, { id: String(Date.now()+1), role: 'assistant', content: data.content, sources: data.sources }]);
+      // Substituído pelo fetch real para o FastAPI local
+      const API_URL = 'http://192.168.0.20:8000';
+      const response = await fetch(`${API_URL}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: 'user-default', // TODO: integrar com UserContext no futuro
+          message: text,
+        }),
+      });
 
-      await new Promise(r => setTimeout(r, 1200));
+      if (!response.ok) {
+        throw new Error('Falha na resposta da API');
+      }
+
+      const data = await response.json();
       setMessages(prev => [...prev, {
-        id:      (Date.now() + 1).toString(),
+        id:      String(Date.now() + 1),
         role:    'assistant',
-        content: 'Esta é uma resposta temporária enquanto a API não está conectada.',
+        content: data.content,
+        sources: data.sources || [],
       }]);
     } catch {
       setMessages(prev => [...prev, {
@@ -181,15 +231,26 @@ export default function AssistenteIA() {
 
       if (!uri) return;
 
-      // TODO: enviar o áudio para a API de transcrição (ex: Whisper)
-      // const formData = new FormData();
-      // formData.append('file', { uri, type: 'audio/m4a', name: 'audio.m4a' } as any);
-      // const response = await fetch('https://SUA-API/transcribe', { method: 'POST', body: formData });
-      // const data = await response.json();
-      // setInput(data.transcript); // ← coloca o texto transcrito no input
+      // Envia o áudio para a API de transcrição (Whisper via Groq)
+      const API_URL = 'http://192.168.0.20:8000';
+      const formData = new FormData();
+      formData.append('file', { uri, type: 'audio/m4a', name: 'audio.m4a' } as any);
 
-      // Mock: simula transcrição e coloca no input
-      setInput('Áudio gravado — transcrição disponível quando a API estiver conectada.');
+      const response = await fetch(`${API_URL}/transcribe`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha na transcrição');
+      }
+
+      const data = await response.json();
+      if (data.transcript) {
+        setInput(data.transcript);
+      } else {
+        Alert.alert('Aviso', 'Não foi possível transcrever o áudio. Tente novamente.');
+      }
     } catch (e) {
       Alert.alert('Erro', 'Não foi possível processar o áudio.');
     } finally {
