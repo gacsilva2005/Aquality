@@ -42,9 +42,6 @@ public class Atleta {
 
     private String senha;
 
-    @Transient
-    private String codigoEquipe;
-
     @ManyToOne
     @JoinColumn(name = "clube_id")
     @JsonBackReference
