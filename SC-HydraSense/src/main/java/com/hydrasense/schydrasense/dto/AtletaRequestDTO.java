@@ -17,6 +17,10 @@ public class AtletaRequestDTO {
 
     private String codigoEquipe;
 
+    private Float altura;
+
+    private String modalidade;
+
     private LocalDate dataNascimento;
 
     private String modalidadePrincipal;
