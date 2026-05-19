@@ -1,6 +1,6 @@
 package com.hydrasense.schydrasense.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,10 +23,10 @@ public class Profissional {
     private String registro;
     private String uf;
     private String especialidade;
-    
+
     @ManyToOne
     @JoinColumn(name = "clube_id")
-    @JsonBackReference
+    @JsonIgnoreProperties({"profissionais", "atletas"})
     private Clube clube;
     private String perfil;
 

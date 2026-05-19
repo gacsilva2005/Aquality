@@ -1,6 +1,6 @@
 package com.hydrasense.schydrasense.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -44,7 +44,7 @@ public class Atleta {
 
     @ManyToOne
     @JoinColumn(name = "clube_id")
-    @JsonBackReference
+    @JsonIgnoreProperties({"profissionais", "atletas"})
     private Clube clube;
 
     private String codigoAcesso;

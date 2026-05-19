@@ -1,10 +1,9 @@
 package com.hydrasense.schydrasense.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +24,11 @@ public class Clube {
     private String codigo;
 
     @OneToMany(mappedBy = "clube", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonIgnoreProperties("clube")
     private List<Atleta> atletas = new ArrayList<>();
 
     @OneToMany(mappedBy = "clube", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonIgnoreProperties("clube")
     private List<Profissional> profissionais = new ArrayList<>();
 
     public Clube() {}
