@@ -39,7 +39,11 @@ export default function Profile() {
     const [height, setHeight] = useState(
         user?.altura?.toString() || ''
     );
-  const [age, setAge] = useState('');
+    const [age, setAge] = useState(
+        user?.dataNascimento
+            ? calcularIdade(user.dataNascimento)
+            : ''
+    );
   const [gender, setGender] = useState<'M' | 'F' | null>('M');
   const [equipe, setEquipe] = useState('S4-C4');
     const [time, setTime] = useState(
