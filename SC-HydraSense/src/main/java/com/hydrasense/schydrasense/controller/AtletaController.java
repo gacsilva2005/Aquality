@@ -2,6 +2,7 @@ package com.hydrasense.schydrasense.controller;
 
 import com.hydrasense.schydrasense.dto.AtletaRequestDTO;
 import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
+import com.hydrasense.schydrasense.dto.LoginDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.service.AtletaService;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,9 @@ public class AtletaController {
     public void enviarConvite(@RequestBody ConviteAtletaDTO dto) {
         service.enviarConvite(dto);
     }
+
+    @PostMapping("/login")
+    public Atleta login(@RequestBody LoginDTO dto) {return service.login(dto.email(), dto.senha());}
 
     @GetMapping
     public List<Atleta> listar() {
