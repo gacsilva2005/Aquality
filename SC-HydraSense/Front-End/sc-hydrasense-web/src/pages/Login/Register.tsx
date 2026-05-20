@@ -28,10 +28,14 @@ const UFS = [
 ];
 
 export function Register() {
+    const = { setUser } = useUser();
   const navigate = useNavigate();
   const [perfilAtivo, setPerfilAtivo] = useState('nutricionista');
   const [buscaClube, setBuscaClube] = useState('');
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
+  const dados = await response.json();
+
+  setUser(dados);
 
     const [formData, setFormData] = useState({
         nome: '',
