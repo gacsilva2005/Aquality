@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Unlock, ChevronRight, Globe, Apple, Droplet, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { useUser } from '../context/UserContext';
 import './Home.css';
 
 import logoFundo from '../assets/Logo-Fundo.png';
@@ -46,6 +47,7 @@ export function GoogleCallback() {
 
 export function Home() {
   const navigate = useNavigate();
+  const { setUser } = useUser();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -81,6 +83,7 @@ export function Home() {
 
       if (dados.tipo === "profissional") {
         success('Login Realizado!', 'Bem-vindo ao painel HydraSense.');
+        setUser(dados.usuario);
         setTimeout(() => navigate("/PageWeb"), 1500);
       } else if (dados.tipo === "atleta") {
         success('Login Realizado!', 'Redirecionando para o dashboard do atleta.');
