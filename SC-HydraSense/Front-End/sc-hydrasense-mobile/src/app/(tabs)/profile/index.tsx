@@ -13,6 +13,24 @@ import { Divider } from '@/src/components/Divider';
 import { useUser } from '../../../contexts/UserContext';
 
 export default function Profile() {
+    const router = useRouter();
+    const [isEditing, setIsEditing] = useState(false);
+
+    const {
+        user,
+        setUser,
+        profileImage,
+        setProfileImage
+    } = useUser();
+
+    const [weight, setWeight] = useState(
+        user?.pesoAtual?.toString() || ''
+    );
+
+    const [height, setHeight] = useState(
+        user?.altura?.toString() || ''
+    );
+
     const calcularIdade = (dataNascimento: string) => {
         const hoje = new Date();
         const nascimento = new Date(dataNascimento);
