@@ -1,11 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NovoAtleta } from './NovoAtleta';
 
 export function Atletas() {
     const [verFormulario, setVerFormulario] = useState(false);
+    const [atletas, setAtletas] = useState([]);
 
     const handleNovoAtleta = () => {
         setVerFormulario(true);
+    };
+
+    useEffect(() => {
+        buscarAtletas();
+    }, []);
+
+    const buscarAtletas = async () => {
+        try {
+
+            const response = await fetch('http://localhost:8080/Atleta');
+
+            if (!response.ok) {
+                throw new Error('Erro ao buscar atletas');
+            }
+
+            const data = await response.json();
+
+            console.log(data);
+
+            setAtletas(data);
+
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     if (verFormulario) {
@@ -97,28 +122,55 @@ export function Atletas() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <div className="td-atleta">
-                                    <div className="avatar-placeholder" />
-                                    <div className="atleta-info">
-                                        <span className="atleta-nome">Carlos Silva</span>
-                                        <span className="atleta-id">#10</span>
+                        {atletas.map((atleta: any) => (
+                            <tr key={atleta.id}>
+                                <td>
+                                    <div className="td-atleta">
+                                        <div className="avatar-placeholder" />
+
+                                        <div className="atleta-info">
+                                            <span className="atleta-nome">
+                                                {atleta.nome}
+                                            </span>
+
+                                            <span className="atleta-id">
+                                                #{atleta.id}
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td>São Paulo FC</td>
-                            <td>1.8%</td>
-                            <td>1.5 L/h</td>
-                            <td>
-                                <div className="td-status moderado">
-                                    <span className="status-dot"></span>
-                                    <span className="status-text">MODERADO</span>
-                                </div>
-                            </td>
-                            <td>95%</td>
-                            <td>15 Jun, 2024</td>
-                        </tr>
+                                </td>
+
+                                <td>
+                                    {atleta.clube?.nome || 'Sem clube'}
+                                </td>
+
+                                <td>
+                                    {atleta.pesoAtual || 0} kg
+                                </td>
+
+                                <td>
+                                    --
+                                </td>
+
+                                <td>
+                                    <div className="td-status moderado">
+                                        <span className="status-dot"></span>
+
+                                        <span className="status-text">
+                                            ATIVO
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    --
+                                </td>
+
+                                <td>
+                                    --
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </section>
