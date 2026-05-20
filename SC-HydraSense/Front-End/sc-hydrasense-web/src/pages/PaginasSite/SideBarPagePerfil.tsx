@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, User, Mail, Phone, Calendar, Users, Save, Pencil, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import  { useUser } from '../../context/UserContext';
 
 interface SideBarPagePerfilProps {
     aberto: boolean;
@@ -11,11 +12,11 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
     const navigate = useNavigate();
 
     // Estado dos campos editáveis
-    const [nome, setNome] = useState('ALEX MERCER');
-    const [email, setEmail] = useState('a.mercer@hydroperform.com');
-    const [telefone, setTelefone] = useState('(11) 98765-4321');
-    const [idade, setIdade] = useState('38');
-    const [cargo, setCargo] = useState('treinador');
+    const [nome, setNome] = useState(user?.nome || '');
+    const [email, setEmail] = useState(user?.email || '');
+    const [telefone, setTelefone] = useState(user?.telefone || '');
+    const [idade, setIdade] = useState(user?.idade?.toString() || '');
+    const [cargo, setCargo] = useState(user?.cargo || '');
 
     // Controle de qual campo está em modo de edição (null = nenhum)
     const [editando, setEditando] = useState<string | null>(null);
