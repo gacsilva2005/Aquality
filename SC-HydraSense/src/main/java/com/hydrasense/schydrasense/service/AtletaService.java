@@ -81,6 +81,18 @@ public class AtletaService {
         return atletaSalvo;
     }
 
+    public Atleta login(String email, String senha) {
+
+        Atleta atleta = repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        if (!atleta.getSenha().equals(senha)) {
+            throw new RuntimeException("Senha inválida");
+        }
+
+        return atleta;
+    }
+
     // Listar todos os atletas
     public List<Atleta> listarTodos() {
         return repository.findAll();
