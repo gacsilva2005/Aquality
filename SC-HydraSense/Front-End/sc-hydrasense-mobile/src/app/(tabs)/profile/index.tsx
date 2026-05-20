@@ -13,6 +13,23 @@ import { Divider } from '@/src/components/Divider';
 import { useUser } from '../../../contexts/UserContext';
 
 export default function Profile() {
+    const calcularIdade = (dataNascimento: string) => {
+        const hoje = new Date();
+        const nascimento = new Date(dataNascimento);
+
+        let idade = hoje.getFullYear() - nascimento.getFullYear();
+
+        const mes = hoje.getMonth() - nascimento.getMonth();
+
+        if (
+            mes < 0 ||
+            (mes === 0 && hoje.getDate() < nascimento.getDate())
+        ) {
+            idade--;
+        }
+
+        return idade.toString();
+    };
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
     const {user, profileImage, setProfileImage,} = useUser();
