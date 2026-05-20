@@ -9,6 +9,30 @@ export function Atletas() {
         setVerFormulario(true);
     };
 
+    useEffect(() => {
+        buscarAtletas();
+    }, []);
+
+    const buscarAtletas = async () => {
+        try {
+
+            const response = await fetch('http://localhost:8080/Atleta');
+
+            if (!response.ok) {
+                throw new Error('Erro ao buscar atletas');
+            }
+
+            const data = await response.json();
+
+            console.log(data);
+
+            setAtletas(data);
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     if (verFormulario) {
         return <NovoAtleta onBack={() => setVerFormulario(false)} />;
     }
