@@ -15,13 +15,19 @@ import { useUser } from '../../../contexts/UserContext';
 export default function Profile() {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
-  const { profileImage, setProfileImage, userName, setUserName } = useUser();
-  const [weight, setWeight] = useState('');
-  const [height, setHeight] = useState('');
+    const {user, profileImage, setProfileImage,} = useUser();
+    const [weight, setWeight] = useState(
+        user?.pesoAtual?.toString() || ''
+    );
+    const [height, setHeight] = useState(
+        user?.altura?.toString() || ''
+    );
   const [age, setAge] = useState('');
   const [gender, setGender] = useState<'M' | 'F' | null>('M');
   const [equipe, setEquipe] = useState('S4-C4');
-  const [time, setTime] = useState('Camelinhos - PROFISSIONAL');
+    const [time, setTime] = useState(
+        user?.modalidade || ''
+    );
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -98,8 +104,8 @@ export default function Profile() {
             {isEditing ? (
               <TextInput
                 style={[styles.photoTitle, styles.nameInput]}
-                value={userName}
-                onChangeText={setUserName}
+                value={user?.nome || ''}
+                onChangeText={() => {}}
                 autoFocus
                 placeholder="SEU NOME"
                 autoCorrect={false}
@@ -107,7 +113,7 @@ export default function Profile() {
                 autoCapitalize="characters"
               />
             ) : (
-              <Text style={styles.photoTitle}>{userName}</Text>
+                <Text style={styles.photoTitle}>{user?.nome}</Text>
             )}
             <Text style={styles.photoSubtitle}>
               {isEditing ? "Toque no ícone para alterar" : "Clique em EDITAR para mudar"}
