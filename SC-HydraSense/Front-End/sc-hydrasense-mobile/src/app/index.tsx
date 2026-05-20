@@ -15,6 +15,7 @@ import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Screen } from '../components/Screen';
 import { Divider } from '../components/Divider';
+import { useUser } from '../contexts/UserContext';
 import { Feather, FontAwesome5 } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import { theme } from '../global/themas';
@@ -25,6 +26,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen() {
+    const { setUser, setUserName } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -101,7 +103,7 @@ export default function LoginScreen() {
       const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
       const API_URL = `http://${ip}:8080`;
 
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/Atleta/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,12 +119,13 @@ export default function LoginScreen() {
 
       const dados = await response.json();
 
-      if (dados.tipo === 'atleta') {
-        console.log('Login validado com sucesso! Atleta:', dados.usuario.nome);
+        console.log('Login validado com sucesso!', dados);
+
+        setUser(dados);
+
+        setUserName(dados.nome);
+
         router.replace('/(tabs)/dashboard');
-      } else {
-        Alert.alert('Acesso Restrito', 'Este aplicativo é exclusivo para atletas. Por favor, acesse o portal Web.');
-      }
     } catch (error) {
       console.error(error);
       Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique sua rede.');
