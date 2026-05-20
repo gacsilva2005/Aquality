@@ -1,6 +1,6 @@
 // src/app/(tabs)/profile/index.tsx
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
 import { Screen } from '../../../components/Screen';
 import { Header } from '../../../components/Header';
 import { InputProfile } from '../../../components/InputProfile';
@@ -11,8 +11,27 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { Divider } from '@/src/components/Divider';
 import { useUser } from '../../../contexts/UserContext';
+import Constants from "expo-constants";
 
 export default function Profile() {
+    const router = useRouter();
+    const [isEditing, setIsEditing] = useState(false);
+
+    const {
+        user,
+        setUser,
+        profileImage,
+        setProfileImage
+    } = useUser();
+
+    const [weight, setWeight] = useState(
+        user?.pesoAtual?.toString() || ''
+    );
+
+    const [height, setHeight] = useState(
+        user?.altura?.toString() || ''
+    );
+
     const calcularIdade = (dataNascimento: string) => {
         const hoje = new Date();
         const nascimento = new Date(dataNascimento);
@@ -30,22 +49,13 @@ export default function Profile() {
 
         return idade.toString();
     };
-  const router = useRouter();
-  const [isEditing, setIsEditing] = useState(false);
-    const {user, profileImage, setProfileImage,} = useUser();
-    const [weight, setWeight] = useState(
-        user?.pesoAtual?.toString() || ''
-    );
-    const [height, setHeight] = useState(
-        user?.altura?.toString() || ''
-    );
+
     const [age, setAge] = useState(
         user?.dataNascimento
             ? calcularIdade(user.dataNascimento)
             : ''
     );
-  const [gender, setGender] = useState<'M' | 'F' | null>('M');
-  const [equipe, setEquipe] = useState('S4-C4');
+    const [gender, setGender] = useState<'M' | 'F' | null>('M');
     const [time, setTime] = useState(
         user?.modalidade || ''
     );
@@ -63,10 +73,47 @@ export default function Profile() {
     }
   };
 
-  const handleSave = () => {
-    console.log("Dados salvos:", { weight, height, age, gender });
-    setIsEditing(false);
-  };
+    const handleSave = async () => {
+        try {
+            const hostUri = Constants?.expoConfig?.hostUri;
+            const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+            const API_URL = `http://${ip}:8080`;
+
+            const response = await fetch(`${API_URL}/Atleta/${user.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...user,
+                    nome: user?.nome,
+                    pesoAtual: Number(weight),
+                    altura: Number(height),
+                }),
+            });
+
+            const responseText = await response.text();
+
+            console.log('STATUS:', response.status);
+            console.log('RESPOSTA:', responseText);
+
+            if (!response.ok) {
+                Alert.alert('Erro', 'Não foi possível atualizar o perfil');
+                return;
+            }
+
+            const updatedUser = JSON.parse(responseText);
+
+            setUser(updatedUser);
+
+            Alert.alert('Sucesso', 'Perfil atualizado!');
+            setIsEditing(false);
+
+        } catch (error) {
+            console.log(error);
+            Alert.alert('Erro', 'Erro de conexão com servidor');
+        }
+    };
 
   const handleLogout = () => {
     console.log("Sessão encerrada");
@@ -123,10 +170,15 @@ export default function Profile() {
           </View>
           <View style={styles.photoTextContainer}>
             {isEditing ? (
-              <TextInput
-                style={[styles.photoTitle, styles.nameInput]}
-                value={user?.nome || ''}
-                onChangeText={() => {}}
+                <TextInput
+                    style={[styles.photoTitle, styles.nameInput]}
+                    value={user?.nome || ''}
+                    onChangeText={(text) =>
+                        setUser({
+                            ...user!,
+                            nome: text,
+                        })
+                    }
                 autoFocus
                 placeholder="SEU NOME"
                 autoCorrect={false}
@@ -200,7 +252,9 @@ export default function Profile() {
         <View style={styles.professionalContainer}>
           <View style={styles.infoCard}>
             <Text style={styles.infoLabel}>EQUIPE (ORGANIZAÇÃO)</Text>
-            <Text style={styles.infoValue}>{equipe}</Text>
+              <Text style={styles.infoValue}>
+                  {user?.clube?.nome || 'Sem equipe'}
+              </Text>
           </View>
 
           <View style={styles.infoCard}>

@@ -26,7 +26,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen() {
-    const { setUser, setUserName } = useUser();
+    const { setUser } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -122,8 +122,6 @@ export default function LoginScreen() {
         console.log('Login validado com sucesso!', dados);
 
         setUser(dados);
-
-        setUserName(dados.nome);
 
         router.replace('/(tabs)/dashboard');
     } catch (error) {

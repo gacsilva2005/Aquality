@@ -20,9 +20,6 @@ interface UserContextData {
 
     profileImage: string | null;
     setProfileImage: (uri: string | null) => void;
-
-    userName: string;
-    setUserName: (name: string) => void;
 }
 
 const UserContext = createContext<UserContextData>({} as UserContextData);
@@ -32,8 +29,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
     const [profileImage, setProfileImage] = useState<string | null>(null);
 
-    const [userName, setUserName] = useState('Nome de Usuário');
-
     return (
         <UserContext.Provider
             value={{
@@ -41,8 +36,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 setUser,
                 profileImage,
                 setProfileImage,
-                userName,
-                setUserName,
             }}
         >
             {children}
