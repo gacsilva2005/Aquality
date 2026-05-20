@@ -3,6 +3,7 @@ import { NovoAtleta } from './NovoAtleta';
 
 export function Atletas() {
     const [verFormulario, setVerFormulario] = useState(false);
+    const [atletas, setAtletas] = useState([]);
 
     const handleNovoAtleta = () => {
         setVerFormulario(true);
