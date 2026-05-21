@@ -7,9 +7,21 @@ from agno.db.sqlite import SqliteDb
 from agno.vectordb.chroma import ChromaDb
 from agno.knowledge.knowledge import Knowledge
 from agno.knowledge.reader.pdf_reader import PDFReader
-from agno.knowledge.embedder.fastembed import FastEmbedEmbedder
+from agno.knowledge.embedder.google import GeminiEmbedder
 
 load_dotenv()
+
+# Carrega a chave diretamente do .env (removendo aspas duplas, caso existam)
+api_key = os.getenv("GOOGLE_API_KEY", "").strip('"').strip("'")
+if not api_key:
+    api_key = os.getenv("GEMINI_API_KEY", "").strip('"').strip("'")
+
+if not api_key:
+    raise RuntimeError("GOOGLE_API_KEY / GEMINI_API_KEY nao encontrada no .env")
+
+# Injeta a chave também no ambiente para garantir compatibilidade com bibliotecas subjacentes
+os.environ["GEMINI_API_KEY"] = api_key
+os.environ["GOOGLE_API_KEY"] = api_key
 
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 caminho_dos_pdfs = os.path.join(diretorio_atual, "..", "PDFs")
@@ -18,7 +30,7 @@ histórico = SqliteDb(db_url="sqlite:///agno.db", session_table="sessões")
 vector_db = ChromaDb(
     collection="camilo",
     path="./chroma_data",
-    embedder=FastEmbedEmbedder(id="sentence-transformers/all-MiniLM-L6-v2"),
+    embedder=GeminiEmbedder(api_key=api_key),
     persistent_client=True,
 )
 
@@ -27,15 +39,14 @@ base_conhecimento = Knowledge(vector_db=vector_db, readers=[reader], max_results
 
 # Carrega PDFs apenas se a collection estiver vazia (evita re-inserção no startup do FastAPI)
 try:
-    _collection = vector_db.get_collection()
-    if _collection is None or _collection.count() == 0:
+    if vector_db.get_count() == 0:
         base_conhecimento.insert(path=caminho_dos_pdfs)
 except Exception:
     base_conhecimento.insert(path=caminho_dos_pdfs)
 
 def criar_agente(session_id: Optional[str] = None) -> Agent:
     return Agent(
-        model=Gemini(id="gemini-flash-latest"),
+        model=Gemini(id="gemini-flash-latest", api_key=api_key),
         knowledge=base_conhecimento,
         search_knowledge=True,
         db=histórico,

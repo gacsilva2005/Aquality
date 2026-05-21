@@ -16,6 +16,7 @@ import { Audio } from 'expo-av';
 import { styles } from './assistente_styles';
 import { theme } from '../../global/themas';
 import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
 
 // TIPOS
 type MessageRole = 'user' | 'assistant';
@@ -152,8 +153,9 @@ export default function AssistenteIA() {
     setLoading(true);
 
     try {
-      // Substituído pelo fetch real para o FastAPI local
-      const API_URL = 'http://192.168.0.20:8000';
+      const hostUri = Constants?.expoConfig?.hostUri;
+      const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+      const API_URL = `http://${ip}:8000`;
       const response = await fetch(`${API_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -231,8 +233,9 @@ export default function AssistenteIA() {
 
       if (!uri) return;
 
-      // Envia o áudio para a API de transcrição (Whisper via Groq)
-      const API_URL = 'http://192.168.0.20:8000';
+      const hostUri = Constants?.expoConfig?.hostUri;
+      const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+      const API_URL = `http://${ip}:8000`;
       const formData = new FormData();
       formData.append('file', { uri, type: 'audio/m4a', name: 'audio.m4a' } as any);
 
