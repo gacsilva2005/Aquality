@@ -29,7 +29,6 @@ const UFS = [
 
 export function Register() {
   const navigate = useNavigate();
-  const = { setUser } = useUser();
   const [perfilAtivo, setPerfilAtivo] = useState('nutricionista');
   const [buscaClube, setBuscaClube] = useState('');
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
