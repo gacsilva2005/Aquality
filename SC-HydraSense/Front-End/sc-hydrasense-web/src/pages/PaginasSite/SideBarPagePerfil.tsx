@@ -10,7 +10,8 @@ interface SideBarPagePerfilProps {
 
 export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) {
     const navigate = useNavigate();
-
+    const { user } = useUser();
+    console.log(JSON.stringify(user, null, 2));
     // Estado dos campos editáveis
     const [nome, setNome] = useState(user?.nome || '');
     const [email, setEmail] = useState(user?.email || '');
