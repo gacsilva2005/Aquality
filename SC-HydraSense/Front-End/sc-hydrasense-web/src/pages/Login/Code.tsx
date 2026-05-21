@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Droplet, ArrowLeft } from 'lucide-react';
-import './code.css';
+import './Code.css';
 
 export function Code() {
     const navigate = useNavigate();

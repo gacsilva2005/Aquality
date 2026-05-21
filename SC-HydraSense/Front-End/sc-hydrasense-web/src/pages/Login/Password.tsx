@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Droplet, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
-import './password.css';
+import './Password.css';
 
 export function Password() {
 
