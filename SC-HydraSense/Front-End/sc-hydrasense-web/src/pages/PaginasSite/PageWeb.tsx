@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { HeaderPageWeb } from "./HeaderPageWeb";
 import { SideBarPageWeb } from "./SideBarPageWeb";
 import { SideBarPagePerfil } from "./SideBarPagePerfil";
+import { useUser } from "../../context/UserContext";
 import "./PageWeb.css";
 
 export function PageWeb() {
