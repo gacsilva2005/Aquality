@@ -8,7 +8,7 @@ import { useUser } from "../../context/UserContext";
 import "./PageWeb.css";
 
 export function PageWeb() {
-    const [usuario, setUsuario] = useState<any>(null);
+    const { user } = useUser();
     const [perfilAberto, setPerfilAberto] = useState(false);
     const [sidebarAberta, setSidebarAberta] = useState(false);
 
@@ -35,7 +35,7 @@ export function PageWeb() {
     return (
         <div className="pageweb">
             <HeaderPageWeb
-                usuario={usuario}
+                usuario={user}
                 onPerfilClick={() => setPerfilAberto(true)}
                 onMenuClick={() => setSidebarAberta(true)}
             />
