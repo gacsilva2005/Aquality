@@ -13,11 +13,19 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
     const { user } = useUser();
     console.log(JSON.stringify(user, null, 2));
     // Estado dos campos editáveis
-    const [nome, setNome] = useState(user?.nome || '');
-    const [email, setEmail] = useState(user?.email || '');
-    const [telefone, setTelefone] = useState(user?.telefone || '');
-    const [idade, setIdade] = useState(user?.idade?.toString() || '');
-    const [cargo, setCargo] = useState(user?.cargo || '');
+    const [nome, setNome] = useState('');
+    const [email, setEmail] = useState('');
+    const [telefone, setTelefone] = useState('');
+    const [cargo, setCargo] = useState('');
+
+    useEffect(() => {
+        if (user) {
+            setNome(user.nome || '');
+            setEmail(user.email || '');
+            setTelefone(user.telefone || '');
+            setCargo(user.cargo || '');
+        }
+    }, [user]);
 
     // Controle de qual campo está em modo de edição (null = nenhum)
     const [editando, setEditando] = useState<string | null>(null);
