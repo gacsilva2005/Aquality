@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown, Droplet, ArrowLeft } from 'lucide-react';
-import './number.css';
+import './Number.css';
 
 export function Number() {
 

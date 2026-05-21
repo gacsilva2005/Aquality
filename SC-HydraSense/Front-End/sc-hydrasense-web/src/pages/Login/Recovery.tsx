@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Droplet, ArrowLeft } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
-import './recovery.css';
+import './Recovery.css';
 
 export function Recovery() {
     const navigate = useNavigate();

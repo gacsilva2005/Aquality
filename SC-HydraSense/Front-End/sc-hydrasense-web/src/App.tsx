@@ -14,10 +14,10 @@ import { Equipes } from "./pages/PaginasSite/Equipes";
 import { RelatorioEquipe } from "./pages/PaginasSite/RelatorioEquipe";
 import { Relatorios } from "./pages/PaginasSite/Relatorios";
 import { Configuracoes } from "./pages/PaginasSite/Configuracoes";
-import { Recovery } from "./pages/Login/recovery";
-import { Code } from "./pages/Login/code";
+import { Recovery } from "./pages/Login/Recovery";
+import { Code } from "./pages/Login/Code";
 import { Password } from "./pages/Login/Password";
-import { Number } from "./pages/Login/number";
+import { Number } from "./pages/Login/Number";
 import { Confirmation } from './pages/Login/Confirmation';
 
 function App() {

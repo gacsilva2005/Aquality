@@ -4,14 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39ef55a9-f571-4eb3-872f-2c7f81d3ef3d" name="Changes" comment="Feature: Implementando primeiras dependências para conexão com banco de dados SQL.&#10;&#10;- Dependências do arquivo &quot;pom.xml&quot;&#10;- Propriedades de aplicação, sem conexão plena e com possibilidade para criação de um dataBase.">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+    <list default="true" id="39ef55a9-f571-4eb3-872f-2c7f81d3ef3d" name="Changes" comment="Feature: Implementa folha de projeto para a criação dos containers.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dockerfile" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <favorite-branches>
@@ -29,7 +35,7 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="develop" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -67,34 +73,49 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Maven.SC-HydraSense [clean,package,-DskipTests].executor": "Run",
+    "Maven.SC-HydraSense [package].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.ScHydraSenseApplication.executor": "Run",
-    "git-widget-placeholder": "develop",
+    "git-widget-placeholder": "feature/implementando-docker",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/gacsilva/IdeaProjects/HydraSync",
+    "last_opened_file_path": "C:/Users/25.00775-8/IdeaProjects/Aquality/SC-HydraSense/Front-End",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "C:/Users/25.00775-8/IdeaProjects/Aquality/SC-HydraSense/Back-End/src/Main.java",
     "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "C:\\Users\\25.00775-8\\IdeaProjects\\Aquality\\SC-HydraSense\\Front-End\\sc-hydrasense-web\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\25.00775-8\IdeaProjects\Aquality\SC-HydraSense\Front-End" />
       <recent name="C:\Users\gacsilva\IdeaProjects\HydraSync" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\25.00775-8\IdeaProjects\Aquality\SC-HydraSense\Front-End\sc-hydrasense-web" />
+      <recent name="C:\Users\25.00775-8\IdeaProjects\Aquality\SC-HydraSense\Front-End" />
+      <recent name="C:\Users\25.00775-8\IdeaProjects\Aquality\SC-HydraSense\Back-End" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean package -DskipTests" />
+    </option>
   </component>
   <component name="RunManager">
     <configuration name="ScHydraSenseApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
-      <module name="SC-HydraSense" />
+      <module name="Aquality" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.hydrasense.schydrasense.ScHydraSenseApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -117,6 +138,71 @@
       <updated>1774895487493</updated>
       <workItem from="1776077839950" duration="2086000" />
     </task>
+    <task id="LOCAL-00001" summary="Refactor: Realocando Back-End para módulo para organização.">
+      <option name="closed" value="true" />
+      <created>1779375537652</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1779375537652</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fix: Altera importação do CSS de 4 telas do front-end:&#10;&#10;- App.tsx, Code.tsx, Number.tsx e Password.tsx.">
+      <option name="closed" value="true" />
+      <created>1779383617314</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1779383617314</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Refactor: Altera localização do arquivo dentro do diretório do projeto.">
+      <option name="closed" value="true" />
+      <created>1779383661266</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1779383661266</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Feature: Adiciona dockerignore para limitar o conteúdo do container.">
+      <option name="closed" value="true" />
+      <created>1779383769826</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1779383769826</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Fix: Altera url do banco de dados para rodar dentro do container.">
+      <option name="closed" value="true" />
+      <created>1779383808339</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1779383808339</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Fix: Altera importação do CSS.">
+      <option name="closed" value="true" />
+      <created>1779383833422</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1779383833422</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Feature: Implementa folha de projeto em ./Back-End e /.Front-End para que seja instalada as dependências do projeto em cada uma das pastas.">
+      <option name="closed" value="true" />
+      <created>1779383888380</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1779383888380</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Feature: Implementa folha de projeto para a criação dos containers.">
+      <option name="closed" value="true" />
+      <created>1779383916984</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1779383916984</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -135,7 +221,26 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Feature: Implementando primeiras dependências para conexão com banco de dados SQL.&#10;&#10;- Dependências do arquivo &quot;pom.xml&quot;&#10;- Propriedades de aplicação, sem conexão plena e com possibilidade para criação de um dataBase." />
-    <option name="LAST_COMMIT_MESSAGE" value="Feature: Implementando primeiras dependências para conexão com banco de dados SQL.&#10;&#10;- Dependências do arquivo &quot;pom.xml&quot;&#10;- Propriedades de aplicação, sem conexão plena e com possibilidade para criação de um dataBase." />
+    <MESSAGE value="Refactor: Realocando Back-End para módulo para organização." />
+    <MESSAGE value="Fix: Altera importação do CSS de 4 telas do front-end:&#10;&#10;- App.tsx, Code.tsx, Number.tsx e Password.tsx." />
+    <MESSAGE value="Refactor: Altera localização do arquivo dentro do diretório do projeto." />
+    <MESSAGE value="Feature: Adiciona dockerignore para limitar o conteúdo do container." />
+    <MESSAGE value="Fix: Altera url do banco de dados para rodar dentro do container." />
+    <MESSAGE value="Fix: Altera importação do CSS." />
+    <MESSAGE value="Feature: Implementa folha de projeto em ./Back-End e /.Front-End para que seja instalada as dependências do projeto em cada uma das pastas." />
+    <MESSAGE value="Feature: Implementa folha de projeto para a criação dos containers." />
+    <option name="LAST_COMMIT_MESSAGE" value="Feature: Implementa folha de projeto para a criação dos containers." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SC-HydraSense/Back-End/src/Main.java</url>
+          <line>11</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
