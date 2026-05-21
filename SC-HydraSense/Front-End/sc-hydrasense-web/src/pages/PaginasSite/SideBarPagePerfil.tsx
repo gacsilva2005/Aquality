@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { X, User, Mail, Phone, Calendar, Users, Save, Pencil, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, User, Mail, Phone, Users, Save, Pencil, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import  { useUser } from '../../context/UserContext';
 
 interface SideBarPagePerfilProps {
     aberto: boolean;
@@ -9,13 +10,22 @@ interface SideBarPagePerfilProps {
 
 export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) {
     const navigate = useNavigate();
-
+    const { user } = useUser();
+    console.log(JSON.stringify(user, null, 2));
     // Estado dos campos editáveis
-    const [nome, setNome] = useState('ALEX MERCER');
-    const [email, setEmail] = useState('a.mercer@hydroperform.com');
-    const [telefone, setTelefone] = useState('(11) 98765-4321');
-    const [idade, setIdade] = useState('38');
-    const [cargo, setCargo] = useState('treinador');
+    const [nome, setNome] = useState('');
+    const [email, setEmail] = useState('');
+    const [telefone, setTelefone] = useState('');
+    const [cargo, setCargo] = useState('');
+
+    useEffect(() => {
+        if (user) {
+            setNome(user.nome || '');
+            setEmail(user.email || '');
+            setTelefone(user.telefone || '');
+            setCargo(user.cargo || '');
+        }
+    }, [user]);
 
     // Controle de qual campo está em modo de edição (null = nenhum)
     const [editando, setEditando] = useState<string | null>(null);
@@ -143,35 +153,6 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
                             <div className="perfil-display-row">
                                 <p className="perfil-campo-valor">{telefone}</p>
                                 <button className="perfil-edit-btn" onClick={() => setEditando('telefone')} title="Editar Telefone">
-                                    <Pencil size={14} />
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Idade */}
-                    <div className="perfil-campo">
-                        <p className="perfil-campo-label">
-                            <Calendar size={12} /> Idade
-                        </p>
-                        {editando === 'idade' ? (
-                            <div className="perfil-edit-row">
-                                <input
-                                    className="perfil-edit-input"
-                                    type="number"
-                                    value={idade}
-                                    onChange={(e) => setIdade(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                    autoFocus
-                                />
-                                <button className="perfil-edit-confirm" onClick={confirmarEdicao} title="Confirmar">
-                                    <Check size={14} />
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="perfil-display-row">
-                                <p className="perfil-campo-valor">{idade} anos</p>
-                                <button className="perfil-edit-btn" onClick={() => setEditando('idade')} title="Editar Idade">
                                     <Pencil size={14} />
                                 </button>
                             </div>
