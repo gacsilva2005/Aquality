@@ -50,6 +50,8 @@ __pycache__/
 venv/
 env/
 pip-log.txt
+models_cache/
+
 
 ### Bancos de Dados Locais e Vetoriais ###
 agno.db
