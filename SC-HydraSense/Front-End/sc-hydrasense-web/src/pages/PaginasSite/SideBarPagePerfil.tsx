@@ -149,35 +149,6 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
                             </div>
                         )}
                     </div>
-
-                    {/* Idade */}
-                    <div className="perfil-campo">
-                        <p className="perfil-campo-label">
-                            <Calendar size={12} /> Idade
-                        </p>
-                        {editando === 'idade' ? (
-                            <div className="perfil-edit-row">
-                                <input
-                                    className="perfil-edit-input"
-                                    type="number"
-                                    value={idade}
-                                    onChange={(e) => setIdade(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                    autoFocus
-                                />
-                                <button className="perfil-edit-confirm" onClick={confirmarEdicao} title="Confirmar">
-                                    <Check size={14} />
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="perfil-display-row">
-                                <p className="perfil-campo-valor">{idade} anos</p>
-                                <button className="perfil-edit-btn" onClick={() => setEditando('idade')} title="Editar Idade">
-                                    <Pencil size={14} />
-                                </button>
-                            </div>
-                        )}
-                    </div>
                 </section>
 
                 {/* Seção: Função na Plataforma */}
