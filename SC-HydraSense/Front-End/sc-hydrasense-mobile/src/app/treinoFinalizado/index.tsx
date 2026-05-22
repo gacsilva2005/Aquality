@@ -16,6 +16,15 @@ export default function TreinoFinalizado() {
         router.push('/urineColor' as any);
     };
 
+    const { esporte, tempoSegundos, hidratacaoMl } = useLocalSearchParams<{
+        esporte: string;
+        tempoSegundos: string;
+        hidratacaoMl: string;
+    }>();
+
+    const tempo = Number(tempoSegundos || 0);
+    const agua = Number(hidratacaoMl || 0);
+
     const handlePerfoarmance = () => {
         // Navega para a tela de desempenho
         router.push('/performance');
