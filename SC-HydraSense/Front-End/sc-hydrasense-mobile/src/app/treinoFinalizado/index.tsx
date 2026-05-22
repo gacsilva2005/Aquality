@@ -108,8 +108,8 @@ export default function TreinoFinalizado() {
                             </View>
                             <View style={styles.cardValueRow}>
                                 {/* Valores fictícios por enquanto. Depois você puxa do estado! */}
-                                <Text style={styles.cardValueMain}>01:24</Text>
-                                <Text style={styles.cardValueSub}>:05</Text>
+                                <Text style={styles.cardValueMain}>{formatTime(tempo).slice(0, 5)}</Text>
+                                <Text style={styles.cardValueSub}>:{formatTime(tempo).slice(-2)}</Text>
                             </View>
                         </View>
 
@@ -120,7 +120,7 @@ export default function TreinoFinalizado() {
                                 <Text style={styles.cardTitle}>ÁGUA{'\n'}CONSUMIDA</Text>
                             </View>
                             <View style={styles.cardValueRow}>
-                                <Text style={styles.cardValueMain}>1.2</Text>
+                                <Text style={styles.cardValueMain}>{(agua / 1000).toFixed(1)}</Text>
                                 <Text style={styles.cardValueSub}>L</Text>
                             </View>
                         </View>
@@ -142,7 +142,7 @@ export default function TreinoFinalizado() {
 
                         <TouchableOpacity
                             style={styles.secondaryButton}
-                            onPress={handlePularEtapa}
+                            onPress={salvarTreino}
                             activeOpacity={0.8}
                         >
                             <Text style={styles.secondaryButtonText}>PULAR ETAPA</Text>
