@@ -40,6 +40,31 @@ export default function TreinoFinalizado() {
         outputRange: ['#0e0e0e', theme.colors.background] // Sai do preto e vai para o branco
     });
 
+    const salvarTreino = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/treinos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    esporte,
+                    tempoSegundos: tempo,
+                    hidratacaoMl: agua,
+                }),
+            });
+
+            if (response.ok) {
+                router.replace('/dashboard');
+            } else {
+                console.log('Erro ao salvar treino');
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <Animated.View style={{ flex: 1, backgroundColor: animatedBackgroundColor }}>
             
