@@ -62,7 +62,14 @@ export default function TreinoAtivo() {
         }).start(({ finished }) => {
             // Se a animação chegou até o final (o usuário não soltou o dedo)
             if (finished) {
-                router.replace('./treinoFinalizado'); // Volta para o Dashboard!
+                router.replace({
+                    pathname: './treinoFinalizado',
+                    params: {
+                        esporte: workoutType,
+                        tempoSegundos: seconds.toString(),
+                        hidratacaoMl: waterConsumed.toString(),
+                    }
+                }); // Volta para o Dashboard!
             }
         });
     };
