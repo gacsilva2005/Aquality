@@ -6,6 +6,8 @@ import { styles } from './styles';
 import { theme } from '@/src/global/themas';
 import { Screen } from '../../components/Screen';
 import { Button } from '@/src/components/Button';
+import { useLocalSearchParams } from 'expo-router';
+import {formatTime} from "jest-util";
 
 export default function TreinoFinalizado() {
     const handleRegistrarUrina = () => {
