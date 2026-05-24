@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
-import { router, Stack } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { theme } from '@/src/global/themas';
@@ -8,6 +8,18 @@ import { Screen } from '../../components/Screen';
 import { Button } from '@/src/components/Button';
 
 export default function TreinoFinalizado() {
+    const { seconds, water } = useLocalSearchParams<{ seconds?: string; water?: string }>();
+
+    const totalSeconds = parseInt(seconds || '0', 10);
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    const mainTime = h > 0 ? `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}` : `00:${m.toString().padStart(2, '0')}`;
+    const subTime = `:${s.toString().padStart(2, '0')}`;
+
+    const waterMl = parseInt(water || '0', 10);
+    const waterL = (waterMl / 1000).toFixed(1);
+
     const handleRegistrarUrina = () => {
         // Futuramente, aqui vai navegar para a tela de registro de urina
         console.log("Navegar para registro de urina");
@@ -71,9 +83,9 @@ export default function TreinoFinalizado() {
                                 <Text style={styles.cardTitle}>TEMPO{'\n'}TOTAL</Text>
                             </View>
                             <View style={styles.cardValueRow}>
-                                {/* Valores fictícios por enquanto. Depois você puxa do estado! */}
-                                <Text style={styles.cardValueMain}>01:24</Text>
-                                <Text style={styles.cardValueSub}>:05</Text>
+                                {/* Valores reais calculados dos parâmetros da rota */}
+                                <Text style={styles.cardValueMain}>{mainTime}</Text>
+                                <Text style={styles.cardValueSub}>{subTime}</Text>
                             </View>
                         </View>
 
@@ -84,7 +96,7 @@ export default function TreinoFinalizado() {
                                 <Text style={styles.cardTitle}>ÁGUA{'\n'}CONSUMIDA</Text>
                             </View>
                             <View style={styles.cardValueRow}>
-                                <Text style={styles.cardValueMain}>1.2</Text>
+                                <Text style={styles.cardValueMain}>{waterL}</Text>
                                 <Text style={styles.cardValueSub}>L</Text>
                             </View>
                         </View>
