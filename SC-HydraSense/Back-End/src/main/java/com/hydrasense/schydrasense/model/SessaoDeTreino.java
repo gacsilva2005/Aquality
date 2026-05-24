@@ -1,6 +1,7 @@
 package com.hydrasense.schydrasense.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -63,10 +64,16 @@ public class SessaoDeTreino {
     @JoinColumn(name = "pesagem_pos_id", referencedColumnName = "id")
     private RegistroDoPeso pesagemPos;
 
+    // Relação 1:1 Registro de Hidratação
+    @Setter
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "registro_hidratacao_id", referencedColumnName = "id")
+    private RegistroDeHidratacao registroDeHidratacao;
+
     // Relação M:1 com Atleta
     @ManyToOne
     @JoinColumn(name = "atleta_id")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Atleta atleta;
 
     // Construtor padrão JPA

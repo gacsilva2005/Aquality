@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/hidratacao")
 public class RegistroDeHidratacaoController {
@@ -35,5 +36,10 @@ public class RegistroDeHidratacaoController {
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) {
         service.deletar(id);
+    }
+
+    @GetMapping("/atleta/{atletaId}")
+    public List<RegistroDeHidratacao> buscarPorAtleta(@PathVariable Long atletaId) {
+        return service.buscarPorAtletaId(atletaId);
     }
 }

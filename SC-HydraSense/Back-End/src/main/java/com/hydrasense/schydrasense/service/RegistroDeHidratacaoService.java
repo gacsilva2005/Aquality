@@ -4,6 +4,7 @@ import com.hydrasense.schydrasense.model.RegistroDeHidratacao;
 import com.hydrasense.schydrasense.repository.RegistroDeHidratacaoRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,9 @@ public class RegistroDeHidratacaoService {
     }
 
     public RegistroDeHidratacao salvar(RegistroDeHidratacao registro) {
+        if (registro.getDataHora() == null) {
+            registro.setDataHora(LocalDateTime.now());
+        }
         return repository.save(registro);
     }
 
@@ -31,5 +35,9 @@ public class RegistroDeHidratacaoService {
 
     public void deletar(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<RegistroDeHidratacao> buscarPorAtletaId(Long atletaId) {
+        return repository.findByAtletaId(atletaId);
     }
 }
