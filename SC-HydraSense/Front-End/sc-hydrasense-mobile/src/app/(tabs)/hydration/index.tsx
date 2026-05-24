@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Dimensions, TextInput, Alert, Modal } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg'; // <-- Importação do SVG
@@ -6,6 +6,8 @@ import { Screen } from '../../../components/Screen';
 import { Header } from '../../../components/Header';
 import { styles } from './styles';
 import { theme } from '@/src/global/themas';
+import { useUser } from '../../../contexts/UserContext';
+import Constants from 'expo-constants';
 
 interface HydrationRecord {
   id: string;
@@ -22,44 +24,125 @@ const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function Hydration() {
+  const { user } = useUser();
   const [consumed, setConsumed] = useState(0);
   const goal = 3000; // Meta: 3000ml
 
   const [history, setHistory] = useState<HydrationRecord[]>([]);
 
-  const handleAddWater = (amountToAdd: number, description: string = 'ÁGUA MINERAL') => {
-    setConsumed(prev => prev + amountToAdd);
-    const now = new Date();
-    const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  const fetchHydrationHistory = async () => {
+    if (!user?.id) return;
+    try {
+      const hostUri = Constants?.expoConfig?.hostUri;
+      const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+      const API_URL = `http://${ip}:8080`;
 
-    setHistory([{
-      id: Math.random().toString(),
-      amount: amountToAdd,
-      description,
-      time: timeString,
-    }, ...history]);
+      const response = await fetch(`${API_URL}/hidratacao/atleta/${user.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        
+        const mapped = data.map((item: any) => {
+          let timeString = '00:00';
+          if (item.dataHora) {
+            const d = new Date(item.dataHora);
+            if (!isNaN(d.getTime())) {
+              timeString = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+            }
+          }
+          return {
+            id: item.id.toString(),
+            amount: item.volume,
+            description: item.tipoFluido || 'ÁGUA MINERAL',
+            time: timeString,
+            dataHora: item.dataHora
+          };
+        });
+
+        // Filtrar apenas registros de hoje para o total e histórico hoje
+        const todayStr = new Date().toDateString();
+        const todayRecords = mapped.filter((item: any) => {
+          if (!item.dataHora) return false;
+          return new Date(item.dataHora).toDateString() === todayStr;
+        });
+
+        setHistory(todayRecords);
+        const totalToday = todayRecords.reduce((sum: number, item: any) => sum + item.amount, 0);
+        setConsumed(totalToday);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar histórico de hidratação:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHydrationHistory();
+  }, [user?.id]);
+
+  const handleAddWater = async (amountToAdd: number, description: string = 'ÁGUA MINERAL') => {
+    if (!user?.id) return;
+    try {
+      const hostUri = Constants?.expoConfig?.hostUri;
+      const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+      const API_URL = `http://${ip}:8080`;
+
+      const response = await fetch(`${API_URL}/hidratacao`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          volume: amountToAdd,
+          tipoFluido: description,
+          atleta: {
+            id: user.id
+          }
+        })
+      });
+
+      if (response.ok) {
+        fetchHydrationHistory();
+      } else {
+        Alert.alert('Erro', 'Não foi possível salvar o registro de água.');
+      }
+    } catch (error) {
+      console.error('Erro ao salvar água:', error);
+      Alert.alert('Erro de Conexão', 'Não foi possível comunicar com o servidor.');
+    }
   };
 
   const handleRemoveWater = (id: string, amountToRemove: number) => {
-      Alert.alert(
-        "Remover Registro",
-        "Tem certeza que deseja apagar este registro?",
-        [
-          { text: "Cancelar", style: "cancel" },
-          {
-            text: "Remover",
-            style: "destructive", // No iOS isso deixa o botão vermelho
-            onPress: () => {
-              // 1. Remove o item específico do histórico
-              setHistory(prevHistory => prevHistory.filter(item => item.id !== id));
+    Alert.alert(
+      "Remover Registro",
+      "Tem certeza que deseja apagar este registro?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Remover",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const hostUri = Constants?.expoConfig?.hostUri;
+              const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+              const API_URL = `http://${ip}:8080`;
 
-              // 2. Diminui o valor consumido (Math.max garante que não fique menor que 0)
-              setConsumed(prevConsumed => Math.max(0, prevConsumed - amountToRemove));
+              const response = await fetch(`${API_URL}/hidratacao/${id}`, {
+                method: 'DELETE'
+              });
+
+              if (response.ok) {
+                fetchHydrationHistory();
+              } else {
+                Alert.alert('Erro', 'Não foi possível remover o registro.');
+              }
+            } catch (error) {
+              console.error('Erro ao deletar registro:', error);
+              Alert.alert('Erro de Conexão', 'Não foi possível deletar.');
             }
           }
-        ]
-      );
-    };
+        }
+      ]
+    );
+  };
 
   // --- LÓGICA DO PREENCHIMENTO ---
   // Garante que o progresso não passe de 1 (100%)
@@ -75,14 +158,13 @@ export default function Hydration() {
   // Estados para o campo personalizado
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customAmount, setCustomAmount] = useState('');
-  // ... seus estados de consumed, history, customAmount, etc.
 
   // --- ESTADOS DE EDIÇÃO ---
   const [editingRecord, setEditingRecord] = useState<HydrationRecord | null>(null);
   const [editAmount, setEditAmount] = useState('');
 
   // --- LÓGICA DE SALVAR EDIÇÃO ---
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     const newAmount = parseInt(editAmount);
     
     // Validação básica
@@ -91,24 +173,37 @@ export default function Hydration() {
       return;
     }
 
-    if (editingRecord) {
-      // 1. Calcula a diferença (pode ser positiva ou negativa)
-      // Ex: Tinha 500, mudou para 200. A diferença é -300.
-      const difference = newAmount - editingRecord.amount;
+    if (editingRecord && user?.id) {
+      try {
+        const hostUri = Constants?.expoConfig?.hostUri;
+        const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+        const API_URL = `http://${ip}:8080`;
 
-      // 2. Atualiza a lista do histórico
-      setHistory(prevHistory => 
-        prevHistory.map(item => 
-          item.id === editingRecord.id 
-            ? { ...item, amount: newAmount } // Substitui o valor do item editado
-            : item // Mantém os outros iguais
-        )
-      );
+        const response = await fetch(`${API_URL}/hidratacao`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: parseInt(editingRecord.id, 10),
+            volume: newAmount,
+            tipoFluido: editingRecord.description,
+            atleta: {
+              id: user.id
+            }
+          })
+        });
 
-      // 3. Atualiza o total consumido somando a diferença
-      setConsumed(prevConsumed => Math.max(0, prevConsumed + difference));
+        if (response.ok) {
+          fetchHydrationHistory();
+        } else {
+          Alert.alert('Erro', 'Não foi possível atualizar o registro.');
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar registro:', error);
+        Alert.alert('Erro de Conexão', 'Não foi possível atualizar.');
+      }
 
-      // 4. Limpa e fecha o modal
       setEditingRecord(null);
       setEditAmount('');
     }
