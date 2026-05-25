@@ -18,6 +18,7 @@ import { styles } from './styles';
 import { router } from 'expo-router';
 import { Input } from '../components/Input';
 import { theme } from '../global/themas';
+import Constants from 'expo-constants';
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
@@ -35,26 +36,58 @@ export default function ForgotPasswordScreen() {
     setModalVisible(true);
   }
 
-  const handleResetPassword = () => {
-    const cleanEmail = email.trim();
+    const handleResetPassword = async () => {
+        const cleanEmail = email.trim();
 
-    if (!cleanEmail) {
-      showModal('Campo Obrigatório', 'Por favor, informe seu e-mail para recuperar a senha.');
-      return;
-    }
+        if (!cleanEmail) {
+            showModal('Campo Obrigatório', 'Por favor, informe seu e-mail para recuperar a senha.');
+            return;
+        }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
-      showModal('E-mail Inválido', 'Insira um formato de e-mail válido.');
-      return;
-    }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(cleanEmail)) {
+            showModal('E-mail Inválido', 'Insira um formato de e-mail válido.');
+            return;
+        }
 
-    showModal(
-      'Solicitação Enviada',
-      'Se este e-mail estiver em nossa base, você receberá instruções para redefinir sua senha em instantes.',
-      () => router.back()
-    );
-  };
+        try {
+            const hostUri = Constants?.expoConfig?.hostUri;
+            const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+            const API_URL = `http://${ip}:8080`;
+
+            const response = await fetch(`${API_URL}/auth/recuperar-senha/enviar-codigo`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: cleanEmail }),
+            });
+
+            if (!response.ok) {
+                showModal(
+                    'Erro',
+                    'Não foi possível enviar o código. Verifique o e-mail informado.'
+                );
+                return;
+            }
+
+            showModal(
+                'Código Enviado',
+                'Enviamos um código de verificação para o seu e-mail.',
+                () => router.push({
+                    pathname: './codigo_recuperacao',
+                    params: { email: cleanEmail },
+                })
+            );
+
+        } catch (error) {
+            console.log(error);
+            showModal(
+                'Erro de Conexão',
+                'Não foi possível conectar ao servidor.'
+            );
+        }
+    };
 
   return (
     <Screen bgImage={require('../assets/images/saocamilo.jpg')}
