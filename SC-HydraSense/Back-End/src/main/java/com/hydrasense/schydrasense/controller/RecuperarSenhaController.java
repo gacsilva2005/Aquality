@@ -1,6 +1,7 @@
 package com.hydrasense.schydrasense.controller;
 
 import com.hydrasense.schydrasense.dto.RecuperarSenhaRequestDTO;
+import com.hydrasense.schydrasense.dto.ValidarCodigoRequestDTO;
 import com.hydrasense.schydrasense.service.RecuperarSenhaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,5 +26,11 @@ public class RecuperarSenhaController {
         recuperarSenhaService.enviarCodigo(request.email());
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/validar-codigo")
+    public ResponseEntity<?> validarCodigo(@RequestBody ValidarCodigoRequestDTO request) {
+        recuperarSenhaService.validarCodigo(request.email(), request.codigo());
+        return ResponseEntity.ok("Código válido");
     }
 }
