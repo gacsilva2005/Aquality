@@ -50,4 +50,16 @@ public class RecuperarSenhaService {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    public boolean validarCodigo(String email, String codigo) {
+        CodigoRecuperacaoSenha registro = codigoRepository
+                .findTopByEmailAndCodigoAndUsadoFalseOrderByIdDesc(email, codigo)
+                .orElseThrow(() -> new RuntimeException("Código inválido"));
+
+        if (registro.getExpiracao().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Código expirado");
+        }
+
+        return true;
+    }
 }
