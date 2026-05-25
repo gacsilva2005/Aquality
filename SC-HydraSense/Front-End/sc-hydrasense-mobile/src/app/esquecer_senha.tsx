@@ -63,11 +63,13 @@ export default function ForgotPasswordScreen() {
                 body: JSON.stringify({ email: cleanEmail }),
             });
 
+            const respostaTexto = await response.text();
+
+            console.log("STATUS:", response.status);
+            console.log("RESPOSTA:", respostaTexto);
+
             if (!response.ok) {
-                showModal(
-                    'Erro',
-                    'Não foi possível enviar o código. Verifique o e-mail informado.'
-                );
+                showModal('Erro', 'Não foi possível enviar o código. Verifique o e-mail informado.');
                 return;
             }
 
