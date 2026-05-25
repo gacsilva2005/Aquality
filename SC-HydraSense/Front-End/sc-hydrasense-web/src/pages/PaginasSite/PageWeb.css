@@ -804,11 +804,6 @@
     border-color: var(--hydro-action);
 }
 
-.equipe-card.inativa {
-    background-color: #F4F5F7;
-    border-color: transparent;
-}
-
 .equipe-card-status-dot {
     position: absolute;
     top: 24px;
@@ -2678,4 +2673,231 @@
     .dashboard-filtros-inline {
         width: 100%;
     }
+}
+
+/* =========================================
+   MODAL ADICIONAR EQUIPE
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: transparent;
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-container {
+    background-color: #fff;
+    width: 450px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 24px;
+    position: relative;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #212529;
+    font-family: var(--font-display, 'Inter', sans-serif);
+    text-transform: uppercase;
+}
+
+.modal-header p {
+    margin: 6px 0 0 0;
+    font-size: 13px;
+    color: #495057;
+    font-family: var(--font-body, sans-serif);
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #212529;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-field label {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #343a40;
+    font-family: var(--font-body, sans-serif);
+    letter-spacing: 0.5px;
+}
+
+.modal-field input[type="text"],
+.modal-field select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #212529;
+    background-color: #ffffff;
+    font-family: var(--font-body, sans-serif);
+    outline: none;
+    box-sizing: border-box;
+}
+
+.modal-field input[type="text"]::placeholder {
+    color: #6c757d;
+}
+
+.modal-field select.is-placeholder {
+    color: #6c757d;
+}
+
+.modal-field select option {
+    color: #212529;
+}
+
+.modal-field input[type="text"]:focus,
+.modal-field select:focus {
+    border-color: #D90429;
+}
+
+.modal-access-box {
+    background-color: #f0f1f3;
+    padding: 16px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.modal-access-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #212529;
+    font-family: var(--font-body, sans-serif);
+    margin: 0;
+}
+
+.modal-radio-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.modal-radio-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #212529;
+    cursor: pointer;
+}
+
+.modal-radio-label input[type="radio"] {
+    accent-color: #D90429;
+    width: 16px;
+    height: 16px;
+}
+
+.modal-validation-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.modal-validation-group label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #343a40;
+    font-weight: 700;
+}
+
+.modal-validation-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.modal-validation-input-row input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+    background-color: #fff;
+}
+
+.modal-btn-validate {
+    padding: 0 16px;
+    background-color: #dee2e6;
+    color: #495057;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.modal-btn-validate:hover {
+    background-color: #ced4da;
+    color: #212529;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    align-items: center;
+}
+
+.modal-btn-cancel {
+    background: none;
+    border: none;
+    color: #212529;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: var(--font-body, sans-serif);
+}
+
+.btn-primary:disabled {
+    opacity: 1;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }

@@ -1,8 +1,38 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import teamLogo from '../../assets/icone_petala.png';
 
 export function Equipes() {
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [nomeEquipe, setNomeEquipe] = useState('');
+    const [esporteRef, setEsporteRef] = useState('');
+    const [codigoAcesso, setCodigoAcesso] = useState('gerar');
+    const [codigoFranquia, setCodigoFranquia] = useState('');
+    const [novasEquipes, setNovasEquipes] = useState<any[]>([]);
+
+    const handleCriarEquipe = () => {
+        if (!nomeEquipe || !esporteRef) return;
+        
+        const novaEquipe = {
+            id: Date.now(),
+            nome: nomeEquipe.toUpperCase(),
+            esporte: esporteRef,
+            atletas: 0,
+            aderencia: '0%',
+            suorMedio: '0L/h'
+        };
+        
+        setNovasEquipes([...novasEquipes, novaEquipe]);
+        
+        setNomeEquipe('');
+        setEsporteRef('');
+        setCodigoAcesso('gerar');
+        setCodigoFranquia('');
+        setIsModalOpen(false);
+    };
+
+    const isFormValid = nomeEquipe.trim() !== '' && esporteRef !== '';
 
     return (
         <>
@@ -14,7 +44,7 @@ export function Equipes() {
                         Visão geral de performance e aderência biométrica.
                     </p>
                 </div>
-                <button className="btn-primary equipes-btn-add">
+                <button className="btn-primary equipes-btn-add" onClick={() => setIsModalOpen(true)}>
                     ADICIONAR EQUIPE
                 </button>
             </header>
@@ -81,9 +111,9 @@ export function Equipes() {
                             </div>
                         </div>
 
-                        <div className="equipe-card inativa" onClick={() => navigate('/PageWeb/equipes/relatorio')}>
+                        <div className="equipe-card" onClick={() => navigate('/PageWeb/equipes/relatorio')}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                                <img src={teamLogo} alt="Logo Equipe" style={{ width: '32px', height: '32px', objectFit: 'contain', opacity: 0.6 }} />
+                                <img src={teamLogo} alt="Logo Equipe" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
                                 <h4 className="equipe-card-nome" style={{ margin: 0 }}>BASQUETE SUB-20</h4>
                             </div>
                             <p className="equipe-card-esporte">Esporte: Basquete</p>
@@ -103,6 +133,32 @@ export function Equipes() {
                                 </div>
                             </div>
                         </div>
+
+                        {novasEquipes.map((equipe) => (
+                            <div key={equipe.id} className="equipe-card" onClick={() => navigate('/PageWeb/equipes/relatorio')}>
+                                <div className="equipe-card-status-dot"></div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                                    <img src={teamLogo} alt="Logo Equipe" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                                    <h4 className="equipe-card-nome" style={{ margin: 0 }}>{equipe.nome}</h4>
+                                </div>
+                                <p className="equipe-card-esporte">Esporte: {equipe.esporte}</p>
+
+                                <div className="equipe-card-stats">
+                                    <div className="equipe-stat-item">
+                                        <p>ATLETAS</p>
+                                        <p>{equipe.atletas}</p>
+                                    </div>
+                                    <div className="equipe-stat-item">
+                                        <p>ADERÊNCIA</p>
+                                        <p className="critico">{equipe.aderencia}</p>
+                                    </div>
+                                    <div className="equipe-stat-item">
+                                        <p>SUOR MÉDIO</p>
+                                        <p>{equipe.suorMedio}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
 
                     </div>
                 </section>
@@ -165,6 +221,99 @@ export function Equipes() {
                     </div>
                 </aside>
             </div>
+
+            {/* MODAL ADICIONAR EQUIPE */}
+            {isModalOpen && (
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="modal-container" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>ADICIONAR EQUIPE</h2>
+                            <p>Configure os parâmetros do novo grupo de atletas.</p>
+                            <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>&times;</button>
+                        </div>
+                        
+                        <div className="modal-body">
+                            <div className="modal-field">
+                                <label>NOME DA EQUIPE</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Ex: Seleção Principal" 
+                                    value={nomeEquipe}
+                                    onChange={e => setNomeEquipe(e.target.value)}
+                                />
+                            </div>
+                            
+                            <div className="modal-field">
+                                <label>ESPORTE DE REFERÊNCIA</label>
+                                <select 
+                                    className={esporteRef === '' ? 'is-placeholder' : ''}
+                                    value={esporteRef} 
+                                    onChange={e => setEsporteRef(e.target.value)}
+                                >
+                                    <option value="" disabled>Selecione um esporte</option>
+                                    <option value="Futebol de Campo">Futebol de Campo</option>
+                                    <option value="Basquete">Basquete</option>
+                                    <option value="Vôlei">Vôlei</option>
+                                    <option value="Corrida">Corrida</option>
+                                </select>
+                            </div>
+                            
+                            <div className="modal-access-box">
+                                <h3 className="modal-access-title">CÓDIGO DE ACESSO</h3>
+                                <div className="modal-radio-group">
+                                    <label className="modal-radio-label">
+                                        <input 
+                                            type="radio" 
+                                            name="codigoAcesso" 
+                                            value="gerar"
+                                            checked={codigoAcesso === 'gerar'}
+                                            onChange={() => setCodigoAcesso('gerar')}
+                                        />
+                                        Gerar Novo Código
+                                    </label>
+                                    <label className="modal-radio-label">
+                                        <input 
+                                            type="radio" 
+                                            name="codigoAcesso" 
+                                            value="existente"
+                                            checked={codigoAcesso === 'existente'}
+                                            onChange={() => setCodigoAcesso('existente')}
+                                        />
+                                        Inserir Código Existente
+                                    </label>
+                                </div>
+                                
+                                <div className="modal-validation-group">
+                                    <label>CÓDIGO DA FRANQUIA/ORGANIZAÇÃO</label>
+                                    <div className="modal-validation-input-row">
+                                        <input 
+                                            type="text" 
+                                            placeholder="XYZ-9876" 
+                                            value={codigoFranquia}
+                                            onChange={e => setCodigoFranquia(e.target.value)}
+                                        />
+                                        <button className="modal-btn-validate">VALIDAR</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="modal-footer">
+                            <button className="modal-btn-cancel" onClick={() => setIsModalOpen(false)}>
+                                CANCELAR
+                            </button>
+                            <button 
+                                className="btn-primary"
+                                onClick={handleCriarEquipe}
+                                disabled={!isFormValid}
+                                style={{ padding: '12px 20px', fontSize: '12px' }}
+                            >
+                                CRIAR EQUIPE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
