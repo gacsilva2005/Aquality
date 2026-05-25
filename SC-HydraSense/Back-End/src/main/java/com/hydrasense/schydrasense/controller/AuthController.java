@@ -2,6 +2,8 @@ package com.hydrasense.schydrasense.controller;
 
 import com.hydrasense.schydrasense.model.LoginRequest;
 import com.hydrasense.schydrasense.service.AuthService;
+import com.hydrasense.schydrasense.dto.RecuperarSenhaRequestDTO;
+import com.hydrasense.schydrasense.service.RecuperarSenhaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
