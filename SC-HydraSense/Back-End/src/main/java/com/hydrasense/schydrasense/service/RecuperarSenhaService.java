@@ -1,5 +1,14 @@
 package com.hydrasense.schydrasense.service;
 
+import com.hydrasense.schydrasense.model.CodigoRecuperacaoSenha;
+import com.hydrasense.schydrasense.repository.CodigoRecuperacaoSenhaRepository;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Random;
+
 @Service
 public class RecuperarSenhaService {
 
@@ -15,21 +24,30 @@ public class RecuperarSenhaService {
     }
 
     public void enviarCodigo(String email) {
-        String codigo = String.valueOf(new Random().nextInt(900000) + 100000);
+        try {
 
-        CodigoRecuperacaoSenha recuperacao = new CodigoRecuperacaoSenha();
-        recuperacao.setEmail(email);
-        recuperacao.setCodigo(codigo);
-        recuperacao.setExpiracao(LocalDateTime.now().plusMinutes(10));
-        recuperacao.setUsado(false);
+            String codigo = String.valueOf(new Random().nextInt(900000) + 100000);
 
-        codigoRepository.save(recuperacao);
+            CodigoRecuperacaoSenha recuperacao = new CodigoRecuperacaoSenha();
+            recuperacao.setEmail(email);
+            recuperacao.setCodigo(codigo);
+            recuperacao.setExpiracao(LocalDateTime.now().plusMinutes(10));
+            recuperacao.setUsado(false);
 
-        SimpleMailMessage mensagem = new SimpleMailMessage();
-        mensagem.setTo(email);
-        mensagem.setSubject("Código de recuperação de senha - HydraSense");
-        mensagem.setText("Seu código de recuperação é: " + codigo + "\n\nEle expira em 10 minutos.");
+            codigoRepository.save(recuperacao);
 
-        mailSender.send(mensagem);
+            SimpleMailMessage mensagem = new SimpleMailMessage();
+            mensagem.setTo(email);
+            mensagem.setSubject("Código de recuperação");
+            mensagem.setText("Seu código é: " + codigo);
+
+            mailSender.send(mensagem);
+
+            System.out.println("EMAIL ENVIADO COM SUCESSO");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
