@@ -16,7 +16,7 @@ public class AuthController {
 
     private final AuthService service;
 
-    public AuthController(AuthService service) {
+    public AuthController(AuthService service, RecuperarSenhaService recuperarSenhaService) {
         this.service = service;
     }
 
