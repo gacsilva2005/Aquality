@@ -14,22 +14,55 @@ export default function PesagemPreTreino() {
 
   const [pesoInput, setPesoInput] = useState('');
 
-  const handleConfirmarPeso = () => {
-    // Troca vírgula por ponto para evitar erros de cálculo
-    const pesoFormatado = pesoInput.replace(',', '.');
-    const pesoNumerico = parseFloat(pesoFormatado);
+    const handleConfirmarPeso = async () => {
 
-    if (!pesoInput || isNaN(pesoNumerico) || pesoNumerico <= 0) {
-      Alert.alert('Atenção', 'Por favor, insira um peso válido antes de iniciar o treino.');
-      return;
-    }
+        const pesoFormatado = pesoInput.replace(',', '.');
+        const pesoNumerico = parseFloat(pesoFormatado);
 
-    // Aqui você pode futuramente salvar o peso num Contexto ou AsyncStorage
-    console.log("Peso inicial registrado:", pesoNumerico);
+        if (!pesoInput || isNaN(pesoNumerico) || pesoNumerico <= 0) {
+            Alert.alert('Atenção', 'Por favor, insira um peso válido antes de iniciar o treino.');
+            return;
+        }
 
-    // Navega para a tela do cronômetro, repassando o tipo de treino
-    router.replace(`/treinoAtivo?type=${workoutType}`);
-  };
+        try {
+            const response = await fetch('http://localhost:8080/sessoes/iniciar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    atletaId: 1,
+                    modalidade: workoutType,
+                    pesoPreTreino: pesoNumerico,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao iniciar treino');
+            }
+
+            const sessao = await response.json();
+
+            console.log("Sessão criada:", sessao);
+
+            // Navega para o treino
+            router.replace({
+                pathname: '/treinoAtivo',
+                params: {
+                    type: workoutType,
+                    sessaoId: sessao.id.toString(),
+                },
+            });
+
+        } catch (error) {
+            console.error(error);
+
+            Alert.alert(
+                'Erro',
+                'Não foi possível iniciar o treino.'
+            );
+        }
+    };
 
   return (
     <Screen style={styles.container}>
