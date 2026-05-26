@@ -78,4 +78,8 @@ public class SessaoDeTreinoService {
 
         return repository.save(sessao);
     }
+
+    public List<SessaoDeTreino> listarPorAtleta(Long atletaId) {
+        return repository.findByAtletaId(atletaId);
+    }
 }
