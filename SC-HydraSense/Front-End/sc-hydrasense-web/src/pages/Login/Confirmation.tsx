@@ -22,7 +22,7 @@ export function Confirmation() {
                         />
 
                         <span className="confirmation-logo-text">
-                            HYDRASENSE
+                            AQUALITY
                         </span>
 
                     </div>

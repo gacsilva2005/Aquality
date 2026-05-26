@@ -144,7 +144,7 @@ export default function LoginScreen() {
       <View style={styles.headerSection}>
         <View style={styles.logoContainer}>
           <FontAwesome5 name="tint" size={16} color="#FFF" />
-          <Text style={styles.logoText}>HYDRASENSE</Text>
+          <Text style={styles.logoText}>AQUALITY</Text>
         </View>
 
         <Text style={styles.mainTitle}>PRECISÃO</Text>
@@ -222,7 +222,7 @@ export default function LoginScreen() {
 
         {/* Rodapé */}
         <View style={styles.footerRow}>
-          <Text style={styles.footerText}>Novo no HydroPerform? </Text>
+          <Text style={styles.footerText}>Novo no AQuality? </Text>
           <TouchableOpacity>
             <Text onPress={() => router.push('./cadastro')} style={styles.footerLink}>Criar cadastro</Text>
           </TouchableOpacity>

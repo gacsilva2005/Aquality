@@ -306,10 +306,10 @@ export default function AssistenteIA() {
         {/* Logo central */}
         <View style={styles.logoContainer}>
           <View style={styles.logoIconWrapper}>
-            <FontAwesome5 name="hospital" size={32} color={theme.colors.primary} />
+            <FontAwesome5 name="tint" size={32} color={theme.colors.primary} />
           </View>
-          <Text style={styles.logoSubtitle}>HOSPITAL</Text>
-          <Text style={styles.logoTitle}>SÃO CAMILO</Text>
+          <Text style={styles.logoSubtitle}>AQUALITY</Text>
+          <Text style={styles.logoTitle}>CO</Text>
         </View>
 
         {/* Mensagens */}

@@ -99,7 +99,7 @@ export default function ForgotPasswordScreen() {
       <View style={styles.headerSection}>
         <View style={styles.logoContainer}>
           <FontAwesome5 name="tint" size={16} color="#FFF" />
-          <Text style={styles.logoText}>HYDRASENSE</Text>
+          <Text style={styles.logoText}>AQUALITY</Text>
         </View>
 
         <Text style={styles.mainTitle}>RECUPERAR</Text>

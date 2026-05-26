@@ -21,8 +21,8 @@ export function HeaderPageWeb({ usuario, onPerfilClick, onMenuClick }: HeaderPag
                         <Menu size={22} />
                     </button>
                 )}
-                <img src={logo} alt="Logo HydraSense" className="hydro-header-logo-img" />
-                <h1 className="hydro-header-title">HydraSense</h1>
+                <img src={logo} alt="Logo AQuality" className="hydro-header-logo-img" />
+                <h1 className="hydro-header-title">AQuality</h1>
             </div>
             <nav>
                 <ul>
