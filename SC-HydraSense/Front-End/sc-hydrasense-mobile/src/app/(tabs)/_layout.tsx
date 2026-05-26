@@ -37,7 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="hydration/index"
         options={{
-          title: 'HYDRATAÇÃO',
+          title: 'HIDRATAÇÃO',
           tabBarIcon: ({ color }) => <FontAwesome5 name="tint" size={20} color={color} />,
         }}
       />

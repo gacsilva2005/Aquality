@@ -23,12 +23,9 @@ export function Header() {
           source={imageSource} 
           style={styles.avatar} 
         />
-        <Text style={styles.title}>HYDRASENSE</Text>
+        <Text style={styles.title}>AQUALITY</Text>
       </View>
 
-      <TouchableOpacity activeOpacity={0.7}>
-        <MaterialCommunityIcons name="cog-outline" size={24} color="#FFF" />
-      </TouchableOpacity>
     </View>
   );
 }

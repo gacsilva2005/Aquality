@@ -36,38 +36,21 @@ export default function TreinoFinalizado() {
         router.replace('/dashboard');
     };
 
-    // --- ANIMAÇÃO: ACENDER DAS LUZES (LIGHTS ON) ---
-    const themeAnimation = useRef(new Animated.Value(0)).current;
-
-    useEffect(() => {
-        Animated.timing(themeAnimation, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: false,
-        }).start();
-    }, []);
-
-    const animatedBackgroundColor = themeAnimation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['#0e0e0e', theme.colors.background] // Sai do preto e vai para o branco
-    });
 
     return (
-        <Animated.View style={{ flex: 1, backgroundColor: animatedBackgroundColor }}>
-            
             <Screen style={styles.container}>
                 
                 <Stack.Screen options={{ headerShown: false, animation: 'fade'}} />
 
                 <View style={styles.content}>
 
-                    <Animated.View style={[styles.iconContainer, { backgroundColor: animatedBackgroundColor }]}>
+                    <View style={styles.iconContainer}>
                         <MaterialCommunityIcons
                             name="check-circle-outline"
                             size={90}
                             color={theme.colors.primary}
                         />
-                    </Animated.View>
+                    </View>
 
                     <Text style={styles.title}>TREINO FINALIZADO!</Text>
                     <Text style={styles.subtitle}>
@@ -75,7 +58,7 @@ export default function TreinoFinalizado() {
                     </Text>
 
                     {/* --- ADICIONADO: CARDS DE RESUMO --- */}
-                    <Animated.View style={[styles.summaryCardsContainer, { backgroundColor: animatedBackgroundColor }]}>
+                    <View style={styles.summaryCardsContainer}>
                         {/* Card Tempo */}
                         <View style={styles.summaryCard}>
                             <View style={styles.cardHeader}>
@@ -100,10 +83,10 @@ export default function TreinoFinalizado() {
                                 <Text style={styles.cardValueSub}>L</Text>
                             </View>
                         </View>
-                    </Animated.View>
+                    </View>
                     {/* ---------------------------------- */}
 
-                    <Animated.View style={[styles.buttonsContainer, {backgroundColor: animatedBackgroundColor}]}>
+                    <View style={styles.buttonsContainer}>
                         <Button
                             onPress={handleRegistrarUrina}
                             title="REGISTRAR URINA"
@@ -124,7 +107,7 @@ export default function TreinoFinalizado() {
                             <Text style={styles.secondaryButtonText}>PULAR ETAPA</Text>
                             <MaterialCommunityIcons name="arrow-right" size={15} color={theme.colors.textSecondary} />
                         </TouchableOpacity>
-                    </Animated.View>
+                    </View>
 
                     <Text style={styles.footerText}>
                         SESSÃO GRAVADA • DATA LOG #676767
@@ -132,6 +115,6 @@ export default function TreinoFinalizado() {
 
                 </View>
             </Screen>
-        </Animated.View>
+        
     );
 }

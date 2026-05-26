@@ -31,7 +31,7 @@ export default function Dashboard() {
   const handleStartWorkout = (treinoSelecionado: string) => {
     setIsModalVisible(false);
     router.push({
-      pathname: '/treinoAtivo' as any,
+      pathname: '/pesagemPreTreino' as any,
       params: { type: treinoSelecionado }
     });
   };
@@ -57,6 +57,11 @@ export default function Dashboard() {
     }
     buscarDadosDaAPI();
   }, []);
+
+  const handleUrinaClick = () => {
+    console.log("Sessão encerrada");
+    router.replace('./urineColor');
+  };
 
   return (
     <Screen

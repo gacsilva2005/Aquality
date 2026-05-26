@@ -8,6 +8,7 @@ import { styles } from './styles';
 import { theme } from '@/src/global/themas';
 import { useUser } from '../../../contexts/UserContext';
 import Constants from 'expo-constants';
+import { router } from 'expo-router';
 
 interface HydrationRecord {
   id: string;
@@ -209,6 +210,12 @@ export default function Hydration() {
     }
   };
 
+  const handleRegistrarUrina = () => {
+          // Futuramente, aqui vai navegar para a tela de registro de urina
+          console.log("Navegar para registro de urina");
+          router.push('/urineColor' as any);
+      };
+
   return (
     <View style={{flex : 1}}>
       <Screen backgroundColor="#FAFAFA" scrollable={true} HeaderComponent={<Header />}>
@@ -316,7 +323,9 @@ export default function Hydration() {
               <Text style={styles.cardTitle}>FISIOLÓGICO</Text>
               <MaterialCommunityIcons name="flask-outline" size={20} color={theme.colors.primary} />
             </View>
-            <TouchableOpacity style={styles.urineButton}>
+            <TouchableOpacity style={styles.urineButton}
+              onPress={handleRegistrarUrina}
+            >
               <Text style={styles.urineButtonText}>REGISTRAR URINA</Text>
             </TouchableOpacity>
           </View>
