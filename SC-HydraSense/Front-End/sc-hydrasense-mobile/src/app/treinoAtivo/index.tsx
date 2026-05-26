@@ -106,8 +106,8 @@ export default function TreinoAtivo() {
                         };
                     }
 
-                    const response = await fetch(`${API_URL}/sessoes-de-treino`, {
-                        method: 'POST',
+                        const response = await fetch(`${API_URL}/sessoes-de-treino/${sessaoId}/finalizar`, {
+                            method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
                         },
