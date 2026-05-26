@@ -57,8 +57,6 @@ export default function PesagemPreTreino() {
                 throw new Error('Erro ao iniciar treino');
             }
 
-            const sessao = await response.json();
-
             console.log("Sessão criada:", sessao);
 
             // Navega para o treino
