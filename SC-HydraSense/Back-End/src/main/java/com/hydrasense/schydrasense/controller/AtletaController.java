@@ -4,7 +4,9 @@ import com.hydrasense.schydrasense.dto.AtletaRequestDTO;
 import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.dto.LoginDTO;
 import com.hydrasense.schydrasense.model.Atleta;
+import com.hydrasense.schydrasense.model.SessaoDeTreino;
 import com.hydrasense.schydrasense.service.AtletaService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,5 +53,10 @@ public class AtletaController {
     @PostMapping
     public Atleta cadastrar(@RequestBody AtletaRequestDTO request) {
         return service.cadastrar(request);
+    }
+
+    @GetMapping("/atleta/{id}")
+    public ResponseEntity<List<SessaoDeTreino>> listarPorAtleta(@PathVariable Long id) {
+        return ResponseEntity.ok(service.listarPorAtleta(id));
     }
 }

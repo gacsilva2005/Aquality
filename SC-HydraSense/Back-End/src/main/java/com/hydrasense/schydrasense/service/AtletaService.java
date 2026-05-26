@@ -4,8 +4,10 @@ import com.hydrasense.schydrasense.dto.AtletaRequestDTO;
 import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.Clube;
+import com.hydrasense.schydrasense.model.SessaoDeTreino;
 import com.hydrasense.schydrasense.repository.AtletaRepository;
 import com.hydrasense.schydrasense.repository.ClubeRepository;
+import com.hydrasense.schydrasense.repository.SessaoDeTreinoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,10 +24,12 @@ public class AtletaService {
 
     private final AtletaRepository repository;
     private final ClubeRepository clubeRepository;
+    private final SessaoDeTreinoRepository sessaoDeTreinoRepository;
 
-    public AtletaService(AtletaRepository repository, ClubeRepository clubeRepository) {
+    public AtletaService(AtletaRepository repository, ClubeRepository clubeRepository,SessaoDeTreinoRepository sessaoDeTreinoRepository) {
         this.repository = repository;
         this.clubeRepository = clubeRepository;
+        this.sessaoDeTreinoRepository = sessaoDeTreinoRepository;
     }
 
     private String gerarCodigo() {
@@ -139,5 +143,9 @@ public class AtletaService {
                     return repository.save(atleta);
                 })
                 .orElseThrow(() -> new RuntimeException("Atleta não encontrado"));
+    }
+
+    public List<SessaoDeTreino> listarPorAtleta(Long atletaId) {
+        return sessaoDeTreinoRepository.findByAtletaId(atletaId);
     }
 }

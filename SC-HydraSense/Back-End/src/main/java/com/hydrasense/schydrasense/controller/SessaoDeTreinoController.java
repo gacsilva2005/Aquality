@@ -36,4 +36,11 @@ public class SessaoDeTreinoController {
     ) {
         return ResponseEntity.ok(service.iniciarTreino(dto));
     }
+
+    @GetMapping("/atleta/{atletaId}")
+    public ResponseEntity<List<SessaoDeTreino>> listarPorAtleta(
+            @PathVariable Long atletaId
+    ) {
+        return ResponseEntity.ok(service.listarPorAtleta(atletaId));
+    }
 }
