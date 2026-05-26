@@ -6,6 +6,7 @@ import { styles } from './styles';
 import { theme } from '@/src/global/themas';
 import { Screen } from '../../components/Screen';
 import { Button } from '@/src/components/Button';
+import Constants from 'expo-constants';
 
 export default function PesagemPreTreino() {
   // Captura o tipo de treino se você estiver passando pelo router.push('/pesagemPreTreino?type=Corrida')
@@ -25,7 +26,12 @@ export default function PesagemPreTreino() {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/sessoes/iniciar', {
+            const hostUri = Constants?.expoConfig?.hostUri;
+            const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+            const API_URL = `http://${ip}:8080`;
+
+            console.log("URL:", `${API_URL}/sessoes-de-treino/iniciar`);
+            const response = await fetch(`${API_URL}/sessoes-de-treino/iniciar`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
