@@ -23,7 +23,10 @@ const getWorkoutIcon = (type: string) => {
 };
 
 export default function TreinoAtivo() {
-    const { type } = useLocalSearchParams<{ type: string }>();
+    const { type, sessaoId } = useLocalSearchParams<{
+        type: string;
+        sessaoId: string;
+    }>();
     const { user } = useUser();
     const [startTime] = useState(() => new Date());
     const workoutType = type || 'Treino Livre';
