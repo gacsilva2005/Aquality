@@ -16,6 +16,7 @@ export default function Cadastro() {
 
   const [nome, setNome] = useState('');
   const [idade, setIdade] = useState('');
+  const [sexo, setSexo] = useState('');
   const [peso, setPeso] = useState('');
   const [altura, setAltura] = useState('');
   const [time, setTime] = useState('');
@@ -34,6 +35,10 @@ export default function Cadastro() {
     // 2. Validações
     if (!nome.trim()) {
       novosErros.nome = 'Preencha o nome completo.';
+    }
+
+    if (!sexo.trim()) {
+      novosErros.sexo = 'Informe o sexo.';
     }
 
     // Validação de E-mail (verifica se tem @ e .)
@@ -88,6 +93,7 @@ export default function Cadastro() {
 
       const atletaPayload = {
         nome: nome.trim(),
+        sexo: sexo.trim(),
         email: email.trim(),
         senha: senha.trim(),
         dataNascimento: dataNascimentoStr,
@@ -212,6 +218,58 @@ export default function Cadastro() {
           keyboardType="numeric"
           errorMessage={erros.idade}
         />
+
+        {/* --- CAMPO SEXO BIOLÓGICO (Checkboxes) --- */}
+        <View style={styles.genderContainer}>
+          <Text style={styles.genderLabel}>SEXO BIOLÓGICO</Text>
+
+          <View style={styles.checkboxRow}>
+            {/* Opção Masculino */}
+            <TouchableOpacity
+              style={styles.checkboxItem}
+              activeOpacity={0.7}
+              onPress={() => {
+                setSexo('Masculino');
+                setErros((prev) => ({ ...prev, sexo: '' })); // Limpa o erro ao clicar
+              }}
+            >
+              <Checkbox
+                value={sexo === 'Masculino'}
+                onValueChange={() => {
+                  setSexo('Masculino');
+                  setErros((prev) => ({ ...prev, sexo: '' }));
+                }}
+                color={sexo === 'Masculino' ? theme.colors.primary : undefined}
+                style={styles.checkbox}
+              />
+              <Text style={styles.checkboxText}>Masculino</Text>
+            </TouchableOpacity>
+
+            {/* Opção Feminino */}
+            <TouchableOpacity
+              style={styles.checkboxItem}
+              activeOpacity={0.7}
+              onPress={() => {
+                setSexo('Feminino');
+                setErros((prev) => ({ ...prev, sexo: '' })); // Limpa o erro ao clicar
+              }}
+            >
+              <Checkbox
+                value={sexo === 'Feminino'}
+                onValueChange={() => {
+                  setSexo('Feminino');
+                  setErros((prev) => ({ ...prev, sexo: '' }));
+                }}
+                color={sexo === 'Feminino' ? theme.colors.primary : undefined}
+                style={styles.checkbox}
+              />
+              <Text style={styles.checkboxText}>Feminino</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Exibição da mensagem de erro caso o usuário tente avançar sem preencher */}
+          {erros.sexo ? <Text style={styles.errorText}>{erros.sexo}</Text> : null}
+        </View>
 
         <Text style={styles.sectionTitle}>PERFIL FÍSICO</Text>
 

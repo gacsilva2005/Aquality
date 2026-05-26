@@ -37,21 +37,21 @@ export default function TreinoAtivo() {
     const [manualInputValue, setManualInputValue] = useState('');
 
     useEffect(() => {
-      // Pedimos para o TS pegar o tipo de retorno exato da função nativa
-      let interval: ReturnType<typeof setInterval>; 
+        // Pedimos para o TS pegar o tipo de retorno exato da função nativa
+        let interval: ReturnType<typeof setInterval>;
 
-      if (isActive) {
-          interval = setInterval(() => {
-              setSeconds((prev) => prev + 1);
-          }, 1000);
-      }
-      
-      // Colocamos um 'if' por segurança, para ele só limpar se o intervalo existir
-      return () => {
-          if (interval) clearInterval(interval);
-      };
-  }, [isActive]);
-    
+        if (isActive) {
+            interval = setInterval(() => {
+                setSeconds((prev) => prev + 1);
+            }, 1000);
+        }
+
+        // Colocamos um 'if' por segurança, para ele só limpar se o intervalo existir
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [isActive]);
+
     // --- ANIMAÇÃO DO BOTÃO ENCERRAR ---
     // Começa em 0 (vazio)
     const fillAnimation = useRef(new Animated.Value(0)).current;
@@ -78,7 +78,7 @@ export default function TreinoAtivo() {
             // Se a animação chegou até o final (o usuário não soltou o dedo)
             if (finished) {
                 const endTime = new Date();
-                
+
                 try {
                     const hostUri = Constants?.expoConfig?.hostUri;
                     const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
@@ -120,13 +120,8 @@ export default function TreinoAtivo() {
                     console.error('Erro de conexão ao salvar treino:', error);
                 }
 
-                router.replace({
-                    pathname: './treinoFinalizado' as any,
-                    params: {
-                        seconds: seconds.toString(),
-                        water: waterConsumed.toString()
-                    }
-                });
+                // Passamos tudo direto na string da URL (como num navegador de internet)
+                router.replace(`./pesagemPosTreino?type=${workoutType}&seconds=${seconds}&water=${waterConsumed}`);
             }
         });
     };

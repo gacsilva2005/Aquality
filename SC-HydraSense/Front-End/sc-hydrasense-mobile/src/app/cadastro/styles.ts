@@ -46,5 +46,43 @@ export const styles = StyleSheet.create({
     color: '#666',
     fontSize: 14,
     textDecorationLine: 'underline',
-  }
+  },
+  
+  genderContainer: {
+    marginBottom: 20,
+    width: '100%',
+  },
+  genderLabel: {
+    fontFamily: theme.fonts.bodyBold, // Ou a fonte bold que você usa nos outros labels
+    fontSize: 12,
+    color: '#888', // Mesma cor dos outros labels
+    marginBottom: 10,
+    letterSpacing: 1,
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 24, // Espaço entre a opção Masculino e Feminino
+  },
+  checkboxItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+    // borderRadius: 10, // Descomente esta linha se quiser que o checkbox fique REDONDO (estilo Radio Button)
+  },
+  checkboxText: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 14,
+    color: theme.colors.textPrimary,
+  },
+  errorText: {
+    color: '#FF4D4D', // O mesmo tom de vermelho que você usa para erros
+    fontSize: 12,
+    marginTop: 6,
+    fontFamily: theme.fonts.bodyBold,
+  },
 });
