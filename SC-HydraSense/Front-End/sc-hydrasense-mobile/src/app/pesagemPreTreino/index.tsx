@@ -43,6 +43,16 @@ export default function PesagemPreTreino() {
                 }),
             });
 
+            const texto = await response.text();
+
+            console.log("STATUS:", response.status);
+            if (!response.ok) {
+                Alert.alert('Erro', 'Não foi possível iniciar o treino.');
+                return;
+            }
+
+            const sessao = JSON.parse(texto);
+
             if (!response.ok) {
                 throw new Error('Erro ao iniciar treino');
             }
