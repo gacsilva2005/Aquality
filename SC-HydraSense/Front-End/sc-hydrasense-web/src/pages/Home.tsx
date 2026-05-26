@@ -82,7 +82,7 @@ export function Home() {
       localStorage.setItem("usuarioLogado", JSON.stringify(dados.usuario));
 
       if (dados.tipo === "profissional") {
-        success('Login Realizado!', 'Bem-vindo ao painel HydraSense.');
+        success('Login Realizado!', 'Bem-vindo ao painel AQuality.');
         setUser(dados.usuario);
         setTimeout(() => navigate("/PageWeb"), 1500);
       } else if (dados.tipo === "atleta") {
@@ -111,7 +111,7 @@ export function Home() {
         {/* Logo Superior Esquerdo */}
         <div className="logo-section">
           <Droplet size={24} color="#FFFFFF" fill="#FFFFFF" />
-          <span className="logo-text">HYDRA SENSE</span>
+          <span className="logo-text">AQUALITY</span>
         </div>
 
         {/* Rodapé Centralizado e na Base */}
@@ -197,7 +197,7 @@ export function Home() {
             </div>
 
             <p className="signup-prompt">
-              Novo no Hydra Sense?
+              Novo no AQuality?
               <span onClick={() => navigate('/registro')} style={{ cursor: 'pointer' }}> Solicitar acesso ao Painel</span>
             </p>
           </form>

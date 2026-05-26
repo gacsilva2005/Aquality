@@ -76,7 +76,7 @@ export function Code() {
 
                     <div className="code-logo">
                         <Droplet size={28} fill="#111111" color="#111111" />
-                        <span className="code-logo-text">HYDRASENSE</span>
+                        <span className="code-logo-text">AQUALITY</span>
                     </div>
 
                     <h1 className="code-title">

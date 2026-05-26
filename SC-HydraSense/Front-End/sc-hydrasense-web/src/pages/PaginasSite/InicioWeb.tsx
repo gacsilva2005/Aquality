@@ -24,7 +24,7 @@ export function InicioWeb() {
             {/* === CABEÇALHO DE BOAS-VINDAS === */}
             <header className="onboarding-header">
                 <h1 className="onboarding-title">
-                    Bem-vindo ao Hydrasense, <span>{nomeProfissional}</span>!
+                    Bem-vindo ao AQuality, <span>{nomeProfissional}</span>!
                 </h1>
                 <p className="onboarding-subtitle">
                     Seu centro de comando para monitoramento avançado de hidratação e performance esportiva.

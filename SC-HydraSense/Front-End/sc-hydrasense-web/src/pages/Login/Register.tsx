@@ -65,7 +65,7 @@ export function Register() {
       <aside className="painel-lateral">
         <div className="lateral-topo">
           <h2 className="lateral-titulo">SÃO CAMILO WEB</h2>
-          <span className="lateral-subtitulo">HYDRO SENSE PROTOCOLO V4.0</span>
+          <span className="lateral-subtitulo">AQUALITY PROTOCOLO V4.0</span>
         </div>
 
         <div className="lateral-meio">

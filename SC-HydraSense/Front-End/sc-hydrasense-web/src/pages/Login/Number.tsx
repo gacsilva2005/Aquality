@@ -129,7 +129,7 @@ export function Number() {
                         />
 
                         <span className="number-logo-text">
-                            HYDRASENSE
+                            AQUALITY
                         </span>
 
                     </div>

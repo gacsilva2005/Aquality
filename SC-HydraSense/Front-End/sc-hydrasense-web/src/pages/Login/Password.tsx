@@ -37,7 +37,7 @@ export function Password() {
 
                     <div className="password-logo">
                         <Droplet size={28} fill="#111111" color="#111111" />
-                        <span className="password-logo-text">HYDRASENSE</span>
+                        <span className="password-logo-text">AQUALITY</span>
                     </div>
 
                     <h1 className="password-title">

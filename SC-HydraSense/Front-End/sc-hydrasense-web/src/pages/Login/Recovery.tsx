@@ -25,7 +25,7 @@ export function Recovery() {
 
                     <div className="recovery-logo">
                         <Droplet size={28} fill="#111111" color="#111111" />
-                        <span className="recovery-logo-text">HYDRASENSE</span>
+                        <span className="recovery-logo-text">AQUALITY</span>
                     </div>
 
                     <h1 className="recovery-title">
