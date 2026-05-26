@@ -1,6 +1,11 @@
 package com.hydrasense.schydrasense.service;
 
+import com.hydrasense.schydrasense.dto.IniciarTreinoDTO;
+import com.hydrasense.schydrasense.model.Atleta;
+import com.hydrasense.schydrasense.model.RegistroDoPeso;
 import com.hydrasense.schydrasense.model.SessaoDeTreino;
+import com.hydrasense.schydrasense.repository.AtletaRepository;
+import com.hydrasense.schydrasense.repository.RegistroDoPesoRepository;
 import com.hydrasense.schydrasense.repository.SessaoDeTreinoRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +16,17 @@ import java.util.Optional;
 public class SessaoDeTreinoService {
 
     private final SessaoDeTreinoRepository repository;
+    private final AtletaRepository atletaRepository;
+    private final RegistroDoPesoRepository pesoRepository;
 
-    public SessaoDeTreinoService(SessaoDeTreinoRepository repository) {
-        this.repository = repository;
+    public SessaoDeTreinoService(
+            SessaoDeTreinoRepository sessaoRepository,
+            AtletaRepository atletaRepository,
+            RegistroDoPesoRepository pesoRepository
+    ) {
+        this.repository = sessaoRepository;
+        this.atletaRepository = atletaRepository;
+        this.pesoRepository = pesoRepository;
     }
 
     public SessaoDeTreino salvar(SessaoDeTreino sessao) {
@@ -43,5 +56,26 @@ public class SessaoDeTreinoService {
                     return repository.save(sessao);
                 })
                 .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
+    }
+
+    public SessaoDeTreino iniciarTreino(IniciarTreinoDTO dto) {
+
+        Atleta atleta = atletaRepository.findById(dto.atletaId())
+                .orElseThrow(() -> new RuntimeException("Atleta não encontrado"));
+
+        RegistroDoPeso pesagemPre = new RegistroDoPeso();
+        pesagemPre.setPeso(dto.pesoPreTreino());
+
+        pesoRepository.save(pesagemPre);
+
+        SessaoDeTreino sessao = new SessaoDeTreino();
+
+        sessao.setAtleta(atleta);
+        sessao.setModalidade(dto.modalidade());
+        sessao.setPesagemPre(pesagemPre);
+
+        sessao.iniciarTreino();
+
+        return repository.save(sessao);
     }
 }

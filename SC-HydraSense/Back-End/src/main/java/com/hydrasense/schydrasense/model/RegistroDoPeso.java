@@ -15,4 +15,5 @@ public class RegistroDoPeso {
 
     private Float pesoKg;
     private LocalDateTime dataHora;
+    private Float peso;
 }

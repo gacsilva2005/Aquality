@@ -6,6 +6,7 @@ import { styles } from './styles';
 import { theme } from '@/src/global/themas';
 import { Screen } from '../../components/Screen';
 import { Button } from '@/src/components/Button';
+import Constants from 'expo-constants';
 
 export default function PesagemPreTreino() {
   // Captura o tipo de treino se você estiver passando pelo router.push('/pesagemPreTreino?type=Corrida')
@@ -14,22 +15,68 @@ export default function PesagemPreTreino() {
 
   const [pesoInput, setPesoInput] = useState('');
 
-  const handleConfirmarPeso = () => {
-    // Troca vírgula por ponto para evitar erros de cálculo
-    const pesoFormatado = pesoInput.replace(',', '.');
-    const pesoNumerico = parseFloat(pesoFormatado);
+    const handleConfirmarPeso = async () => {
 
-    if (!pesoInput || isNaN(pesoNumerico) || pesoNumerico <= 0) {
-      Alert.alert('Atenção', 'Por favor, insira um peso válido antes de iniciar o treino.');
-      return;
-    }
+        const pesoFormatado = pesoInput.replace(',', '.');
+        const pesoNumerico = parseFloat(pesoFormatado);
 
-    // Aqui você pode futuramente salvar o peso num Contexto ou AsyncStorage
-    console.log("Peso inicial registrado:", pesoNumerico);
+        if (!pesoInput || isNaN(pesoNumerico) || pesoNumerico <= 0) {
+            Alert.alert('Atenção', 'Por favor, insira um peso válido antes de iniciar o treino.');
+            return;
+        }
 
-    // Navega para a tela do cronômetro, repassando o tipo de treino
-    router.replace(`/treinoAtivo?type=${workoutType}`);
-  };
+        try {
+            const hostUri = Constants?.expoConfig?.hostUri;
+            const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+            const API_URL = `http://${ip}:8080`;
+
+            console.log("URL:", `${API_URL}/sessoes-de-treino/iniciar`);
+            const response = await fetch(`${API_URL}/sessoes-de-treino/iniciar`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    atletaId: 1,
+                    modalidade: workoutType,
+                    pesoPreTreino: pesoNumerico,
+                }),
+            });
+
+            const texto = await response.text();
+
+            console.log("STATUS:", response.status);
+            if (!response.ok) {
+                Alert.alert('Erro', 'Não foi possível iniciar o treino.');
+                return;
+            }
+
+            const sessao = JSON.parse(texto);
+
+            if (!response.ok) {
+                throw new Error('Erro ao iniciar treino');
+            }
+
+            console.log("Sessão criada:", sessao);
+
+            // Navega para o treino
+            router.replace({
+                pathname: '/treinoAtivo',
+                params: {
+                    type: workoutType,
+                    sessaoId: sessao.id.toString(),
+                },
+            });
+
+        } catch (error) {
+            console.error(error);
+
+            Alert.alert(
+                'Erro',
+                'Não foi possível iniciar o treino.'
+            );
+        }
+    };
 
   return (
     <Screen style={styles.container}>
