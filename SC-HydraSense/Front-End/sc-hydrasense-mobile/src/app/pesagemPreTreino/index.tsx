@@ -7,11 +7,13 @@ import { theme } from '@/src/global/themas';
 import { Screen } from '../../components/Screen';
 import { Button } from '@/src/components/Button';
 import Constants from 'expo-constants';
+import { useUser } from '../../contexts/UserContext';
 
 export default function PesagemPreTreino() {
   // Captura o tipo de treino se você estiver passando pelo router.push('/pesagemPreTreino?type=Corrida')
   const { type } = useLocalSearchParams<{ type: string }>();
   const workoutType = type || 'Treino Livre';
+    const { user } = useUser();
 
   const [pesoInput, setPesoInput] = useState('');
 
@@ -22,6 +24,11 @@ export default function PesagemPreTreino() {
 
         if (!pesoInput || isNaN(pesoNumerico) || pesoNumerico <= 0) {
             Alert.alert('Atenção', 'Por favor, insira um peso válido antes de iniciar o treino.');
+            return;
+        }
+
+        if (!user?.id) {
+            Alert.alert('Erro', 'Usuário não encontrado. Faça login novamente.');
             return;
         }
 
@@ -37,7 +44,7 @@ export default function PesagemPreTreino() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    atletaId: 1,
+                    atletaId: user.id,
                     modalidade: workoutType,
                     pesoPreTreino: pesoNumerico,
                 }),
