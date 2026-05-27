@@ -1,10 +1,13 @@
 package com.hydrasense.schydrasense.config;
 
+import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.Clube;
+import com.hydrasense.schydrasense.repository.AtletaRepository;
 import com.hydrasense.schydrasense.repository.ClubeRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,9 +15,11 @@ import java.util.List;
 public class DataSeeder implements CommandLineRunner {
 
     private final ClubeRepository clubeRepository;
+    private final AtletaRepository atletaRepository;
 
-    public DataSeeder(ClubeRepository clubeRepository) {
+    public DataSeeder(ClubeRepository clubeRepository, AtletaRepository atletaRepository) {
         this.clubeRepository = clubeRepository;
+        this.atletaRepository = atletaRepository;
     }
 
     @Override
@@ -35,6 +40,29 @@ public class DataSeeder implements CommandLineRunner {
 
             clubeRepository.saveAll(clubesIniciais);
             System.out.println("DataSeeder: 10 Clubes inseridos com sucesso no banco de dados.");
+        }
+
+        if (atletaRepository.findByEmail("dev").isEmpty()) {
+            Clube clubeDev = clubeRepository.findAll().stream().findFirst().orElse(null);
+            if (clubeDev == null) {
+                clubeDev = new Clube("Juventus", "JUVE-2024");
+                clubeDev = clubeRepository.save(clubeDev);
+            }
+
+            Atleta devAtleta = new Atleta();
+            devAtleta.setNome("Desenvolvedor Dev");
+            devAtleta.setEmail("dev");
+            devAtleta.setSenha("dev");
+            devAtleta.setDataNascimento(LocalDate.of(2000, 1, 1));
+            devAtleta.setModalidadePrincipal("Corrida");
+            devAtleta.setPesoAtual(75.0);
+            devAtleta.setAltura(1.75f);
+            devAtleta.setClube(clubeDev);
+            devAtleta.setAtivado(true);
+            devAtleta.setCodigoAcesso("123456");
+
+            atletaRepository.save(devAtleta);
+            System.out.println("DataSeeder: Usuário dev/dev criado com sucesso no banco de dados.");
         }
     }
 }
