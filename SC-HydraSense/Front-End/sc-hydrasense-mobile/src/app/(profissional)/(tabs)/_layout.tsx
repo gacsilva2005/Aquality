@@ -1,6 +1,6 @@
 // src/app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
-import { FontAwesome5, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5 , Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { theme } from '../../../global/themas';
 
 export default function TabLayout() {
@@ -33,21 +33,21 @@ export default function TabLayout() {
         }}
       />
 
-      {/* 2º - Hydration */}
+      {/* 2º - Teams */}
       <Tabs.Screen
-        name="hydration/index"
+        name="teams/index"
         options={{
-          title: 'HIDRATAÇÃO',
-          tabBarIcon: ({ color }) => <FontAwesome5 name="tint" size={20} color={color} />,
+          title: 'EQUIPES',
+          tabBarIcon: ({ color }) => <FontAwesome name="group" size={20} color={color} />,
         }}
       />
 
       {/* 3º - Performance */}
       <Tabs.Screen
-        name="performance/index"
+        name="athletes/index"
         options={{
-          title: 'PERFORMANCE',
-          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="lightning-bolt-outline" size={30} color={color} />,
+          title: 'ATLETAS',
+          tabBarIcon: ({ color }) => <FontAwesome5 name="dumbbell" size={20} color={color} />,
         }}
       />
 
