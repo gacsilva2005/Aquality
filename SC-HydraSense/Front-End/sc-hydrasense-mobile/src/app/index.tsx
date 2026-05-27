@@ -11,6 +11,7 @@ import {
   ScrollView,
   Alert
 } from 'react-native';
+import { ModalTipoCadastro } from '../components/modalTipoCadastro'; // Atualizado
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Screen } from '../components/Screen';
@@ -26,12 +27,15 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen() {
-    const { setUser } = useUser();
+  const { setUser } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [carregando, setCarregando] = useState(false);
+
+  // --- ESTADO DO MODAL DE CADASTRO ---
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [biometryPrompted, setBiometryPrompted] = useState(false);
 
@@ -79,7 +83,7 @@ export default function LoginScreen() {
     // === ATALHO PARA DESENVOLVIMENTO (Ignora o Backend) ===
     if (__DEV__ && loginEmail.trim() === 'dev' && loginPassword === 'dev') {
       console.log('Bypass de Login Ativado (Modo Dev)!');
-      router.replace('/(tabs)/dashboard');
+      router.replace('/(atleta)/(tabs)/dashboard'); // Rota atualizada com o caminho correto
       return;
     }
 
@@ -119,11 +123,11 @@ export default function LoginScreen() {
 
       const dados = await response.json();
 
-        console.log('Login validado com sucesso!', dados);
+      console.log('Login validado com sucesso!', dados);
 
-        setUser(dados);
+      setUser(dados);
 
-        router.replace('/(tabs)/dashboard');
+      router.replace('/(atleta)/(tabs)/dashboard'); // Rota atualizada
     } catch (error) {
       console.error(error);
       Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique sua rede.');
@@ -137,9 +141,15 @@ export default function LoginScreen() {
   };
 
   return (
-    <Screen bgImage={require('../assets/images/saocamilo.jpg')}
-      backgroundColor="#4A0E17">
-
+    <Screen 
+      bgImage={require('../assets/images/logo.png')}
+      backgroundColor="#4A0E17"
+      // Aqui controlamos a posição e tamanho sem esticar!
+      imageStyle={{ 
+        height: 500,          
+        transform: [{ translateY: -20 }], 
+      }} 
+    >
       {/* === CABEÇALHO ESCURO === */}
       <View style={styles.headerSection}>
         <View style={styles.logoContainer}>
@@ -189,12 +199,12 @@ export default function LoginScreen() {
             <Checkbox
               value={rememberMe}
               onValueChange={setRememberMe}
-              color={rememberMe ? theme.colors.primary : '#4A4A4A'}
+              color={rememberMe ? theme.colors.primary : undefined}
               style={styles.checkbox}
             />
             <Text style={styles.checkboxLabel}>Lembrar sessão</Text>
           </View>
-          <TouchableOpacity onPress={() => router.push('./esquecer_senha')}>
+          <TouchableOpacity onPress={() => router.push('/fluxoSenha/esquecer_senha')}>
             <Text style={styles.forgotPassword}>ESQUECI MINHA SENHA</Text>
           </TouchableOpacity>
         </View>
@@ -223,10 +233,18 @@ export default function LoginScreen() {
         {/* Rodapé */}
         <View style={styles.footerRow}>
           <Text style={styles.footerText}>Novo no AQuality? </Text>
-          <TouchableOpacity>
-            <Text onPress={() => router.push('./cadastro')} style={styles.footerLink}>Criar cadastro</Text>
+
+          {/* MUDANÇA AQUI: Abrindo o modal ao invés de navegar direto */}
+          <TouchableOpacity onPress={() => setIsModalVisible(true)}>
+            <Text style={styles.footerLink}>Criar cadastro</Text>
           </TouchableOpacity>
         </View>
+
+        {/* --- MODAL DE ESCOLHA DE CADASTRO --- */}
+        <ModalTipoCadastro
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+        />
       </View>
     </Screen>
   );
