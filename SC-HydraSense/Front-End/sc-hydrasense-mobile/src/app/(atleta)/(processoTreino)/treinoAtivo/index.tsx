@@ -105,26 +105,19 @@ export default function TreinoAtivo() {
                             }
                         };
                     }
-
-                        const response = await fetch(`${API_URL}/sessoes-de-treino/${sessaoId}/finalizar`, {
-                            method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        console.error('Erro ao salvar sessão de treino no servidor:', response.status);
-                    } else {
-                        console.log('Sessão de treino salva com sucesso!');
-                    }
                 } catch (error) {
                     console.error('Erro de conexão ao salvar treino:', error);
                 }
 
-                // Passamos tudo direto na string da URL (como num navegador de internet)
-                router.replace(`./pesagemPosTreino?type=${workoutType}&seconds=${seconds}&water=${waterConsumed}`);
+                router.replace({
+                    pathname: '/pesagemPosTreino',
+                    params: {
+                        sessaoId,
+                        type: workoutType,
+                        seconds: seconds.toString(),
+                        water: waterConsumed.toString(),
+                    },
+                });
             }
         });
     };
