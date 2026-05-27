@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Animated } from 'react-native';
-import { router, Stack } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
+import Constants from 'expo-constants';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { theme } from '@/src/global/themas';
@@ -9,9 +10,14 @@ import { Button } from '@/src/components/Button';
 
 export default function PesagemPosTreino() {
     const [pesoInput, setPesoInput] = useState('');
+    const { sessaoId, type, seconds, water } = useLocalSearchParams<{
+        sessaoId: string;
+        type: string;
+        seconds: string;
+        water: string;
+    }>();
 
-    const handleConfirmarPeso = () => {
-        // Troca vírgula por ponto para evitar erros
+    const handleConfirmarPeso = async () => {
         const pesoFormatado = pesoInput.replace(',', '.');
         const pesoNumerico = parseFloat(pesoFormatado);
 
@@ -20,11 +26,49 @@ export default function PesagemPosTreino() {
             return;
         }
 
-        // Futuramente, aqui você salva o peso final e aciona o cálculo da taxa de sudorese
-        console.log("Peso final registrado:", pesoNumerico);
+        if (!sessaoId) {
+            Alert.alert('Erro', 'Sessão de treino não encontrada.');
+            return;
+        }
 
-        // Navega para a tela de resumo final (Treino Finalizado)
-        router.replace('/treinoFinalizado');
+        try {
+            const hostUri = Constants?.expoConfig?.hostUri;
+            const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+            const API_URL = `http://${ip}:8080`;
+
+            const response = await fetch(`${API_URL}/sessoes-de-treino/${sessaoId}/pesagem-pos`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    pesoPosTreino: pesoNumerico,
+                }),
+            });
+
+            const texto = await response.text();
+
+            if (!response.ok) {
+                console.log('Erro backend:', texto);
+                Alert.alert('Erro', 'Não foi possível registrar a pesagem pós-treino.');
+                return;
+            }
+
+            router.replace({
+                pathname: '/treinoFinalizado',
+                params: {
+                    sessaoId,
+                    type,
+                    seconds,
+                    water,
+                    pesoPosTreino: pesoNumerico.toString(),
+                },
+            });
+
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
+        }
     };
 
     // --- ANIMAÇÃO: ACENDER DAS LUZES (LIGHTS ON) ---

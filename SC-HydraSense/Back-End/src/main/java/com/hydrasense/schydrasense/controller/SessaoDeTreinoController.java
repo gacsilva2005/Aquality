@@ -1,6 +1,7 @@
 package com.hydrasense.schydrasense.controller;
 
 import com.hydrasense.schydrasense.dto.IniciarTreinoDTO;
+import com.hydrasense.schydrasense.dto.PesagemPosTreinoDTO;
 import com.hydrasense.schydrasense.model.SessaoDeTreino;
 import com.hydrasense.schydrasense.service.SessaoDeTreinoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,18 @@ public class SessaoDeTreinoController {
             @PathVariable Long atletaId
     ) {
         return ResponseEntity.ok(service.listarPorAtleta(atletaId));
+    }
+
+    @PutMapping("/{sessaoId}/pesagem-pos")
+    public ResponseEntity<SessaoDeTreino> registrarPesagemPos(
+            @PathVariable Long sessaoId,
+            @RequestBody PesagemPosTreinoDTO dto
+    ) {
+        return ResponseEntity.ok(service.registrarPesagemPos(sessaoId, dto));
+    }
+
+    @GetMapping("/{sessaoId}")
+    public ResponseEntity<SessaoDeTreino> buscarPorId(@PathVariable Long sessaoId) {
+        return ResponseEntity.ok(service.buscarPorId(sessaoId));
     }
 }
