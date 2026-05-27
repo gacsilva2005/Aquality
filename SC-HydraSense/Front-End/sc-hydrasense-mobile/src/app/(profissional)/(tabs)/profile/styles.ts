@@ -9,37 +9,6 @@ export const styles = StyleSheet.create({
     paddingBottom: 20,
     flex: 1,
   },
-  content: {
-    padding: 20,
-    marginTop: 10,
-  },
-  cardRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  card: {
-    backgroundColor: '#fff',
-    width: '48%',
-    padding: 15,
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardLabel: {
-    fontFamily: theme.fonts.bodyRegular,
-    fontSize: 12,
-    color: theme.colors.textLight,
-  },
-  cardValue: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 18,
-    color: theme.colors.primary,
-    marginTop: 5,
-  },
   titleContainer: {
     paddingHorizontal: 20,
     marginTop: 10,
@@ -61,60 +30,6 @@ export const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 30,
   },
-  inputContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 14,
-    color: theme.colors.textBrown,
-    marginBottom: 8,
-  },
-  inputValue: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 22,
-    color: theme.colors.textSecondary,
-  },
-  inputObservation: {
-    fontFamily: theme.fonts.bodyRegular,
-    fontSize: 10,
-    color: theme.colors.primary,
-    marginTop: 6,
-    textTransform: 'uppercase',
-  },
-  genderContainer: {
-    paddingHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 30,
-  },
-  genderRow: {
-    flexDirection: 'row',
-    gap: 15,
-    marginTop: 10,
-  },
-  genderButton: {
-    flex: 1,
-    height: 55,
-    backgroundColor: '#FFF',
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  genderButtonSelected: {
-    borderColor: theme.colors.primary,
-    borderWidth: 2,
-  },
-  genderText: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 14,
-    color: theme.colors.textLight,
-  },
-  genderTextSelected: {
-    color: theme.colors.primary,
-  },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -127,6 +42,11 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.headingBold,
     fontSize: 20,
     color: theme.colors.textPrimary,
+  },
+  sectionTitleProfissional: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 14,
+    color: theme.colors.textSecondary,
   },
   editButton: {
     flexDirection: 'row',
@@ -146,18 +66,6 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.bodyBold,
     fontSize: 12,
     color: theme.colors.primary,
-  },
-  inputBox: {
-    height: 65,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    overflow: 'hidden',
-  },
-  inputElement: {
-    flex: 1,
-    paddingHorizontal: 15,
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 26,
   },
   inputLocked: {
     backgroundColor: '#F0F0F0',
@@ -214,7 +122,7 @@ export const styles = StyleSheet.create({
   },
   photoSubtitle: {
     fontFamily: theme.fonts.bodyRegular,
-    fontSize: 12,
+    fontSize: 14,
     color: theme.colors.textBrown,
     marginTop: 2,
   },
@@ -245,7 +153,7 @@ export const styles = StyleSheet.create({
   },
   infoValue: {
     fontFamily: theme.fonts.headingBold,
-    fontSize: 18,
+    fontSize: 15,
     color: theme.colors.textPrimary,
     textTransform: 'uppercase',
   },
@@ -264,4 +172,43 @@ export const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
+  // --- ESTILOS DOS CARDS DE PERFIL ---
+  perfilContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    gap: 12, // Espaço entre os cards
+  },
+  perfilCard: {
+    flex: 1, // Faz os três cards dividirem o espaço igualmente
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: 'transparent', // Transparente por padrão
+    // Efeito de sombra leve
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  perfilCardActive: {
+    borderColor: theme.colors.primary, // Borda fica vermelha quando selecionado
+    backgroundColor: '#FFFFFF', 
+  },
+  perfilText: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 11, // Fonte pequenininha para caber na caixa
+    color: '#333333',
+    marginTop: 10,
+  },
+  perfilCardLocked: {
+    backgroundColor: '#F0F0F0', // Fundo cinza para mostrar que está bloqueado
+    elevation: 0, // Tira a sombra para parecer "desativado"
+  },
+  
 });
