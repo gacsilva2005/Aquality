@@ -10,7 +10,7 @@ import Checkbox from 'expo-checkbox';
 import { theme } from '../../global/themas';
 import { InputCadastro } from '../../components/InputCadastro';
 import { styles } from './styles';
-
+ 
 export default function Cadastro() {
   const router = useRouter();
 
