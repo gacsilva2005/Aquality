@@ -37,6 +37,8 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="assistenteIA/assistente" options={{ headerShown: false }} />
         <Stack.Screen name="urineColor" options={{ headerShown: false }} />
+          <Stack.Screen name="codigo_recuperacao" options={{ headerShown: false }} />
+          <Stack.Screen name="redefinir_senha" options={{ headerShown: false }} />
       </Stack>
     </UserProvider>
   );
