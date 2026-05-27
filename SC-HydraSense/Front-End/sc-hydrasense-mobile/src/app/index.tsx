@@ -80,13 +80,6 @@ export default function LoginScreen() {
   };
 
   const performLogin = async (loginEmail: string, loginPassword: string) => {
-    // === ATALHO PARA DESENVOLVIMENTO (Ignora o Backend) ===
-    if (__DEV__ && loginEmail.trim() === 'dev' && loginPassword === 'dev') {
-      console.log('Bypass de Login Ativado (Modo Dev)!');
-      router.replace('/(atleta)/(tabs)/dashboard'); // Rota atualizada com o caminho correto
-      return;
-    }
-
     const cleanEmail = loginEmail.trim();
     const cleanPassword = loginPassword.trim();
 
@@ -96,7 +89,7 @@ export default function LoginScreen() {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
+    if (cleanEmail !== 'dev' && !emailRegex.test(cleanEmail)) {
       Alert.alert('E-mail Inválido', 'Por favor, insira um formato de e-mail válido (ex: atleta@performance.com).');
       return;
     }
