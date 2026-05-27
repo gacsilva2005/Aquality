@@ -138,7 +138,7 @@ export default function PinVerificationScreen() {
           <Feather name="arrow-left" size={24} color="#FFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>SEGURANÇA</Text>
-        <View style={{ width: 24 }} /> {/* Espaçador para centralizar o texto */}
+        <View style={{ width: 24 }} />
       </View>
 
       <KeyboardAvoidingView 
