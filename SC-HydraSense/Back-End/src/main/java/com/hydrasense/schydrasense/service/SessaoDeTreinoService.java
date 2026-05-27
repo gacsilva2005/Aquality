@@ -38,8 +38,9 @@ public class SessaoDeTreinoService {
         return repository.findAll();
     }
 
-    public Optional<SessaoDeTreino> buscarPorId(Long id) {
-        return repository.findById(id);
+    public SessaoDeTreino buscarPorId(Long sessaoId) {
+        return repository.findById(sessaoId)
+                .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
     }
 
     public void deletar(Long id) {
