@@ -1,6 +1,7 @@
 package com.hydrasense.schydrasense.service;
 
 import com.hydrasense.schydrasense.dto.IniciarTreinoDTO;
+import com.hydrasense.schydrasense.dto.PesagemPosTreinoDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.RegistroDoPeso;
 import com.hydrasense.schydrasense.model.SessaoDeTreino;
@@ -75,6 +76,24 @@ public class SessaoDeTreinoService {
         sessao.setPesagemPre(pesagemPre);
 
         sessao.iniciarTreino();
+
+        return repository.save(sessao);
+    }
+
+    public SessaoDeTreino registrarPesagemPos(Long sessaoId, PesagemPosTreinoDTO dto) {
+
+        SessaoDeTreino sessao = repository.findById(sessaoId)
+                .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
+
+        RegistroDoPeso pesagemPos = new RegistroDoPeso();
+
+        pesagemPos.setPeso(dto.getPesoPosTreino());
+
+        pesoRepository.save(pesagemPos);
+
+        sessao.setPesagemPos(pesagemPos);
+
+        sessao.finalizarTreino();
 
         return repository.save(sessao);
     }
