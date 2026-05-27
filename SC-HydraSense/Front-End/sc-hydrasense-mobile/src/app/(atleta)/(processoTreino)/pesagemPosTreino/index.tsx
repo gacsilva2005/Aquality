@@ -10,6 +10,12 @@ import { Button } from '@/src/components/Button';
 
 export default function PesagemPosTreino() {
     const [pesoInput, setPesoInput] = useState('');
+    const { sessaoId, type, seconds, water } = useLocalSearchParams<{
+        sessaoId: string;
+        type: string;
+        seconds: string;
+        water: string;
+    }>();
 
     const handleConfirmarPeso = () => {
         // Troca vírgula por ponto para evitar erros
