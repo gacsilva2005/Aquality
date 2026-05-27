@@ -1,13 +1,13 @@
-// app/_layout.tsx
 import { Stack } from "expo-router";
 import { useFonts } from 'expo-font';
 import { Inter_400Regular, Inter_500Medium, Inter_700Bold } from '@expo-google-fonts/inter';
 import { SpaceGrotesk_400Regular, SpaceGrotesk_700Bold } from '@expo-google-fonts/space-grotesk';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { UserProvider } from "../contexts/UserContext";
 
-// Segura a tela de splash enquanto as fontes baixam
+// Use o atalho @/ para evitar problemas de caminho (../)
+import { UserProvider } from "@/src/contexts/UserContext"; 
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -31,15 +31,8 @@ export default function RootLayout() {
 
   return (
     <UserProvider>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="esquecer_senha" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="assistenteIA/assistente" options={{ headerShown: false }} />
-        <Stack.Screen name="urineColor" options={{ headerShown: false }} />
-          <Stack.Screen name="codigo_recuperacao" options={{ headerShown: false }} />
-          <Stack.Screen name="redefinir_senha" options={{ headerShown: false }} />
-      </Stack>
+      {/* Esconde o cabeçalho para TUDO que estiver na raiz (login, cadastro, etc) */}
+      <Stack screenOptions={{ headerShown: false }} />
     </UserProvider>
   );
 }
