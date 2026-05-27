@@ -1,4 +1,3 @@
-// src/app/(tabs)/profile/index.tsx
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
 import { Screen } from '../../../../components/Screen';
@@ -13,7 +12,7 @@ import { Divider } from '@/src/components/Divider';
 import { useUser } from '../../../../contexts/UserContext';
 import Constants from "expo-constants";
 
-export default function Profile() {
+export default function ProfileProfissional() {
     const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
 
@@ -24,54 +23,30 @@ export default function Profile() {
         setProfileImage
     } = useUser();
 
-    const [weight, setWeight] = useState(
-        user?.pesoAtual?.toString() || ''
-    );
+    // --- ESTADOS ESPECÍFICOS DO PROFISSIONAL ---
+    const [perfil, setPerfil] = useState(''); 
+    const [email, setEmail] = useState(user?.email || '');
+    const [registro, setRegistro] = useState(user?.registroProfissional || '');
+    const [especialidade, setEspecialidade] = useState(user?.tipoProfissional || '');
+    const [instituicao, setInstituicao] = useState(user?.instituicao || '');
 
-    const [height, setHeight] = useState(
-        user?.altura?.toString() || ''
-    );
-
-    const calcularIdade = (dataNascimento: string) => {
-        const hoje = new Date();
-        const nascimento = new Date(dataNascimento);
-
-        let idade = hoje.getFullYear() - nascimento.getFullYear();
-
-        const mes = hoje.getMonth() - nascimento.getMonth();
-
-        if (
-            mes < 0 ||
-            (mes === 0 && hoje.getDate() < nascimento.getDate())
-        ) {
-            idade--;
-        }
-
-        return idade.toString();
+    // Função para selecionar o perfil e limpar o erro
+    const handleSelectPerfil = (tipo: string) => {
+        setPerfil(tipo);
     };
 
-    const [age, setAge] = useState(
-        user?.dataNascimento
-            ? calcularIdade(user.dataNascimento)
-            : ''
-    );
-    const [gender, setGender] = useState<'M' | 'F' | null>('M');
-    const [time, setTime] = useState(
-        user?.modalidade || ''
-    );
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
-    }
-  };
+        if (!result.canceled) {
+            setProfileImage(result.assets[0].uri);
+        }
+    };
 
     const handleSave = async () => {
         try {
@@ -79,7 +54,7 @@ export default function Profile() {
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
             const API_URL = `http://${ip}:8080`;
 
-            const response = await fetch(`${API_URL}/Atleta/${user.id}`, {
+            const response = await fetch(`${API_URL}/Profissional/${user?.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -87,25 +62,22 @@ export default function Profile() {
                 body: JSON.stringify({
                     ...user,
                     nome: user?.nome,
-                    pesoAtual: Number(weight),
-                    altura: Number(height),
+                    email: email,
+                    registroProfissional: registro,
+                    tipoProfissional: especialidade,
+                    instituicao: instituicao
                 }),
             });
-
-            const responseText = await response.text();
-
-            console.log('STATUS:', response.status);
-            console.log('RESPOSTA:', responseText);
 
             if (!response.ok) {
                 Alert.alert('Erro', 'Não foi possível atualizar o perfil');
                 return;
             }
 
+            const responseText = await response.text();
             const updatedUser = JSON.parse(responseText);
 
             setUser(updatedUser);
-
             Alert.alert('Sucesso', 'Perfil atualizado!');
             setIsEditing(false);
 
@@ -115,167 +87,209 @@ export default function Profile() {
         }
     };
 
-  const handleLogout = () => {
-    console.log("Sessão encerrada");
-    router.replace('/');
-  };
+    const handleLogout = () => {
+        console.log("Sessão encerrada");
+        router.replace('/');
+    };
 
-  return (
-    <Screen
-      backgroundColor={theme.colors.background}
-      scrollable={true}
-      HeaderComponent={<Header/>}
-    >
-      <View style={styles.mainContent}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleLine}>SEU</Text>
-          <Text style={styles.titleLine}>PERFIL</Text>
-        </View>
-
-        <Text style={styles.description}>
-          Gerencie seus parâmetros fisiológicos e equipamentos para cálculos precisos de taxa de suor.
-        </Text>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>CONFIGURAÇÕES PESSOAIS</Text>
-          <TouchableOpacity
-            onPress={isEditing ? handleSave : () => setIsEditing(true)}
-            style={styles.editButton}
-          >
-            <MaterialCommunityIcons
-              name={isEditing ? "check-circle" : "pencil-circle"}
-              size={24}
-              color={isEditing ? "#27ae60" : theme.colors.primary}
-            />
-            <Text style={[styles.editText, isEditing && { color: "#27ae60" }]}>
-              {isEditing ? "SALVAR" : "EDITAR"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.photoSection}>
-          <View style={styles.photoContainer}>
-            <Image
-              source={profileImage ? { uri: profileImage } : require('../../../../assets/images/logo.png')}
-              style={styles.profilePhoto}
-            />
-            {isEditing && (
-              <TouchableOpacity
-                style={styles.changePhotoButton}
-                onPress={pickImage}
-              >
-                <MaterialCommunityIcons name="camera-flip" size={20} color="#FFF" />
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.photoTextContainer}>
-            {isEditing ? (
-                <TextInput
-                    style={[styles.photoTitle, styles.nameInput]}
-                    value={user?.nome || ''}
-                    onChangeText={(text) =>
-                        setUser({
-                            ...user!,
-                            nome: text,
-                        })
-                    }
-                autoFocus
-                placeholder="SEU NOME"
-                autoCorrect={false}
-                spellCheck={false}
-                autoCapitalize="characters"
-              />
-            ) : (
-                <Text style={styles.photoTitle}>{user?.nome}</Text>
-            )}
-            <Text style={styles.photoSubtitle}>
-              {isEditing ? "Toque no ícone para alterar" : "Clique em EDITAR para mudar"}
-            </Text>
-          </View>
-        </View>
-
-        <InputProfile
-          label="PESO ATUAL (KG)"
-          value={weight}
-          onChangeText={setWeight}
-          editable={isEditing}
-          placeholder='Ex: 70'
-          observation="USE SEMPRE A MESMA BALANÇA"
-          style={isEditing ? styles.inputUnlocked : styles.inputLocked}
-        />
-
-        <InputProfile
-          label="ALTURA (CM)"
-          value={height}
-          onChangeText={setHeight}
-          editable={isEditing}
-          placeholder="Ex: 170"
-          style={isEditing ? styles.inputUnlocked : styles.inputLocked}
-        />
-
-        <InputProfile
-          label="IDADE"
-          value={age}
-          onChangeText={setAge}
-          editable={isEditing}
-          placeholder="Ex: 30"
-          style={isEditing ? styles.inputUnlocked : styles.inputLocked}
-        />
-
-        <View style={[styles.genderContainer, !isEditing && { opacity: 0.5 }]}>
-          <Text style={styles.inputLabel}>SEXO BIOLÓGICO</Text>
-          <View style={styles.genderRow}>
-            <TouchableOpacity
-              disabled={!isEditing}
-              style={[styles.genderButton, gender === 'M' && styles.genderButtonSelected]}
-              onPress={() => setGender('M')}
-            >
-              <Text style={[styles.genderText, gender === 'M' && styles.genderTextSelected]}>
-                MASCULINO
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              disabled={!isEditing}
-              style={[styles.genderButton, gender === 'F' && styles.genderButtonSelected]}
-              onPress={() => setGender('F')}
-            >
-              <Text style={[styles.genderText, gender === 'F' && styles.genderTextSelected]}>
-                FEMININO
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <Divider text="INFORMAÇÕES PROFISSIONAIS" />
-
-        <View style={styles.professionalContainer}>
-          <View style={styles.infoCard}>
-            <Text style={styles.infoLabel}>EQUIPE (ORGANIZAÇÃO)</Text>
-              <Text style={styles.infoValue}>
-                  {user?.clube?.nome || 'Sem equipe'}
-              </Text>
-          </View>
-
-          <View style={styles.infoCard}>
-            <Text style={styles.infoLabel}>TIME (CATEGORIA)</Text>
-            <Text style={styles.infoValue}>{time}</Text>
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={handleLogout}
-          activeOpacity={0.7}
+    return (
+        <Screen
+            backgroundColor={theme.colors.background}
+            scrollable={true}
+            HeaderComponent={<Header />}
         >
-          <MaterialCommunityIcons
-            name="logout-variant"
-            size={22}
-            color={theme.colors.primary}
-          />
-          <Text style={styles.logoutText}>ENCERRAR SESSÃO</Text>
-        </TouchableOpacity>
-      </View>
-    </Screen>
-  );
+            <View style={styles.mainContent}>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.titleLine}>SEU</Text>
+                    <Text style={styles.titleLine}>PERFIL</Text>
+                </View>
+
+                <Text style={styles.description}>
+                    Gerencie suas credenciais de acesso, registro profissional e vínculos institucionais.
+                </Text>
+
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>DADOS DA CONTA</Text>
+                    <TouchableOpacity
+                        onPress={isEditing ? handleSave : () => setIsEditing(true)}
+                        style={styles.editButton}
+                    >
+                        <MaterialCommunityIcons
+                            name={isEditing ? "check-circle" : "pencil-circle"}
+                            size={24}
+                            color={isEditing ? "#27ae60" : theme.colors.primary}
+                        />
+                        <Text style={[styles.editText, isEditing && { color: "#27ae60" }]}>
+                            {isEditing ? "SALVAR" : "EDITAR"}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* --- FOTO E NOME --- */}
+                <View style={styles.photoSection}>
+                    <View style={styles.photoContainer}>
+                        <Image
+                            source={profileImage ? { uri: profileImage } : require('../../../../assets/images/logo.png')}
+                            style={styles.profilePhoto}
+                        />
+                        {isEditing && (
+                            <TouchableOpacity
+                                style={styles.changePhotoButton}
+                                onPress={pickImage}
+                            >
+                                <MaterialCommunityIcons name="camera-flip" size={20} color="#FFF" />
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                    <View style={styles.photoTextContainer}>
+                        {isEditing ? (
+                            <TextInput
+                                style={[styles.photoTitle, styles.nameInput]}
+                                value={user?.nome || ''}
+                                onChangeText={(text) =>
+                                    setUser({
+                                        ...user!,
+                                        nome: text,
+                                    })
+                                }
+                                autoFocus
+                                placeholder="SEU NOME"
+                                autoCorrect={false}
+                                spellCheck={false}
+                                autoCapitalize="words"
+                            />
+                        ) : (
+                            <Text style={styles.photoTitle}>{user?.nome || 'Profissional'}</Text>
+                        )}
+                        <Text style={styles.photoSubtitle}>
+                            {isEditing ? "Toque no ícone para alterar" : "Clique em EDITAR para mudar"}
+                        </Text>
+                    </View>
+                </View>
+
+                {/* --- INPUTS DO PROFISSIONAL --- */}
+                <InputProfile
+                    label="ENDEREÇO DE E-MAIL"
+                    value={email}
+                    onChangeText={setEmail}
+                    editable={isEditing}
+                    placeholder="exemplo@clinica.com"
+                    style={isEditing ? styles.inputUnlocked : styles.inputLocked}
+                />
+
+                <InputProfile
+                    label="REGISTRO PROFISSIONAL (CRN/CRM/CREF)"
+                    value={registro}
+                    onChangeText={setRegistro}
+                    editable={isEditing}
+                    placeholder="Ex: 123456-SP"
+                    autoCapitalize="characters"
+                    style={isEditing ? styles.inputUnlocked : styles.inputLocked}
+                />
+
+                {/* --- CAIXAS DE SELEÇÃO DE PERFIL --- */}
+
+                <Text style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitleProfissional}>TIPO DE PROFISSIONAL</Text>
+                </Text>
+                <View style={[styles.perfilContainer, !isEditing && { opacity: 0.7 }]}>
+                    {/* Nutricionista */}
+                    <TouchableOpacity
+                        disabled={!isEditing} // <-- O SEGREDO ESTÁ AQUI
+                        style={[
+                            styles.perfilCard, 
+                            perfil === 'Nutricionista' && styles.perfilCardActive,
+                            !isEditing && styles.perfilCardLocked // <-- Adiciona estilo extra quando bloqueado
+                        ]}
+                        onPress={() => handleSelectPerfil('Nutricionista')}
+                        activeOpacity={0.7}
+                    >
+                        <MaterialCommunityIcons
+                            name="silverware-fork-knife"
+                            size={32}
+                            color={perfil === 'Nutricionista' ? '#1A1A1A' : '#888'}
+                        />
+                        <Text style={styles.perfilText}>Nutricionista</Text>
+                    </TouchableOpacity>
+
+                    {/* Treinador */}
+                    <TouchableOpacity
+                        disabled={!isEditing} // Bloqueia o clique se não estiver editando
+                        style={[
+                            styles.perfilCard, 
+                            perfil === 'Treinador' && styles.perfilCardActive,
+                            !isEditing && styles.perfilCardLocked 
+                        ]}
+                        onPress={() => handleSelectPerfil('Treinador')}
+                        activeOpacity={0.7}
+                    >
+                        <MaterialCommunityIcons
+                            name="dumbbell"
+                            size={32}
+                            color={perfil === 'Treinador' ? '#1A1A1A' : '#888'}
+                        />
+                        <Text style={styles.perfilText}>Treinador</Text>
+                    </TouchableOpacity>
+
+                    {/* Médico */}
+                    <TouchableOpacity
+                        disabled={!isEditing} // Bloqueia o clique se não estiver editando
+                        style={[
+                            styles.perfilCard, 
+                            perfil === 'Médico' && styles.perfilCardActive,
+                            !isEditing && styles.perfilCardLocked
+                        ]}
+                        onPress={() => handleSelectPerfil('Médico')}
+                        activeOpacity={0.7}
+                    >
+                        <MaterialCommunityIcons
+                            name="stethoscope"
+                            size={32}
+                            color={perfil === 'Médico' ? '#1A1A1A' : '#888'}
+                        />
+                        <Text style={styles.perfilText}>Médico</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <Divider text="VÍNCULO INSTITUCIONAL" />
+
+                <View style={styles.professionalContainer}>
+                    <View style={styles.infoCard}>
+                        <Text style={styles.infoLabel}>INSTITUIÇÃO OU CLUBE</Text>
+                        {isEditing ? (
+                            <TextInput 
+                                style={[styles.infoValue, { borderBottomWidth: 1, borderColor: '#CCC', paddingBottom: 4 }]}
+                                value={instituicao}
+                                onChangeText={setInstituicao}
+                                placeholder="Digite a instituição..."
+                            />
+                        ) : (
+                            <Text style={styles.infoValue}>{instituicao || 'Não informado'}</Text>
+                        )}
+                    </View>
+
+                    <View style={styles.infoCard}>
+                        <Text style={styles.infoLabel}>CÓDIGO DE ACESSO DA EQUIPE</Text>
+                        {/* Esse dado costuma ser gerado pelo sistema, então mantemos fixo para visualização */}
+                        <Text style={[styles.infoValue, { color: theme.colors.primary }]}>
+                            {user?.codigoEquipe || 'SQUAD-2026-X'}
+                        </Text>
+                    </View>
+                </View>
+
+                <TouchableOpacity
+                    style={styles.logoutButton}
+                    onPress={handleLogout}
+                    activeOpacity={0.7}
+                >
+                    <MaterialCommunityIcons
+                        name="logout-variant"
+                        size={22}
+                        color={theme.colors.primary}
+                    />
+                    <Text style={styles.logoutText}>ENCERRAR SESSÃO</Text>
+                </TouchableOpacity>
+            </View>
+        </Screen>
+    );
 }
