@@ -100,6 +100,7 @@ public class SessaoDeTreinoService {
 
             hidratacao.setVolume(dto.hidratacaoMl().floatValue());
             hidratacao.setTipoFluido("ÁGUA");
+            hidratacao.setAtleta(sessao.getAtleta());
 
             sessao.setRegistroDeHidratacao(hidratacao);
         }
