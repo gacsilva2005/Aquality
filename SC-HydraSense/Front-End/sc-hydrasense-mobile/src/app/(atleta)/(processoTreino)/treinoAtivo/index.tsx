@@ -6,7 +6,6 @@ import { styles } from './styles';
 import { theme } from '@/src/global/themas';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../../../../contexts/UserContext';
-import Constants from 'expo-constants';
 
 // Importando o seu componente de Screen (ajuste o caminho se for diferente)
 import { Screen } from '../../../../components/Screen';
@@ -27,8 +26,6 @@ export default function TreinoAtivo() {
         type: string;
         sessaoId: string;
     }>();
-    const { user } = useUser();
-    const [startTime] = useState(() => new Date());
     const workoutType = type || 'Treino Livre';
     const iconName = getWorkoutIcon(workoutType);
 
@@ -60,59 +57,26 @@ export default function TreinoAtivo() {
     const fillAnimation = useRef(new Animated.Value(0)).current;
     const TEMPO_PRESSAO = 1500; // 1.5 segundos segurando para encerrar
 
-    const formatLocalDateTime = (date: Date) => {
-        const pad = (num: number) => String(num).padStart(2, '0');
-        const year = date.getFullYear();
-        const month = pad(date.getMonth() + 1);
-        const day = pad(date.getDate());
-        const hours = pad(date.getHours());
-        const minutes = pad(date.getMinutes());
-        const seconds = pad(date.getSeconds());
-        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-    };
-
     const handlePressIn = () => {
         // Quando o usuário encosta o dedo, a barra começa a encher até o 1
         Animated.timing(fillAnimation, {
             toValue: 1,
             duration: TEMPO_PRESSAO,
-            useNativeDriver: false, // Falso porque vamos animar a largura (width)
+            useNativeDriver: false,
         }).start(async ({ finished }) => {
             // Se a animação chegou até o final (o usuário não soltou o dedo)
             if (finished) {
-                const endTime = new Date();
+                console.log("sessaoId no TreinoAtivo:", sessaoId);
 
-                try {
-                    const hostUri = Constants?.expoConfig?.hostUri;
-                    const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
-                    const API_URL = `http://${ip}:8080`;
-
-                    const payload: any = {
-                        dataHoraInicio: formatLocalDateTime(startTime),
-                        dataHoraFim: formatLocalDateTime(endTime),
-                        modalidade: workoutType,
-                        atleta: {
-                            id: user?.id
-                        }
-                    };
-
-                    if (waterConsumed > 0) {
-                        payload.registroDeHidratacao = {
-                            volume: waterConsumed,
-                            tipoFluido: "ÁGUA",
-                            atleta: {
-                                id: user?.id
-                            }
-                        };
-                    }
-                } catch (error) {
-                    console.error('Erro de conexão ao salvar treino:', error);
+                if (!sessaoId) {
+                    console.error("Sessão não encontrada no TreinoAtivo");
+                    return;
                 }
 
                 router.replace({
                     pathname: '/pesagemPosTreino',
                     params: {
-                        sessaoId,
+                        sessaoId: sessaoId.toString(),
                         type: workoutType,
                         seconds: seconds.toString(),
                         water: waterConsumed.toString(),
