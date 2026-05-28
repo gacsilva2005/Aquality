@@ -43,6 +43,7 @@ export default function PesagemPosTreino() {
                 },
                 body: JSON.stringify({
                     pesoPosTreino: pesoNumerico,
+                    hidratacaoMl: Number(water || 0),
                 }),
             });
 
