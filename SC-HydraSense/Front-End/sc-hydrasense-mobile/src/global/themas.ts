@@ -7,7 +7,8 @@ export const theme = {
     primaryLight: '#FFF0F2',  // Fundo vermelho bem claro 
     
     // Fundo e Superfícies
-    background: '#F7F7F9',    // Fundo geral do app (cinza bem claro)
+    background: '#F7F7F9', 
+    backgroundSecondary: '#ececec', // Fundo geral do app (cinza bem claro)
     surface: '#FFFFFF',       // Fundo dos cards brancos
     headersoft: '#1a1a1d',    // Fundo do cabeçalho superior escuro
     header: '#121214',        // Fundo do cabeçalho superior (cinza quase preto)

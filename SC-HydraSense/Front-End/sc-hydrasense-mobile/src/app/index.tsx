@@ -21,7 +21,7 @@ import { Feather, FontAwesome5 } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import { theme } from '../global/themas';
 import { styles } from './styles';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, Redirect } from 'expo-router';
 import Constants from 'expo-constants';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
@@ -132,6 +132,15 @@ export default function LoginScreen() {
   const handleLogin = () => {
     performLogin(email, password);
   };
+
+  // ==========================================
+  // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
+  // Tire as duas barras (//) da linha abaixo para pular direto para a tela desejada:
+  //
+     return <Redirect href="/(profissional)/(tabs)/profile" />;
+  //
+  // Para voltar pro Atleta, seria: href="/(atleta)/(tabs)/dashboard"
+  // ==========================================
 
   return (
     <Screen 

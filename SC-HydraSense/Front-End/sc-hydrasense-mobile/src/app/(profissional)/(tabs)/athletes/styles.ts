@@ -4,25 +4,41 @@ import { theme } from '@/src/global/themas';
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 30,
-        // Move levemente para cima para compensar visualmente o espaço do bottom tab
-        marginTop: -50, 
+        paddingHorizontal: 20,
+        paddingTop: 30,
+        paddingBottom: 40,
     },
-    title: {
+    pageTitle: {
         fontFamily: theme.fonts.headingBold,
-        fontSize: 22,
-        color: theme.colors.textPrimary,
-        textAlign: 'center',
-        marginBottom: 12,
-        letterSpacing: 0.5,
+        fontSize: 32,
+        color: '#1A1A1A',
+        marginBottom: 20,
     },
-    description: {
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F0F0F0',
+        borderRadius: 12,
+        paddingHorizontal: 15,
+        height: 50,
+        marginBottom: 30,
+    },
+    searchIcon: {
+        marginRight: 10,
+    },
+    searchInput: {
+        flex: 1,
         fontFamily: theme.fonts.bodyRegular,
-        fontSize: 15,
-        color: theme.colors.textBrown,
+        fontSize: 16,
+        color: '#333',
+    },
+    listContainer: {
+        gap: 16, 
+    },
+    emptyText: {
+        fontFamily: theme.fonts.bodyRegular,
         textAlign: 'center',
-        lineHeight: 24,
+        color: '#999',
+        marginTop: 40,
     }
 });
