@@ -339,54 +339,63 @@ export default function Hydration() {
                 Nenhum registro ainda. Adicione água para começar!
               </Text>
             ) : (
-              history.map((item) => (
-                <View key={item.id} style={styles.historyItem}>
-                  
-                  {/* 1. ÍCONE DA ESQUERDA */}
-                  <View style={styles.historyIconContainer}>
-                    <MaterialCommunityIcons name="cup-water" size={24} color={theme.colors.primary} />
-                  </View>
-                  
-                  {/* 2. TEXTOS DO MEIO (Quantidade e Descrição) */}
-                  <View style={styles.historyTextContainer}>
-                    <Text style={styles.historyAmount}>
-                      {item.amount >= 1000 ? `${(item.amount / 1000).toFixed(1)}L` : `${item.amount}ml`}
-                    </Text>
-                    {/* O numberOfLines={1} evita que o texto quebre o layout se for muito grande */}
-                    <Text style={styles.historyDescription} numberOfLines={1}>
-                      {item.description}
-                    </Text>
-                  </View>
+              history.map((item) => {
+                const isWorkout = item.description.includes('(TREINO)');
+                const displayName = item.description.replace('(TREINO)', '').trim();
 
-                  {/* 3. AÇÕES DA DIREITA (Hora e Lixeira) */}
-                  {/* 3. AÇÕES DA DIREITA (Hora, Editar e Lixeira) */}
-                  <View style={styles.historyRightAction}>
-                    <Text style={styles.historyTime}>{item.time}</Text>
+                return (
+                  <View key={item.id} style={[styles.historyItem, isWorkout && styles.historyItemWorkout]}>
                     
-                    {/* BOTÃO DE EDITAR */}
-                    <TouchableOpacity 
-                      style={styles.actionButton}
-                      onPress={() => {
-                        setEditingRecord(item); // Diz qual item estamos editando
-                        setEditAmount(item.amount.toString()); // Preenche o input com o valor atual
-                      }}
-                      activeOpacity={0.6}
-                    >
-                      <MaterialCommunityIcons name="pencil-outline" size={20} color="#888" />
-                    </TouchableOpacity>
+                    {/* 1. ÍCONE DA ESQUERDA */}
+                    <View style={styles.historyIconContainer}>
+                      <MaterialCommunityIcons name="cup-water" size={24} color={theme.colors.primary} />
+                    </View>
+                    
+                    {/* 2. TEXTOS DO MEIO (Quantidade e Descrição) */}
+                    <View style={styles.historyTextContainer}>
+                      <Text style={styles.historyAmount}>
+                        {item.amount >= 1000 ? `${(item.amount / 1000).toFixed(1)}L` : `${item.amount}ml`}
+                      </Text>
+                      {/* O numberOfLines={1} evita que o texto quebre o layout se for muito grande */}
+                      <Text style={styles.historyDescription} numberOfLines={1}>
+                        {displayName}
+                      </Text>
+                      {isWorkout && (
+                        <View style={styles.workoutBadge}>
+                          <Text style={styles.workoutBadgeText}>Durante o Treino</Text>
+                        </View>
+                      )}
+                    </View>
 
-                    {/* BOTÃO DE DELETAR (que você já tinha) */}
-                    <TouchableOpacity 
-                      style={styles.actionButton}
-                      onPress={() => handleRemoveWater(item.id, item.amount)}
-                      activeOpacity={0.6}
-                    >
-                      <MaterialCommunityIcons name="trash-can-outline" size={20} color="#FF6B6B" />
-                    </TouchableOpacity>
+                    {/* 3. AÇÕES DA DIREITA (Hora, Editar e Lixeira) */}
+                    <View style={styles.historyRightAction}>
+                      <Text style={styles.historyTime}>{item.time}</Text>
+                      
+                      {/* BOTÃO DE EDITAR */}
+                      <TouchableOpacity 
+                        style={styles.actionButton}
+                        onPress={() => {
+                          setEditingRecord(item); // Diz qual item estamos editando
+                          setEditAmount(item.amount.toString()); // Preenche o input com o valor atual
+                        }}
+                        activeOpacity={0.6}
+                      >
+                        <MaterialCommunityIcons name="pencil-outline" size={20} color="#888" />
+                      </TouchableOpacity>
+
+                      {/* BOTÃO DE DELETAR */}
+                      <TouchableOpacity 
+                        style={styles.actionButton}
+                        onPress={() => handleRemoveWater(item.id, item.amount)}
+                        activeOpacity={0.6}
+                      >
+                        <MaterialCommunityIcons name="trash-can-outline" size={20} color="#FF6B6B" />
+                      </TouchableOpacity>
+                    </View>
+
                   </View>
-
-                </View>
-              ))
+                );
+              })
             )}
           </View>
 
@@ -401,7 +410,7 @@ export default function Hydration() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Editar Registro</Text>
-            <Text style={styles.modalSubtitle}>{editingRecord?.description}</Text>
+            <Text style={styles.modalSubtitle}>{editingRecord?.description.replace('(TREINO)', '').trim()}</Text>
 
             <View style={styles.modalInputContainer}>
               <TextInput

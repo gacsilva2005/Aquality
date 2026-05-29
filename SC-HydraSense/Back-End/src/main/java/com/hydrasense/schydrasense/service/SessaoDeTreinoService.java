@@ -101,7 +101,7 @@ public class SessaoDeTreinoService {
             RegistroDeHidratacao hidratacao = new RegistroDeHidratacao();
 
             hidratacao.setVolume(dto.hidratacaoMl().floatValue());
-            hidratacao.setTipoFluido("ÁGUA MINERAL");
+            hidratacao.setTipoFluido("ÁGUA MINERAL (TREINO)");
             hidratacao.setAtleta(sessao.getAtleta());
             hidratacao.setDataHora(java.time.LocalDateTime.now());
 
@@ -123,6 +123,7 @@ public class SessaoDeTreinoService {
             if (hidratacao.getAtleta() == null && sessao.getAtleta() != null) {
                 hidratacao.setAtleta(sessao.getAtleta());
             }
+            hidratacao.setTipoFluido("ÁGUA MINERAL (TREINO)");
         }
     }
 
