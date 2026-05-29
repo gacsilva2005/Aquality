@@ -293,4 +293,27 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  historyItemWorkout: {
+    borderLeftWidth: 4,
+    borderLeftColor: theme.colors.primary,
+  },
+  amountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  workoutBadge: {
+    backgroundColor: '#EFEFEF',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginTop: 4,
+    alignSelf: 'flex-start',
+  },
+  workoutBadgeText: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 8,
+    color: '#666',
+    textTransform: 'uppercase',
+  },
 });
