@@ -32,7 +32,6 @@ public class SessaoDeTreinoService {
     }
 
     public SessaoDeTreino salvar(SessaoDeTreino sessao) {
-        prepararRegistroDeHidratacao(sessao);
         return repository.save(sessao);
     }
 
@@ -57,7 +56,6 @@ public class SessaoDeTreinoService {
                     sessao.setDistanciaPercorrida(novaSessao.getDistanciaPercorrida());
                     sessao.setModalidade(novaSessao.getModalidade());
                     sessao.setIntensidadePercebida(novaSessao.getIntensidadePercebida());
-                    prepararRegistroDeHidratacao(sessao);
                     return repository.save(sessao);
                 })
                 .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
@@ -109,22 +107,8 @@ public class SessaoDeTreinoService {
         }
 
         sessao.finalizarTreino();
-        prepararRegistroDeHidratacao(sessao);
 
         return repository.save(sessao);
-    }
-
-    private void prepararRegistroDeHidratacao(SessaoDeTreino sessao) {
-        if (sessao.getRegistroDeHidratacao() != null) {
-            RegistroDeHidratacao hidratacao = sessao.getRegistroDeHidratacao();
-            if (hidratacao.getDataHora() == null) {
-                hidratacao.setDataHora(sessao.getDataHoraFim() != null ? sessao.getDataHoraFim() : java.time.LocalDateTime.now());
-            }
-            if (hidratacao.getAtleta() == null && sessao.getAtleta() != null) {
-                hidratacao.setAtleta(sessao.getAtleta());
-            }
-            hidratacao.setTipoFluido("ÁGUA MINERAL (TREINO)");
-        }
     }
 
     public List<SessaoDeTreino> listarPorAtleta(Long atletaId) {
