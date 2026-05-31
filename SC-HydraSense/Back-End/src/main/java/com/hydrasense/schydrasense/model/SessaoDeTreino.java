@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import com.hydrasense.schydrasense.service.CalculadoraFisiologica;
 
 @Getter
 @Entity
@@ -93,6 +94,33 @@ public class SessaoDeTreino {
 
     public void finalizarTreino() {
         this.dataHoraFim = LocalDateTime.now();
+    }
+
+    public void finalizar(
+            RegistroDoPeso pesagemPos,
+            RegistroDeHidratacao hidratacao,
+            Integer duracaoSegundos,
+            CalculadoraFisiologica calculadora
+    ) {
+        this.pesagemPos = pesagemPos;
+        this.registroDeHidratacao = hidratacao;
+
+        if (duracaoSegundos != null && duracaoSegundos > 0) {
+            this.dataHoraFim = this.dataHoraInicio.plusSeconds(duracaoSegundos);
+        } else {
+            finalizarTreino();
+        }
+
+        Float pesoPreVal = (this.pesagemPre != null) ? this.pesagemPre.getPeso() : 0.0f;
+        Float pesoPosVal = (this.pesagemPos != null) ? this.pesagemPos.getPeso() : 0.0f;
+        Integer volumeHidratacao = (this.registroDeHidratacao != null) ? this.registroDeHidratacao.getVolume().intValue() : 0;
+
+        Double duracaoMinutosPrecisos = (duracaoSegundos != null && duracaoSegundos > 0)
+                ? duracaoSegundos / 60.0
+                : (double) this.calcularDuracaoTotal();
+
+        this.taxaSudorese = calculadora.calcularTaxaSudorese(pesoPreVal, pesoPosVal, volumeHidratacao, duracaoMinutosPrecisos);
+        this.balancoHidrico = calculadora.calcularBalancoHidrico(pesoPreVal, pesoPosVal);
     }
 
     public long calcularDuracaoTotal() {
