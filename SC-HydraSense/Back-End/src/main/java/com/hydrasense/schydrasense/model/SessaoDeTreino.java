@@ -32,6 +32,12 @@ public class SessaoDeTreino {
     @Setter
     private String intensidadePercebida;
 
+    @Setter
+    private Float taxaSudorese;
+
+    @Setter
+    private Float balancoHidrico;
+
     // Relação 1:1 Registro de Sintoma
     @Setter
     @OneToOne(mappedBy = "sessaoDeTreino", cascade = CascadeType.ALL)

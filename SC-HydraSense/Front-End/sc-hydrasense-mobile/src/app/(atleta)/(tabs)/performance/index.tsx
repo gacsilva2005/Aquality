@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,9 @@ import { Header } from '../../../../components/Header';
 import { styles } from './styles';
 import { theme } from '../../../../global/themas';
 import { LineChart } from 'react-native-chart-kit';
+import { useUser } from '../../../../contexts/UserContext';
+import { useFocusEffect } from 'expo-router';
+import Constants from 'expo-constants';
 
 // TIPOS
 type FilterType = 'TODOS' | 'CORRIDA' | 'CICLISMO' | 'FUTEBOL' | 'MUSCULAÇÃO' | 'NATAÇÃO';
@@ -25,17 +28,6 @@ interface Session {
   sweatRate: number; 
   status: StatusType;
 }
-
-// DADOS MOCK (substituir por API depois)
-const MOCK_SESSIONS: Session[] = [
-  { id: '1', day: '12', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.1, status: 'OPTIMAL'  },
-  { id: '2', day: '10', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.4, status: 'WARNING'  },
-  { id: '3', day: '08', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.9, status: 'CRITICAL' },
-  { id: '4', day: '05', month: 'JAN', type: 'CICLISMO', sweatRate: 0.8, status: 'OPTIMAL'  },
-  { id: '5', day: '02', month: 'JAN', type: 'FUTEBOL',  sweatRate: 1.5, status: 'WARNING'  },
-  { id: '6', day: '28', month: 'DEZ', type: 'NATAÇÃO',  sweatRate: 0.5, status: 'OPTIMAL'  },
-  { id: '7', day: '25', month: 'DEZ', type: 'MUSCULAÇÃO', sweatRate: 0.8, status: 'OPTIMAL'  },
-];
 
 // HELPERS
 const STATUS_COLOR: Record<StatusType, string> = {
@@ -53,6 +45,17 @@ function getTrend(data: number[]): string {
   return 'STABLE';
 }
 
+// DADOS MOCK (utilizados como fallback inicial caso não haja treinos)
+const MOCK_SESSIONS: Session[] = [
+  { id: '1', day: '12', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.1, status: 'OPTIMAL'  },
+  { id: '2', day: '10', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.4, status: 'WARNING'  },
+  { id: '3', day: '08', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.9, status: 'CRITICAL' },
+  { id: '4', day: '05', month: 'JAN', type: 'CICLISMO', sweatRate: 0.8, status: 'OPTIMAL'  },
+  { id: '5', day: '02', month: 'JAN', type: 'FUTEBOL',  sweatRate: 1.5, status: 'WARNING'  },
+  { id: '6', day: '28', month: 'DEZ', type: 'NATAÇÃO',  sweatRate: 0.5, status: 'OPTIMAL'  },
+  { id: '7', day: '25', month: 'DEZ', type: 'MUSCULAÇÃO', sweatRate: 0.8, status: 'OPTIMAL'  },
+];
+
 function getAvgRate(sessions: Session[]): string {
   if (!sessions.length) return '0.0';
   const avg = sessions.reduce((sum, s) => sum + s.sweatRate, 0) / sessions.length;
@@ -62,23 +65,75 @@ function getAvgRate(sessions: Session[]): string {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function Performance() {
+  const { user } = useUser();
   const [filter, setFilter]       = useState<FilterType>('TODOS');
-  const [sessions, setSessions]   = useState<Session[]>(MOCK_SESSIONS);
+  const [sessions, setSessions]   = useState<Session[]>([]);
 
   // ── Buscar dados da API ──
-  useEffect(() => {
-    async function fetchSessions() {
-      try {
-        // TODO: substituir pela chamada real
-        // const response = await fetch('https://sua-api.com/sessions');
-        // const data = await response.json();
-        // setSessions(data);
-      } catch (error) {
-        console.error('Erro ao buscar sessões:', error);
+  const fetchSessions = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const hostUri = Constants?.expoConfig?.hostUri;
+      const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+      const API_URL = `http://${ip}:8080`;
+
+      const response = await fetch(`${API_URL}/sessoes-de-treino/atleta/${user.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        // Filtrar treinos finalizados (dataHoraFim e taxaSudorese preenchidos)
+        const finishedSessions = data.filter((s: any) => s.dataHoraFim !== null && s.taxaSudorese !== null);
+
+        // Mapear para a estrutura da tela
+        const mappedSessions: Session[] = finishedSessions.map((s: any) => {
+          const d = new Date(s.dataHoraFim || s.dataHoraInicio);
+          const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+          const day = d.getDate().toString().padStart(2, '0');
+          const month = meses[d.getMonth()];
+
+          let typeStr = s.modalidade ? s.modalidade.toUpperCase() : 'CORRIDA';
+          if (typeStr !== 'CORRIDA' && typeStr !== 'CICLISMO' && typeStr !== 'FUTEBOL' && typeStr !== 'MUSCULAÇÃO' && typeStr !== 'NATAÇÃO') {
+            typeStr = 'CORRIDA'; // Fallback
+          }
+
+          const pesoPre = s.pesoPre || 70.0;
+          const perdaPeso = pesoPre - (s.pesoPos || pesoPre);
+          const percentualPerda = pesoPre > 0 ? (perdaPeso / pesoPre) * 100.0 : 0.0;
+
+          let status: StatusType = 'OPTIMAL';
+          if (percentualPerda > 2.0) {
+            status = 'CRITICAL';
+          } else if (percentualPerda > 1.0) {
+            status = 'WARNING';
+          }
+
+          return {
+            id: s.id.toString(),
+            day,
+            month,
+            type: typeStr as any,
+            sweatRate: s.taxaSudorese,
+            status
+          };
+        });
+
+        // Ordenar sessões da mais recente para a mais antiga na lista
+        mappedSessions.sort((a, b) => {
+          // Usar id ou construir datas para ordenar
+          return parseInt(b.id) - parseInt(a.id);
+        });
+
+        setSessions(mappedSessions);
       }
+    } catch (error) {
+      console.error('Erro ao buscar sessões:', error);
     }
-    fetchSessions();
-  }, []);
+  }, [user?.id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchSessions();
+    }, [fetchSessions])
+  );
 
   // Sessões filtradas 
   const filtered = filter === 'TODOS'
