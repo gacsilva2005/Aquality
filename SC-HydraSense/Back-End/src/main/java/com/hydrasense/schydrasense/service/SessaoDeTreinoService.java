@@ -127,39 +127,16 @@ public class SessaoDeTreinoService {
 
         pesoRepository.save(pesagemPos);
 
-        sessao.setPesagemPos(pesagemPos);
-
+        RegistroDeHidratacao hidratacao = null;
         if (dto.hidratacaoMl() != null && dto.hidratacaoMl() > 0) {
-
-            RegistroDeHidratacao hidratacao = new RegistroDeHidratacao();
-
+            hidratacao = new RegistroDeHidratacao();
             hidratacao.setVolume(dto.hidratacaoMl().floatValue());
             hidratacao.setTipoFluido("ÁGUA MINERAL (TREINO)");
             hidratacao.setAtleta(sessao.getAtleta());
             hidratacao.setDataHora(java.time.LocalDateTime.now());
-
-            sessao.setRegistroDeHidratacao(hidratacao);
-        }
-        if (dto.duracaoSegundos() != null && dto.duracaoSegundos() > 0) {
-            sessao.setDataHoraFim(sessao.getDataHoraInicio().plusSeconds(dto.duracaoSegundos()));
-        } else {
-            sessao.finalizarTreino();
         }
 
-        Float pesoPre = (sessao.getPesagemPre() != null) ? sessao.getPesagemPre().getPeso() : 0.0f;
-        Float pesoPos = dto.pesoPosTreino() != null ? dto.pesoPosTreino() : 0.0f;
-        Integer hidratacaoMl = (dto.hidratacaoMl() != null) ? dto.hidratacaoMl() : 0;
-        long duracaoMinutos = sessao.calcularDuracaoTotal();
-        Double duracaoMinutosPrecisos = (dto.duracaoSegundos() != null && dto.duracaoSegundos() > 0)
-                ? dto.duracaoSegundos() / 60.0
-                : (double) duracaoMinutos;
-
-        Float taxaSudorese = calculadoraFisiologica.calcularTaxaSudorese(pesoPre, pesoPos, hidratacaoMl, duracaoMinutosPrecisos);
-        Float balancoHidrico = calculadoraFisiologica.calcularBalancoHidrico(pesoPre, pesoPos);
-        String statusHidratacao = calculadoraFisiologica.classificarStatusHidratacao(pesoPre, pesoPos);
-
-        sessao.setTaxaSudorese(taxaSudorese);
-        sessao.setBalancoHidrico(balancoHidrico);
+        sessao.finalizar(pesagemPos, hidratacao, dto.duracaoSegundos(), calculadoraFisiologica);
 
         repository.save(sessao);
 
