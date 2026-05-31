@@ -12,6 +12,11 @@ interface UserData {
     altura?: string;
     idade?: string;
     profileImage?: string | null;
+    pesoAtual?: string; 
+    modalidade?: string;
+    clube?: { 
+        nome: string; 
+    };
 }
 
 interface UserContextData {

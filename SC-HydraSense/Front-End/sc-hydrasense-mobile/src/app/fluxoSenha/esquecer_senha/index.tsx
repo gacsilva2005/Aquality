@@ -11,13 +11,13 @@ import {
   Modal,
   StyleSheet,
 } from 'react-native';
-import { Button } from '../../components/Button';
-import { Screen } from '../../components/Screen';
+import { Button } from '../../../components/Button';
+import { Screen } from '../../../components/Screen';
 import { Feather, FontAwesome5 } from '@expo/vector-icons';
-import { styles } from '../styles';
+import { styles } from '../../styles';
 import { router } from 'expo-router';
-import { Input } from '../../components/Input';
-import { theme } from '../../global/themas';
+import { Input } from '../../../components/Input';
+import { theme } from '../../../global/themas';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 
@@ -94,7 +94,7 @@ export default function ForgotPasswordScreen() {
 
   return (
     <Screen 
-          bgImage={require('../../assets/images/logo.png')}
+          bgImage={require('../../../assets/images/logo.png')}
           backgroundColor="#4A0E17"
           // Aqui controlamos a posição e tamanho sem esticar!
           imageStyle={{ 

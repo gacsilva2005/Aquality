@@ -143,11 +143,15 @@ export const styles = StyleSheet.create({
   },
 
   // ── FILTROS ──
+  filterContainer: {
+    marginBottom: theme.spacing.md,
+  },
   filterRow: {
     flexDirection: 'row',
     paddingHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md,
-    gap: theme.spacing.sm,                  
+    alignItems: 'center',
+    // O gap foi removido daqui para evitar que o ScrollView corte o último item em alguns dispositivos Android. 
+    // Usaremos marginRight direto no botão.
   },
   filterBtn: {
     paddingHorizontal: 20,
@@ -156,6 +160,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.border,       
     backgroundColor: theme.colors.surface, 
+    marginRight: theme.spacing.sm, // espaçar os itens dentro do ScrollView
   },
   filterBtnActive: {
     backgroundColor: theme.colors.primary, 
