@@ -1,10 +1,8 @@
 package com.hydrasense.schydrasense.controller;
 
-import com.hydrasense.schydrasense.dto.IniciarTreinoDTO;
-import com.hydrasense.schydrasense.dto.PesagemPosTreinoDTO;
+import com.hydrasense.schydrasense.dto.*;
 import com.hydrasense.schydrasense.model.SessaoDeTreino;
 import com.hydrasense.schydrasense.service.SessaoDeTreinoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,39 +20,39 @@ public class SessaoDeTreinoController {
     }
 
     @PostMapping
-    public SessaoDeTreino salvar(@RequestBody SessaoDeTreino sessao) {
-        return service.salvar(sessao);
+    public ResponseEntity<SessaoTreinoResponseDTO> salvar(@RequestBody SessaoDeTreino sessao) {
+        return ResponseEntity.ok(service.salvar(sessao));
     }
 
     @GetMapping
-    public List<SessaoDeTreino> listar() {
-        return service.listarTodas();
+    public ResponseEntity<List<SessaoTreinoResponseDTO>> listar() {
+        return ResponseEntity.ok(service.listarTodas());
     }
 
     @PostMapping("/iniciar")
-    public ResponseEntity<SessaoDeTreino> iniciar(
-            @RequestBody IniciarTreinoDTO dto
+    public ResponseEntity<SessaoTreinoResponseDTO> iniciar(
+            @RequestBody IniciarTreinoRequestDTO dto
     ) {
         return ResponseEntity.ok(service.iniciarTreino(dto));
     }
 
     @GetMapping("/atleta/{atletaId}")
-    public ResponseEntity<List<SessaoDeTreino>> listarPorAtleta(
+    public ResponseEntity<List<SessaoTreinoResponseDTO>> listarPorAtleta(
             @PathVariable Long atletaId
     ) {
         return ResponseEntity.ok(service.listarPorAtleta(atletaId));
     }
 
-    @PutMapping("/{sessaoId}/pesagem-pos")
-    public ResponseEntity<SessaoDeTreino> registrarPesagemPos(
+    @PutMapping("/{sessaoId}/finalizar")
+    public ResponseEntity<SessaoTreinoResponseDTO> finalizar(
             @PathVariable Long sessaoId,
-            @RequestBody PesagemPosTreinoDTO dto
+            @RequestBody FinalizarSessaoRequestDTO dto
     ) {
-        return ResponseEntity.ok(service.registrarPesagemPos(sessaoId, dto));
+        return ResponseEntity.ok(service.finalizarSessao(sessaoId, dto));
     }
 
     @GetMapping("/{sessaoId}")
-    public ResponseEntity<SessaoDeTreino> buscarPorId(@PathVariable Long sessaoId) {
+    public ResponseEntity<SessaoTreinoResponseDTO> buscarPorId(@PathVariable Long sessaoId) {
         return ResponseEntity.ok(service.buscarPorId(sessaoId));
     }
 }
