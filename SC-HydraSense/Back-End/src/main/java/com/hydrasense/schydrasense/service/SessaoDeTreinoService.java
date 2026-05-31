@@ -1,7 +1,6 @@
 package com.hydrasense.schydrasense.service;
 
-import com.hydrasense.schydrasense.dto.IniciarTreinoDTO;
-import com.hydrasense.schydrasense.dto.PesagemPosTreinoDTO;
+import com.hydrasense.schydrasense.dto.*;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.RegistroDeHidratacao;
 import com.hydrasense.schydrasense.model.RegistroDoPeso;
@@ -20,36 +19,70 @@ public class SessaoDeTreinoService {
     private final SessaoDeTreinoRepository repository;
     private final AtletaRepository atletaRepository;
     private final RegistroDoPesoRepository pesoRepository;
+    private final CalculadoraFisiologica calculadoraFisiologica;
 
     public SessaoDeTreinoService(
             SessaoDeTreinoRepository sessaoRepository,
             AtletaRepository atletaRepository,
-            RegistroDoPesoRepository pesoRepository
+            RegistroDoPesoRepository pesoRepository,
+            CalculadoraFisiologica calculadoraFisiologica
     ) {
         this.repository = sessaoRepository;
         this.atletaRepository = atletaRepository;
         this.pesoRepository = pesoRepository;
+        this.calculadoraFisiologica = calculadoraFisiologica;
     }
 
-    public SessaoDeTreino salvar(SessaoDeTreino sessao) {
-        return repository.save(sessao);
+    private SessaoTreinoResponseDTO mapToResponseDTO(SessaoDeTreino sessao) {
+        Float pesoPre = (sessao.getPesagemPre() != null) ? sessao.getPesagemPre().getPeso() : null;
+        Float pesoPos = (sessao.getPesagemPos() != null) ? sessao.getPesagemPos().getPeso() : null;
+        Integer hidratacaoMl = (sessao.getRegistroDeHidratacao() != null) ? sessao.getRegistroDeHidratacao().getVolume().intValue() : null;
+        
+        Integer duracaoSegundos = 0;
+        if (sessao.getDataHoraInicio() != null && sessao.getDataHoraFim() != null) {
+            duracaoSegundos = (int) java.time.Duration.between(sessao.getDataHoraInicio(), sessao.getDataHoraFim()).toSeconds();
+        }
+
+        String statusHidratacao = calculadoraFisiologica.classificarStatusHidratacao(pesoPre, pesoPos);
+
+        return new SessaoTreinoResponseDTO(
+                sessao.getId(),
+                sessao.getDataHoraInicio(),
+                sessao.getDataHoraFim(),
+                sessao.getModalidade(),
+                duracaoSegundos,
+                pesoPre,
+                pesoPos,
+                hidratacaoMl,
+                sessao.getTaxaSudorese(),
+                sessao.getBalancoHidrico(),
+                statusHidratacao
+        );
     }
 
-    public List<SessaoDeTreino> listarTodas() {
-        return repository.findAll();
+    public SessaoTreinoResponseDTO salvar(SessaoDeTreino sessao) {
+        SessaoDeTreino salva = repository.save(sessao);
+        return mapToResponseDTO(salva);
     }
 
-    public SessaoDeTreino buscarPorId(Long sessaoId) {
-        return repository.findById(sessaoId)
+    public List<SessaoTreinoResponseDTO> listarTodas() {
+        return repository.findAll().stream()
+                .map(this::mapToResponseDTO)
+                .toList();
+    }
+
+    public SessaoTreinoResponseDTO buscarPorId(Long sessaoId) {
+        SessaoDeTreino s = repository.findById(sessaoId)
                 .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
+        return mapToResponseDTO(s);
     }
 
     public void deletar(Long id) {
         repository.deleteById(id);
     }
 
-    public SessaoDeTreino atualizar(Long id, SessaoDeTreino novaSessao) {
-        return repository.findById(id)
+    public SessaoTreinoResponseDTO atualizar(Long id, SessaoDeTreino novaSessao) {
+        SessaoDeTreino s = repository.findById(id)
                 .map(sessao -> {
                     sessao.setDataHoraInicio(novaSessao.getDataHoraInicio());
                     sessao.setDataHoraFim(novaSessao.getDataHoraFim());
@@ -59,9 +92,10 @@ public class SessaoDeTreinoService {
                     return repository.save(sessao);
                 })
                 .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
+        return mapToResponseDTO(s);
     }
 
-    public SessaoDeTreino iniciarTreino(IniciarTreinoDTO dto) {
+    public SessaoTreinoResponseDTO iniciarTreino(IniciarTreinoRequestDTO dto) {
 
         Atleta atleta = atletaRepository.findById(dto.atletaId())
                 .orElseThrow(() -> new RuntimeException("Atleta não encontrado"));
@@ -79,10 +113,11 @@ public class SessaoDeTreinoService {
 
         sessao.iniciarTreino();
 
-        return repository.save(sessao);
+        SessaoDeTreino salva = repository.save(sessao);
+        return mapToResponseDTO(salva);
     }
 
-    public SessaoDeTreino registrarPesagemPos(Long sessaoId, PesagemPosTreinoDTO dto) {
+    public SessaoTreinoResponseDTO finalizarSessao(Long sessaoId, FinalizarSessaoRequestDTO dto) {
 
         SessaoDeTreino sessao = repository.findById(sessaoId)
                 .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
@@ -105,13 +140,35 @@ public class SessaoDeTreinoService {
 
             sessao.setRegistroDeHidratacao(hidratacao);
         }
+        if (dto.duracaoSegundos() != null && dto.duracaoSegundos() > 0) {
+            sessao.setDataHoraFim(sessao.getDataHoraInicio().plusSeconds(dto.duracaoSegundos()));
+        } else {
+            sessao.finalizarTreino();
+        }
 
-        sessao.finalizarTreino();
+        Float pesoPre = (sessao.getPesagemPre() != null) ? sessao.getPesagemPre().getPeso() : 0.0f;
+        Float pesoPos = dto.pesoPosTreino() != null ? dto.pesoPosTreino() : 0.0f;
+        Integer hidratacaoMl = (dto.hidratacaoMl() != null) ? dto.hidratacaoMl() : 0;
+        long duracaoMinutos = sessao.calcularDuracaoTotal();
+        Double duracaoMinutosPrecisos = (dto.duracaoSegundos() != null && dto.duracaoSegundos() > 0)
+                ? dto.duracaoSegundos() / 60.0
+                : (double) duracaoMinutos;
 
-        return repository.save(sessao);
+        Float taxaSudorese = calculadoraFisiologica.calcularTaxaSudorese(pesoPre, pesoPos, hidratacaoMl, duracaoMinutosPrecisos);
+        Float balancoHidrico = calculadoraFisiologica.calcularBalancoHidrico(pesoPre, pesoPos);
+        String statusHidratacao = calculadoraFisiologica.classificarStatusHidratacao(pesoPre, pesoPos);
+
+        sessao.setTaxaSudorese(taxaSudorese);
+        sessao.setBalancoHidrico(balancoHidrico);
+
+        repository.save(sessao);
+
+        return mapToResponseDTO(sessao);
     }
 
-    public List<SessaoDeTreino> listarPorAtleta(Long atletaId) {
-        return repository.findByAtletaId(atletaId);
+    public List<SessaoTreinoResponseDTO> listarPorAtleta(Long atletaId) {
+        return repository.findByAtletaId(atletaId).stream()
+                .map(this::mapToResponseDTO)
+                .toList();
     }
 }
