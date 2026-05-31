@@ -36,7 +36,7 @@ export default function PesagemPosTreino() {
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
             const API_URL = `http://${ip}:8080`;
 
-            const response = await fetch(`${API_URL}/sessoes-de-treino/${sessaoId}/pesagem-pos`, {
+            const response = await fetch(`${API_URL}/sessoes-de-treino/${sessaoId}/finalizar`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,6 +44,7 @@ export default function PesagemPosTreino() {
                 body: JSON.stringify({
                     pesoPosTreino: pesoNumerico,
                     hidratacaoMl: Number(water || 0),
+                    duracaoSegundos: Number(seconds || 0),
                 }),
             });
 
@@ -51,9 +52,11 @@ export default function PesagemPosTreino() {
 
             if (!response.ok) {
                 console.log('Erro backend:', texto);
-                Alert.alert('Erro', 'Não foi possível registrar a pesagem pós-treino.');
+                Alert.alert('Erro', 'Não foi possível finalizar a sessão de treino.');
                 return;
             }
+
+            const resumo = JSON.parse(texto);
 
             router.replace({
                 pathname: '/treinoFinalizado',
@@ -63,6 +66,9 @@ export default function PesagemPosTreino() {
                     seconds,
                     water,
                     pesoPosTreino: pesoNumerico.toString(),
+                    taxaSudorese: resumo.taxaSudorese.toString(),
+                    balancoHidrico: resumo.balancoHidrico.toString(),
+                    statusHidratacao: resumo.statusHidratacao,
                 },
             });
 

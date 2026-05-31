@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,9 @@ import { Header } from '../../../../components/Header';
 import { ModalTreino } from '../../../../components/ModalTreino';
 import { styles } from './styles';
 import { theme } from '../../../../global/themas';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { useUser } from '../../../../contexts/UserContext';
+import Constants from 'expo-constants';
 
 // CÁLCULOS DO CÍRCULO DE PROGRESSO
 const { width } = Dimensions.get('window');
@@ -21,10 +23,12 @@ const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function Dashboard() {
-  const [hydrationLevel, setHydrationLevel] = useState(82);
-  const [sweatRate, setSweatRate] = useState(1.2);
-  const [waterBalance, setWaterBalance] = useState(-0.84);
-  const [recoveryPercent, setRecoveryPercent] = useState(94);
+  const { user } = useUser();
+  const [hydrationLevel, setHydrationLevel] = useState(100);
+  const [sweatRate, setSweatRate] = useState(0.0);
+  const [waterBalance, setWaterBalance] = useState(0.0);
+  const [recoveryPercent, setRecoveryPercent] = useState(100);
+  const [lastWorkoutDate, setLastWorkoutDate] = useState('');
 
   // Modal de seleção de treino
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -37,7 +41,7 @@ export default function Dashboard() {
   };
 
   // Estados do header de hidratação
-  const [consumed, setConsumed] = useState(1500);
+  const [consumed, setConsumed] = useState(0);
   const goal = 3000;
 
   // Lógica do preenchimento SVG
@@ -49,14 +53,76 @@ export default function Dashboard() {
   const progressColor = isGoalMet ? theme.colors.success : theme.colors.primary;
 
   // API
-  useEffect(() => {
-    async function buscarDadosDaAPI() {
-      try {
-        // Chamada da API
-      } catch (error) {}
+  const fetchDashboardData = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const hostUri = Constants?.expoConfig?.hostUri;
+      const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+      const API_URL = `http://${ip}:8080`;
+
+      // 1. Buscar registros de hidratação de hoje
+      const responseHidr = await fetch(`${API_URL}/hidratacao/atleta/${user.id}`);
+      if (responseHidr.ok) {
+        const data = await responseHidr.json();
+        const todayStr = new Date().toDateString();
+        const todayRecords = data.filter((item: any) => {
+          if (!item.dataHora) return false;
+          return new Date(item.dataHora).toDateString() === todayStr;
+        });
+        const totalToday = todayRecords.reduce((sum: number, item: any) => sum + item.volume, 0);
+        setConsumed(totalToday);
+      }
+
+      // 2. Buscar sessões de treino do atleta
+      const responseSessoes = await fetch(`${API_URL}/sessoes-de-treino/atleta/${user.id}`);
+      if (responseSessoes.ok) {
+        const data = await responseSessoes.json();
+        const finishedSessions = data.filter((s: any) => s.dataHoraFim !== null && s.taxaSudorese !== null);
+        
+        if (finishedSessions.length > 0) {
+          finishedSessions.sort((a: any, b: any) => new Date(b.dataHoraFim).getTime() - new Date(a.dataHoraFim).getTime());
+          const latest = finishedSessions[0];
+
+          setSweatRate(latest.taxaSudorese);
+          setWaterBalance(latest.balancoHidrico);
+
+          if (latest.dataHoraFim) {
+            const d = new Date(latest.dataHoraFim);
+            const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+            const dia = d.getDate().toString().padStart(2, '0');
+            const mes = meses[d.getMonth()];
+            const horas = d.getHours().toString().padStart(2, '0');
+            const minutos = d.getMinutes().toString().padStart(2, '0');
+            setLastWorkoutDate(`${dia} DE ${mes}, ${horas}:${minutos}`);
+          }
+
+          const pesoPre = latest.pesoPre || 70.0;
+          const perdaPeso = pesoPre - (latest.pesoPos || pesoPre);
+          const percentualPerda = pesoPre > 0 ? (perdaPeso / pesoPre) * 100.0 : 0.0;
+
+          const level = Math.max(50, Math.min(100, Math.round(100 - percentualPerda)));
+          setHydrationLevel(level);
+
+          const recovery = Math.max(30, Math.min(100, Math.round(100 + (latest.balancoHidrico / pesoPre) * 100)));
+          setRecoveryPercent(recovery);
+        } else {
+          setHydrationLevel(100);
+          setSweatRate(0.0);
+          setWaterBalance(0.0);
+          setRecoveryPercent(100);
+          setLastWorkoutDate('SEM REGISTRO');
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados do dashboard:', error);
     }
-    buscarDadosDaAPI();
-  }, []);
+  }, [user?.id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchDashboardData();
+    }, [fetchDashboardData])
+  );
 
   const handleUrinaClick = () => {
     console.log("Sessão encerrada");
@@ -122,29 +188,33 @@ export default function Dashboard() {
         <View style={styles.infoCard}>
           <View style={styles.lastWorkoutHeader}>
             <Text style={styles.cardLabel}>ÚLTIMO TREINO</Text>
-            <Text style={styles.dateText}>16 DE OUT, 08:30</Text>
+            <Text style={styles.dateText}>{lastWorkoutDate || "SEM REGISTRO"}</Text>
           </View>
 
           <View style={styles.metricsContainer}>
             <View style={styles.metricBlock}>
               <Text style={styles.metricLabel}>TAXA DE SUDORESE</Text>
               <View style={styles.metricValueRow}>
-                <Text style={styles.metricValue}>{sweatRate}</Text>
+                <Text style={styles.metricValue}>{sweatRate > 0 ? sweatRate.toFixed(1) : "0.0"}</Text>
                 <Text style={styles.metricUnit}>L/H</Text>
               </View>
               <View style={styles.tagGreen}>
-                <Text style={styles.tagGreenText}>ZONA ALTA</Text>
+                <Text style={styles.tagGreenText}>
+                  {sweatRate > 2.0 ? "ZONA ALTA" : sweatRate > 1.0 ? "ZONA MODERADA" : "ZONA EXCELENTE"}
+                </Text>
               </View>
             </View>
 
             <View style={styles.metricBlock}>
               <Text style={styles.metricLabel}>BALANÇO HÍDRICO</Text>
               <View style={styles.metricValueRow}>
-                <Text style={styles.metricValue}>{waterBalance}</Text>
+                <Text style={styles.metricValue}>{(waterBalance > 0 ? "+" : "") + waterBalance.toFixed(2)}</Text>
                 <Text style={styles.metricUnit}>L</Text>
               </View>
               <View style={styles.tagRed}>
-                <Text style={styles.tagRedText}>DÉFICIT CRÍTICO</Text>
+                <Text style={styles.tagRedText}>
+                  {waterBalance < -1.5 ? "DÉFICIT CRÍTICO" : waterBalance < 0.0 ? "DÉFICIT LEVE" : "ESTÁVEL"}
+                </Text>
               </View>
             </View>
           </View>
