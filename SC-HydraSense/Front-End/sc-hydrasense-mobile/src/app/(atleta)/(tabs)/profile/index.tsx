@@ -1,12 +1,13 @@
 // src/app/(tabs)/profile/index.tsx
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput, Modal, StyleSheet } from 'react-native';
 import { Screen } from '../../../../components/Screen';
 import { Header } from '../../../../components/Header';
 import { InputProfile } from '../../../../components/InputProfile';
 import { styles } from './styles';
 import { theme } from '@/src/global/themas';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
+import { Feather } from '@expo/vector-icons'; // Importação do Feather adicionada
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { Divider } from '@/src/components/Divider';
@@ -24,6 +25,21 @@ export default function Profile() {
         setProfileImage
     } = useUser();
 
+    // ── ESTADOS DO MODAL CUSTOMIZADO ──
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalTitle, setModalTitle] = useState('');
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalIcon, setModalIcon] = useState<'info' | 'check-circle' | 'alert-circle'>('info');
+    const [modalOnOk, setModalOnOk] = useState<() => void>(() => () => setModalVisible(false));
+
+    function showModal(title: string, message: string, icon: 'info' | 'check-circle' | 'alert-circle', onOk?: () => void) {
+        setModalTitle(title);
+        setModalMessage(message);
+        setModalIcon(icon);
+        setModalOnOk(() => () => { setModalVisible(false); onOk?.(); });
+        setModalVisible(true);
+    }
+
     const [weight, setWeight] = useState(
         user?.pesoAtual?.toString() || ''
     );
@@ -37,7 +53,6 @@ export default function Profile() {
         const nascimento = new Date(dataNascimento);
 
         let idade = hoje.getFullYear() - nascimento.getFullYear();
-
         const mes = hoje.getMonth() - nascimento.getMonth();
 
         if (
@@ -74,6 +89,11 @@ export default function Profile() {
   };
 
     const handleSave = async () => {
+        if (!user || !user.id) {
+            showModal('Erro', 'Usuário não encontrado!', 'alert-circle');
+            return;
+        }
+
         try {
             const hostUri = Constants?.expoConfig?.hostUri;
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
@@ -98,7 +118,8 @@ export default function Profile() {
             console.log('RESPOSTA:', responseText);
 
             if (!response.ok) {
-                Alert.alert('Erro', 'Não foi possível atualizar o perfil');
+                // Substituição do Alert nativo
+                showModal('Erro', 'Não foi possível atualizar o perfil', 'alert-circle');
                 return;
             }
 
@@ -106,12 +127,14 @@ export default function Profile() {
 
             setUser(updatedUser);
 
-            Alert.alert('Sucesso', 'Perfil atualizado!');
+            // Substituição do Alert nativo
+            showModal('Sucesso', 'Perfil atualizado!', 'check-circle');
             setIsEditing(false);
 
         } catch (error) {
             console.log(error);
-            Alert.alert('Erro', 'Erro de conexão com servidor');
+            // Substituição do Alert nativo
+            showModal('Erro', 'Erro de conexão com servidor', 'alert-circle');
         }
     };
 
@@ -276,6 +299,84 @@ export default function Profile() {
           <Text style={styles.logoutText}>ENCERRAR SESSÃO</Text>
         </TouchableOpacity>
       </View>
+
+      {/* ── MODAL CUSTOMIZADO ADICIONADO ── */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={modalStyles.overlay}>
+          <View style={modalStyles.container}>
+            <View style={modalStyles.iconWrapper}>
+              <Feather name={modalIcon} size={28} color={theme.colors.primary} />
+            </View>
+            <Text style={modalStyles.title}>{modalTitle}</Text>
+            <Text style={modalStyles.message}>{modalMessage}</Text>
+            <TouchableOpacity style={modalStyles.btnOk} onPress={modalOnOk} activeOpacity={0.8}>
+              <Text style={modalStyles.btnOkText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </Screen>
   );
 }
+
+// ── ESTILOS DO MODAL ──
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing?.xl || 24, // Fallback caso não exista espaçamento xl
+  },
+  container: {
+    backgroundColor: theme.colors.surface || '#FFFFFF',
+    borderRadius: theme.borderRadius?.lg || 12,
+    padding: theme.spacing?.xl || 24,
+    width: '100%',
+    alignItems: 'center',
+  },
+  iconWrapper: {
+    width: 56,
+    height: 56,
+    borderRadius: theme.borderRadius?.full || 28,
+    backgroundColor: theme.colors.primaryLight || '#FEE2E2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.spacing?.md || 16,
+  },
+  title: {
+    fontFamily: theme.fonts?.headingBold,
+    fontSize: 18,
+    color: theme.colors.textPrimary || '#1F2937',
+    textAlign: 'center',
+    marginBottom: theme.spacing?.sm || 8,
+    fontWeight: 'bold', // Adicionado como segurança caso falte a fonte
+  },
+  message: {
+    fontFamily: theme.fonts?.bodyRegular,
+    fontSize: 14,
+    color: theme.colors.textSecondary || '#4B5563',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: theme.spacing?.lg || 24,
+  },
+  btnOk: {
+    backgroundColor: theme.colors.primary || '#E53E3E',
+    width: '100%',
+    paddingVertical: 14,
+    borderRadius: theme.borderRadius?.sm || 8,
+    alignItems: 'center',
+  },
+  btnOkText: {
+    fontFamily: theme.fonts?.bodyBold,
+    fontSize: 14,
+    color: theme.colors.textWhite || '#FFFFFF',
+    letterSpacing: 1,
+    fontWeight: 'bold', // Adicionado como segurança caso falte a fonte
+  },
+});

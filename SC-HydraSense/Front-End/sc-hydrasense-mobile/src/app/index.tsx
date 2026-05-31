@@ -140,6 +140,7 @@ export default function LoginScreen() {
      return <Redirect href="/(profissional)/(tabs)/profile" />;
   //
   // Para voltar pro Atleta, seria: href="/(atleta)/(tabs)/dashboard"
+  //    return <Redirect href="/(atleta)/(tabs)/profile" />;
   // ==========================================
 
   return (

@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
+  ScrollView, // <-- Importação adicionada
 } from 'react-native';
 import { Screen } from '../../../../components/Screen';
 import { Header } from '../../../../components/Header';
@@ -12,7 +13,7 @@ import { theme } from '../../../../global/themas';
 import { LineChart } from 'react-native-chart-kit';
 
 // TIPOS
-type FilterType = 'TODOS' | 'CORRIDA' | 'CICLISMO';
+type FilterType = 'TODOS' | 'CORRIDA' | 'CICLISMO' | 'FUTEBOL' | 'MUSCULAÇÃO' | 'NATAÇÃO';
 
 type StatusType = 'OPTIMAL' | 'WARNING' | 'CRITICAL';
 
@@ -20,7 +21,7 @@ interface Session {
   id: string;
   day: string;
   month: string;
-  type: 'CORRIDA' | 'CICLISMO';
+  type: 'CORRIDA' | 'CICLISMO' | 'FUTEBOL' | 'MUSCULAÇÃO' | 'NATAÇÃO';
   sweatRate: number; 
   status: StatusType;
 }
@@ -31,8 +32,9 @@ const MOCK_SESSIONS: Session[] = [
   { id: '2', day: '10', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.4, status: 'WARNING'  },
   { id: '3', day: '08', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.9, status: 'CRITICAL' },
   { id: '4', day: '05', month: 'JAN', type: 'CICLISMO', sweatRate: 0.8, status: 'OPTIMAL'  },
-  { id: '5', day: '02', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.3, status: 'WARNING'  },
-  { id: '6', day: '28', month: 'DEZ', type: 'CICLISMO', sweatRate: 1.0, status: 'OPTIMAL'  },
+  { id: '5', day: '02', month: 'JAN', type: 'FUTEBOL',  sweatRate: 1.5, status: 'WARNING'  },
+  { id: '6', day: '28', month: 'DEZ', type: 'NATAÇÃO',  sweatRate: 0.5, status: 'OPTIMAL'  },
+  { id: '7', day: '25', month: 'DEZ', type: 'MUSCULAÇÃO', sweatRate: 0.8, status: 'OPTIMAL'  },
 ];
 
 // HELPERS
@@ -58,7 +60,6 @@ function getAvgRate(sessions: Session[]): string {
 }
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-
 
 export default function Performance() {
   const [filter, setFilter]       = useState<FilterType>('TODOS');
@@ -168,18 +169,24 @@ export default function Performance() {
         </View>
 
         {/* ── FILTROS ── */}
-        <View style={styles.filterRow}>
-          {(['TODOS', 'CORRIDA', 'CICLISMO'] as FilterType[]).map(f => (
-            <TouchableOpacity
-              key={f}
-              style={[styles.filterBtn, filter === f && styles.filterBtnActive]}
-              onPress={() => setFilter(f)}
-            >
-              <Text style={[styles.filterBtnText, filter === f && styles.filterBtnTextActive]}>
-                {f}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.filterContainer}>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            contentContainerStyle={styles.filterRow}
+          >
+            {(['TODOS', 'CORRIDA', 'CICLISMO', 'FUTEBOL', 'MUSCULAÇÃO', 'NATAÇÃO'] as FilterType[]).map(f => (
+              <TouchableOpacity
+                key={f}
+                style={[styles.filterBtn, filter === f && styles.filterBtnActive]}
+                onPress={() => setFilter(f)}
+              >
+                <Text style={[styles.filterBtnText, filter === f && styles.filterBtnTextActive]}>
+                  {f}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
 
         {/* ── LISTA DE SESSÕES ── */}

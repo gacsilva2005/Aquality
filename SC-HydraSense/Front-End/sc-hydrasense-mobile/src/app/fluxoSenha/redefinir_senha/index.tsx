@@ -16,8 +16,8 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
-import { theme } from '../../global/themas'; 
-import { Button } from '../../components/Button'; 
+import { theme } from '../../../global/themas'; 
+import { Button } from '../../../components/Button'; 
 
 export default function ResetPasswordScreen() {
   const { email, token } = useLocalSearchParams<{ email: string, token: string }>();
