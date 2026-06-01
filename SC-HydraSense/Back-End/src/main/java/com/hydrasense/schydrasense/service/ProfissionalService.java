@@ -2,7 +2,9 @@ package com.hydrasense.schydrasense.service;
 
 import com.hydrasense.schydrasense.model.LoginRequest;
 import com.hydrasense.schydrasense.model.Profissional;
+import com.hydrasense.schydrasense.model.Clube;
 import com.hydrasense.schydrasense.repository.ProfissionalRepository;
+import com.hydrasense.schydrasense.repository.ClubeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,12 +14,18 @@ import java.util.Optional;
 public class ProfissionalService {
 
     private final ProfissionalRepository repository;
+    private final ClubeRepository clubeRepository;
 
-    public ProfissionalService(ProfissionalRepository repository) {
+    public ProfissionalService(ProfissionalRepository repository, ClubeRepository clubeRepository) {
         this.repository = repository;
+        this.clubeRepository = clubeRepository;
     }
 
     public Profissional salvar(Profissional profissional) {
+        if (profissional.getClube() != null && profissional.getClube().getNome() != null) {
+            clubeRepository.findByNome(profissional.getClube().getNome())
+                           .ifPresent(profissional::setClube);
+        }
         return repository.save(profissional);
     }
 
@@ -56,7 +64,12 @@ public class ProfissionalService {
             p.setEmail(dados.getEmail());
             p.setRegistro(dados.getRegistro());
             p.setEspecialidade(dados.getEspecialidade());
-            p.setInstituicao(dados.getInstituicao());
+            if (dados.getClube() != null && dados.getClube().getNome() != null) {
+                clubeRepository.findByNome(dados.getClube().getNome())
+                               .ifPresent(p::setClube);
+            } else {
+                p.setClube(null);
+            }
             if (dados.getSenha() != null && !dados.getSenha().trim().isEmpty()) {
                 p.setSenha(dados.getSenha());
             }
