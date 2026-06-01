@@ -1,28 +1,294 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '@/src/global/themas';
+import { theme } from '../../../../global/themas'; // Ajuste este caminho para onde o seu theme.ts realmente está!
 
 export const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 30,
-        // Move levemente para cima para compensar visualmente o espaço do bottom tab
-        marginTop: -50, 
-    },
-    title: {
-        fontFamily: theme.fonts.headingBold,
-        fontSize: 22,
-        color: theme.colors.textPrimary,
-        textAlign: 'center',
-        marginBottom: 12,
-        letterSpacing: 0.5,
-    },
-    description: {
-        fontFamily: theme.fonts.bodyRegular,
-        fontSize: 15,
-        color: theme.colors.textBrown,
-        textAlign: 'center',
-        lineHeight: 24,
-    }
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  scrollContent: {
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.lg,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  headerTitle: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 24,
+    color: theme.colors.textPrimary,
+  },
+  headerSubtitle: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    marginTop: theme.spacing.xs,
+  },
+  exportButton: {
+    backgroundColor: theme.colors.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+  },
+  exportButtonText: {
+    fontFamily: theme.fonts.bodyBold,
+    color: theme.colors.textWhite,
+    fontSize: 12,
+    marginLeft: theme.spacing.sm,
+  },
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+  },
+  cardTitle: {
+    fontFamily: theme.fonts.headingRegular,
+    fontSize: 16,
+    color: theme.colors.textPrimary,
+    marginBottom: 10,
+  },
+  scoreContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: theme.spacing.md,
+  },
+  scoreLarge: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 64,
+    color: theme.colors.textPrimary,
+    lineHeight: 70,
+  },
+  scoreLabel: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 12,
+    color: theme.colors.textSecondary,
+    marginLeft: theme.spacing.sm,
+  },
+  badgeSuccess: {
+    // Fundo leve usando o verde success com opacidade (ou hardcode #E8F5E9)
+    backgroundColor: 'rgba(22, 163, 74, 0.1)', 
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: theme.borderRadius.full,
+  },
+  badgeSuccessText: {
+    fontFamily: theme.fonts.bodyBold,
+    color: theme.colors.success,
+    fontSize: 12,
+    marginLeft: 6,
+  },
+  sectionTitle: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 16,
+    color: theme.colors.textPrimary,
+    marginBottom: theme.spacing.md,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  halfCard: {
+    width: '48%',
+    padding: theme.spacing.md,
+  },
+  iconRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.md,
+  },
+  cardSubtitle: {
+    fontFamily: theme.fonts.bodyMedium,
+    fontSize: 12,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.xs,
+  },
+  statValue: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 28,
+    color: theme.colors.textPrimary,
+  },
+  statUnit: {
+    fontFamily: theme.fonts.headingRegular,
+    fontSize: 16,
+    color: theme.colors.textPrimary,
+  },
+  riskHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.sm,
+  },
+  riskBadge: {
+    backgroundColor: theme.colors.primaryLight,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.md,
+  },
+  riskBadgeText: {
+    fontFamily: theme.fonts.bodyBold,
+    color: theme.colors.primary,
+    fontSize: 10,
+  },
+  athleteList: {
+    gap: theme.spacing.sm,
+  },
+  athleteCard: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderLeftWidth: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.03,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+    marginBottom: 10,
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: theme.borderRadius.md,
+    marginRight: theme.spacing.md,
+  },
+  athleteInfo: {
+    flex: 1,
+  },
+  athleteName: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 16,
+    color: theme.colors.textPrimary,
+    marginBottom: theme.spacing.xs,
+  },
+  alertRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  alertText: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 10,
+    marginLeft: theme.spacing.xs,
+  },
+  athleteScore: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 24,
+  },
+  scoreUnit: {
+    fontFamily: theme.fonts.headingRegular,
+    fontSize: 14,
+  },
+  bottomNav: {
+    flexDirection: 'row',
+    backgroundColor: theme.colors.surface,
+    paddingVertical: 10,
+    paddingBottom: 24, // Área segura do iPhone
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    justifyContent: 'space-around',
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+  },
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    width: '25%',
+  },
+  navItemActive: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.borderRadius.md,
+    paddingVertical: 10,
+    width: '25%',
+    marginHorizontal: 10,
+  },
+  navText: {
+    fontFamily: theme.fonts.bodyMedium,
+    fontSize: 10,
+    color: theme.colors.textSecondary,
+    marginTop: 4,
+  },
+  navTextActive: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 10,
+    color: theme.colors.textWhite,
+    marginTop: 4,
+  },
+
+  // ==========================================
+  // ESTILOS DO POP-UP (MODAL)
+  // ==========================================
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fundo escuro semi-transparente
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing.lg,
+  },
+  modalContent: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.xl,
+    width: '100%',
+    maxWidth: 340,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  modalIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: theme.borderRadius.full,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  modalTitle: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 20,
+    color: theme.colors.textPrimary,
+    marginBottom: theme.spacing.sm,
+    textAlign: 'center',
+  },
+  modalMessage: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: theme.spacing.lg,
+    lineHeight: 20,
+  },
+  modalButton: {
+    backgroundColor: theme.colors.primary,
+    paddingVertical: 14,
+    borderRadius: theme.borderRadius.md,
+    width: '100%',
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    fontFamily: theme.fonts.bodyBold,
+    color: theme.colors.textWhite,
+    fontSize: 14,
+  },
 });
