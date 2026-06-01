@@ -1,31 +1,33 @@
 import { useEffect, useState } from 'react';
 import { NovoAtleta } from './NovoAtleta';
+import { useUser } from '../../context/UserContext';
 
 export function Atletas() {
     const [verFormulario, setVerFormulario] = useState(false);
     const [atletas, setAtletas] = useState([]);
+    const { user } = useUser();
 
     const handleNovoAtleta = () => {
         setVerFormulario(true);
     };
 
     useEffect(() => {
-        buscarAtletas();
-    }, []);
+        if (user?.clube?.id) {
+            buscarAtletas();
+        }
+    }, [user]);
 
     const buscarAtletas = async () => {
         try {
+            const clubeId = user.clube.id;
 
-            const response = await fetch('http://localhost:8080/Atleta');
+            const response = await fetch(`http://localhost:8080/Atleta/clube/${clubeId}`);
 
             if (!response.ok) {
-                throw new Error('Erro ao buscar atletas');
+                throw new Error('Erro ao buscar atletas do clube');
             }
 
             const data = await response.json();
-
-            console.log(data);
-
             setAtletas(data);
 
         } catch (error) {
