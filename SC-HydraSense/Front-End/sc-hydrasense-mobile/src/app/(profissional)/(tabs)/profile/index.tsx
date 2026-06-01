@@ -24,15 +24,16 @@ export default function ProfileProfissional() {
     } = useUser();
 
     // --- ESTADOS ESPECÍFICOS DO PROFISSIONAL ---
-    const [perfil, setPerfil] = useState(''); 
+    const [perfil, setPerfil] = useState(user?.especialidade || ''); 
     const [email, setEmail] = useState(user?.email || '');
-    const [registro, setRegistro] = useState(user?.registroProfissional || '');
-    const [especialidade, setEspecialidade] = useState(user?.tipoProfissional || '');
+    const [registro, setRegistro] = useState(user?.registro || '');
+    const [especialidade, setEspecialidade] = useState(user?.especialidade || '');
     const [instituicao, setInstituicao] = useState(user?.instituicao || '');
 
     // Função para selecionar o perfil e limpar o erro
     const handleSelectPerfil = (tipo: string) => {
         setPerfil(tipo);
+        setEspecialidade(tipo);
     };
 
     const pickImage = async () => {
@@ -54,7 +55,7 @@ export default function ProfileProfissional() {
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
             const API_URL = `http://${ip}:8080`;
 
-            const response = await fetch(`${API_URL}/Profissional/${user?.id}`, {
+            const response = await fetch(`${API_URL}/profissionais/${user?.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,8 +64,8 @@ export default function ProfileProfissional() {
                     ...user,
                     nome: user?.nome,
                     email: email,
-                    registroProfissional: registro,
-                    tipoProfissional: especialidade,
+                    registro: registro,
+                    especialidade: especialidade,
                     instituicao: instituicao
                 }),
             });
