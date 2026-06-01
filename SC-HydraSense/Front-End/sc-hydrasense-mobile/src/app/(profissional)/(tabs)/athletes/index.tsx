@@ -1,29 +1,74 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '../../../../components/Screen';
 import { Feather } from '@expo/vector-icons';
 import { styles } from './styles';
-import { AthleteCard, Athlete } from '../../../../components/athleteCard'; // Importamos o componente e a tipagem!
-import { Header} from '@/src/components/Header';
-
-// Usamos a tipagem Athlete que agora vem do componente
-const mockAthletes: Athlete[] = [
-    { id: '1', name: 'Gabriel Silva', number: '#10', sudorese: '1.8L/HR', hidro: '92%', status: 'ÓTIMO', photo: require('../../../../assets/images/karate.jpeg') },
-    { id: '2', name: 'Sergio Henrique', number: '#8', sudorese: '0.9L/HR', hidro: '74%', status: 'ATENÇÃO', photo: require('../../../../assets/images/maldade.jpeg') },
-    { id: '3', name: 'Lucas Castilho', number: '#4', sudorese: '1.3L/HR', hidro: '62%', status: 'CRÍTICO', photo: require('../../../../assets/images/toalha.jpeg') },
-];
+import { AthleteCard, Athlete } from '../../../../components/athleteCard';
+import Constants from 'expo-constants';
+import * as SecureStore from 'expo-secure-store';
 
 export default function Athletes() {
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
+    const [athletes, setAthletes] = useState<Athlete[]>([]);
 
-    const filteredAthletes = mockAthletes.filter(athlete => 
+    useEffect(() => {
+        buscarAtletasDoClube();
+    }, []);
+
+    const buscarAtletasDoClube = async () => {
+        try {
+            const usuarioSalvo = await SecureStore.getItemAsync('usuarioLogado');
+
+            if (!usuarioSalvo) {
+                console.log('Nenhum usuário logado');
+                return;
+            }
+
+            const usuario = JSON.parse(usuarioSalvo);
+            const clubeId = usuario?.clube?.id;
+
+            if (!clubeId) {
+                console.log('Usuário sem clube');
+                return;
+            }
+
+            const hostUri = Constants?.expoConfig?.hostUri;
+            const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+            const API_URL = `http://${ip}:8080`;
+
+            const response = await fetch(`${API_URL}/Atleta/clube/${clubeId}`);
+
+            if (!response.ok) {
+                throw new Error('Erro ao buscar atletas');
+            }
+
+            const data = await response.json();
+
+            const atletasFormatados: Athlete[] = data.map((atleta: any) => ({
+                id: String(atleta.id),
+                name: atleta.nome,
+                number: `#${atleta.id}`,
+                sudorese: '--',
+                hidro: '--',
+                status: 'ATIVO',
+                photo: require('../../../../assets/images/karate.jpeg')
+            }));
+
+            setAthletes(atletasFormatados);
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const filteredAthletes = athletes.filter(athlete =>
         athlete.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
-        <Screen backgroundColor="#F7F7F7" scrollable={true} HeaderComponent={<Header />}>
+        <Screen backgroundColor="#F7F7F7" scrollable={true}>
             <View style={styles.container}>
                 
                 <Text style={styles.pageTitle}>ATLETAS</Text>
