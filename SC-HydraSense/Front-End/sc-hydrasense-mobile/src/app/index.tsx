@@ -1,4 +1,3 @@
-// src/app/index.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
@@ -119,6 +118,7 @@ export default function LoginScreen() {
       console.log('Login validado com sucesso!', dados);
 
       setUser(dados.usuario);
+      await SecureStore.setItemAsync('usuarioLogado', JSON.stringify(dados.usuario));
 
       if (dados.tipo === 'profissional') {
         router.replace('/(profissional)/(tabs)/dashboard');
