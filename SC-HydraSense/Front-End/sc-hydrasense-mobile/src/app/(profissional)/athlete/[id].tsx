@@ -1,5 +1,4 @@
-// src/app/(profissional)/(tabs)/athletes/[id].tsx
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Screen } from '../../../components/Screen';
@@ -8,11 +7,48 @@ import { theme } from '@/src/global/themas';
 import { styles } from './styles'; // Vamos criar esse arquivo no próximo passo
 import { LinearGradient } from 'expo-linear-gradient';
 import { RecordCard, RecordItem } from '../../../components/recordCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AthleteDetails() {
     const router = useRouter();
-    // Captura o ID que foi passado na URL
+
     const { id } = useLocalSearchParams();
+    const [atletas, setAtletas] = useState([]);
+
+    useEffect(() => {
+        buscarAtletasDoClube();
+    }, []);
+
+    const buscarAtletasDoClube = async () => {
+        try {
+            const usuarioSalvo = await AsyncStorage.getItem('usuarioLogado');
+
+            if (!usuarioSalvo) {
+                console.log('Nenhum usuário logado');
+                return;
+            }
+
+            const usuario = JSON.parse(usuarioSalvo);
+            const clubeId = usuario?.clube?.id;
+
+            if (!clubeId) {
+                console.log('Usuário sem clube');
+                return;
+            }
+
+            const response = await fetch(`http://SEU_IP:8080/Atleta/clube/${clubeId}`);
+
+            if (!response.ok) {
+                throw new Error('Erro ao buscar atletas do clube');
+            }
+
+            const data = await response.json();
+            setAtletas(data);
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     // No futuro, você fará um fetch() na API usando esse 'id' para pegar os dados reais.
     // Por enquanto, vamos usar dados estáticos baseados no seu design:
