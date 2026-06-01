@@ -2,8 +2,10 @@ package com.hydrasense.schydrasense.config;
 
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.Clube;
+import com.hydrasense.schydrasense.model.Profissional;
 import com.hydrasense.schydrasense.repository.AtletaRepository;
 import com.hydrasense.schydrasense.repository.ClubeRepository;
+import com.hydrasense.schydrasense.repository.ProfissionalRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +18,12 @@ public class DataSeeder implements CommandLineRunner {
 
     private final ClubeRepository clubeRepository;
     private final AtletaRepository atletaRepository;
+    private final ProfissionalRepository profissionalRepository;
 
-    public DataSeeder(ClubeRepository clubeRepository, AtletaRepository atletaRepository) {
+    public DataSeeder(ClubeRepository clubeRepository, AtletaRepository atletaRepository, ProfissionalRepository profissionalRepository) {
         this.clubeRepository = clubeRepository;
         this.atletaRepository = atletaRepository;
+        this.profissionalRepository = profissionalRepository;
     }
 
     @Override
@@ -63,6 +67,29 @@ public class DataSeeder implements CommandLineRunner {
 
             atletaRepository.save(devAtleta);
             System.out.println("DataSeeder: Usuário dev/dev criado com sucesso no banco de dados.");
+        }
+
+        if (profissionalRepository.findByEmail("devpro").isEmpty()) {
+            Clube clubeDev = clubeRepository.findAll().stream().findFirst().orElse(null);
+            if (clubeDev == null) {
+                clubeDev = new Clube("Juventus", "JUVE-2024");
+                clubeDev = clubeRepository.save(clubeDev);
+            }
+
+            Profissional devPro = new Profissional();
+            devPro.setNome("Fisiologista DevPro");
+            devPro.setEmail("devpro");
+            devPro.setSenha("devpro");
+            devPro.setRegistro("12345");
+            devPro.setUf("SP");
+            devPro.setEspecialidade("Fisiologia");
+            devPro.setClube(clubeDev);
+            devPro.setTelefone("11999999999");
+            devPro.setPerfil("Profissional");
+            devPro.setResumo("Fisiologista de testes de desenvolvimento.");
+
+            profissionalRepository.save(devPro);
+            System.out.println("DataSeeder: Usuário profissional devpro/devpro criado com sucesso no banco de dados.");
         }
     }
 }

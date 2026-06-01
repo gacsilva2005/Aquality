@@ -1,48 +1,79 @@
-import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Modal, View, Text, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Button } from '../Button';
 import { styles } from './styles';
 import { theme } from '@/src/global/themas';
 import { InputCadastro } from '@/src/components/InputCadastro'; 
+import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
 interface ModalAddTeamProps {
     visible: boolean;
     onClose: () => void;
+    onTeamAdded?: () => void;
 }
 
 const ESPORTES = ['Futebol', 'Natação', 'Corrida', 'Musculação', 'Ciclismo'];
 
-const ATLETAS_MOCK = [
-    { id: '1', nome: 'Gabriel Silva', numero: '10' },
-    { id: '2', nome: 'Lucas Santos', numero: '08' },
-    { id: '3', nome: 'Matheus Oliveira', numero: '04' },
-    { id: '4', nome: 'Pedro Henrique', numero: '09' },
-    { id: '5', nome: 'João Paulo', numero: '01' },
-];
-
-export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
+export function ModalAddTeam({ visible, onClose, onTeamAdded }: ModalAddTeamProps) {
     const [teamName, setTeamName] = useState('');
-    const [teamCode, setTeamCode] = useState('');
     const [categoria, setCategoria] = useState('');
     const [maxAtletas, setMaxAtletas] = useState('');
     const [atletasSelecionados, setAtletasSelecionados] = useState<string[]>([]); 
+    const [atletas, setAtletas] = useState<{ id: string; nome: string; numero: string }[]>([]);
+    const [clubeId, setClubeId] = useState<number | null>(null);
     
     const [dropdownAberto, setDropdownAberto] = useState(false);
     
     // --- ESTADO DE ERROS ---
     const [erros, setErros] = useState<Record<string, string>>({});
 
+    useEffect(() => {
+        if (visible) {
+            buscarAtletasEClube();
+        }
+    }, [visible]);
+
+    const buscarAtletasEClube = async () => {
+        try {
+            const usuarioSalvo = await SecureStore.getItemAsync('usuarioLogado');
+            let cid = null;
+            if (usuarioSalvo) {
+                const usuario = JSON.parse(usuarioSalvo);
+                cid = usuario?.clube?.id;
+            }
+
+            if (!cid) {
+                console.log("ModalAddTeam: Nenhum profissional logado. Usando clubeId = 1 de fallback.");
+                cid = 1;
+            }
+
+            setClubeId(cid);
+
+            const hostUri = Constants?.expoConfig?.hostUri;
+            const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+            const API_URL = `http://${ip}:8080`;
+
+            const response = await fetch(`${API_URL}/Atleta/clube/${cid}`);
+            if (response.ok) {
+                const data = await response.json();
+                const formatted = data.map((atleta: any) => ({
+                    id: String(atleta.id),
+                    nome: atleta.nome,
+                    numero: String(atleta.id)
+                }));
+                setAtletas(formatted);
+            }
+        } catch (error) {
+            console.log('Erro ao buscar atletas para o modal:', error);
+        }
+    };
+
     // Função para atualizar o valor e limpar o erro daquele campo simultaneamente
     const handleChange = (field: string, value: any, setter: React.Dispatch<React.SetStateAction<any>>) => {
         setter(value);
         setErros((prev) => ({ ...prev, [field]: '' }));
-    };
-
-    const handleGenerateCode = () => {
-        const part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
-        const part2 = Math.random().toString(36).substring(2, 6).toUpperCase();
-        handleChange('teamCode', `${part1}-${part2}`, setTeamCode);
     };
 
     const toggleAtleta = (id: string) => {
@@ -56,7 +87,8 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
         setErros((prev) => ({ ...prev, atletas: '' }));
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        console.log("handleSave pressionado");
         let novosErros: Record<string, string> = {};
 
         // --- VALIDAÇÕES ---
@@ -69,29 +101,70 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
         if (!maxAtletas.trim() || parseInt(maxAtletas) <= 0) {
             novosErros.maxAtletas = 'Informe uma quantidade válida.';
         }
-        if (!teamCode.trim()) {
-            novosErros.teamCode = 'Insira ou gere um código de acesso.';
-        }
-        // Opcional: Se quiser obrigar a ter pelo menos 1 atleta, descomente a linha abaixo
-        // if (atletasSelecionados.length === 0) novosErros.atletas = 'Vincule pelo menos 1 atleta.';
 
-        // Se houver algum erro, paramos por aqui e mostramos na tela
         if (Object.keys(novosErros).length > 0) {
             setErros(novosErros);
             return;
         }
 
-        // Se passou em tudo, salva com sucesso!
-        console.log("Salvando equipe:", { teamName, categoria, maxAtletas, teamCode, atletasSelecionados });
+        if (!clubeId) {
+            Alert.alert(
+                'Erro do Profissional',
+                'O profissional atual não está vinculado a nenhum clube. Vincule-o a um clube antes de criar equipes.'
+            );
+            return;
+        }
 
-        setTeamName('');
-        setTeamCode('');
-        setCategoria('');
-        setMaxAtletas('');
-        setAtletasSelecionados([]); 
-        setDropdownAberto(false);
-        setErros({}); // Limpa os erros para a próxima vez
-        onClose();
+        try {
+            const hostUri = Constants?.expoConfig?.hostUri;
+            const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+            const API_URL = `http://${ip}:8080`;
+
+            const payload = {
+                nome: teamName,
+                categoria: categoria,
+                limiteAtletas: parseInt(maxAtletas),
+                clubeId: clubeId,
+                atletasIds: atletasSelecionados.map(id => parseInt(id))
+            };
+
+            console.log("Chamando salvar equipe com payload:", payload);
+
+            const response = await fetch(`${API_URL}/Equipe`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro do servidor (${response.status}): ${errorText}`);
+            }
+
+            console.log("Equipe salva com sucesso!");
+            Alert.alert('Sucesso', 'Equipe cadastrada com sucesso!');
+
+            setTeamName('');
+            setCategoria('');
+            setMaxAtletas('');
+            setAtletasSelecionados([]); 
+            setDropdownAberto(false);
+            setErros({}); 
+            
+            if (onTeamAdded) {
+                onTeamAdded();
+            }
+            onClose();
+        } catch (error: any) {
+            console.log('Erro ao salvar equipe:', error);
+            Alert.alert(
+                'Falha ao Salvar',
+                `Não foi possível salvar a equipe. Detalhes: ${error.message || error}`
+            );
+            setErros({ api: 'Não foi possível salvar a equipe. Tente novamente.' });
+        }
     };
 
     return (
@@ -199,7 +272,7 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
                             {atletasSelecionados.length > 0 && (
                                 <View style={styles.selectedAthletesContainer}>
                                     {atletasSelecionados.map(id => {
-                                        const atleta = ATLETAS_MOCK.find(a => a.id === id);
+                                        const atleta = atletas.find(a => a.id === id);
                                         if (!atleta) return null;
                                         return (
                                             <TouchableOpacity 
@@ -221,7 +294,7 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
                             {dropdownAberto && (
                                 <View style={styles.dropdownListContainer}>
                                     <ScrollView nestedScrollEnabled style={styles.dropdownScroll} keyboardShouldPersistTaps="handled">
-                                        {ATLETAS_MOCK.map((atleta) => {
+                                        {atletas.map((atleta) => {
                                             const isSelected = atletasSelecionados.includes(atleta.id);
                                             return (
                                                 <TouchableOpacity
@@ -247,13 +320,13 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
                                 </View>
                             )}
                         </View>
-                    </ScrollView>
 
-                    <Button
-                        title="SALVAR EQUIPE"
-                        onPress={handleSave}
-                        style={{ marginTop: 10, marginBottom: 0 }}
-                    />
+                        <Button
+                            title="SALVAR EQUIPE"
+                            onPress={handleSave}
+                            style={{ marginTop: 20, marginBottom: 10 }}
+                        />
+                    </ScrollView>
 
                 </View>
             </KeyboardAvoidingView>
