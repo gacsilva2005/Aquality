@@ -79,7 +79,6 @@ export function Home() {
 
       const dados = await response.json();
       console.log("Login realizado:", dados);
-      localStorage.setItem("usuarioLogado", JSON.stringify(dados.usuario));
 
       if (dados.tipo === "profissional") {
         success('Login Realizado!', 'Bem-vindo ao painel AQuality.');

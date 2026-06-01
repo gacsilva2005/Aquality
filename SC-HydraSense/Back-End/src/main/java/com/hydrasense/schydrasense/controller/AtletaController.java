@@ -5,7 +5,9 @@ import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.dto.LoginDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.SessaoDeTreino;
+import com.hydrasense.schydrasense.repository.AtletaRepository;
 import com.hydrasense.schydrasense.service.AtletaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/Atleta")
 public class AtletaController {
+
+    @Autowired
+    private AtletaRepository atletaRepository;
 
     private final AtletaService service;
 
@@ -59,4 +64,11 @@ public class AtletaController {
     public ResponseEntity<List<SessaoDeTreino>> listarPorAtleta(@PathVariable Long id) {
         return ResponseEntity.ok(service.listarPorAtleta(id));
     }
+
+    @GetMapping("/clube/{clubeId}")
+    public ResponseEntity<List<Atleta>> listarAtletasPorClube(@PathVariable Long clubeId) {
+        List<Atleta> atletas = atletaRepository.findByClubeId(clubeId);
+        return ResponseEntity.ok(atletas);
+    }
+
 }
