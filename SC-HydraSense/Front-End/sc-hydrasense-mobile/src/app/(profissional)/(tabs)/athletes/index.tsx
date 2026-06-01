@@ -5,6 +5,7 @@ import { Screen } from '../../../../components/Screen';
 import { Feather } from '@expo/vector-icons';
 import { styles } from './styles';
 import { AthleteCard, Athlete } from '../../../../components/athleteCard'; // Importamos o componente e a tipagem!
+import { Header} from '@/src/components/Header';
 
 // Usamos a tipagem Athlete que agora vem do componente
 const mockAthletes: Athlete[] = [
@@ -22,7 +23,7 @@ export default function Athletes() {
     );
 
     return (
-        <Screen backgroundColor="#F7F7F7" scrollable={true}>
+        <Screen backgroundColor="#F7F7F7" scrollable={true} HeaderComponent={<Header />}>
             <View style={styles.container}>
                 
                 <Text style={styles.pageTitle}>ATLETAS</Text>
