@@ -6,6 +6,7 @@ import { TeamCard, Team } from '../../../../components/TeamCard'; // Nosso novo 
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { Header } from '@/src/components/Header';
+import { ModalAddTeam } from '@/src/components/ModalAddTeam';
 
 const mockTeams: Team[] = [
     { id: '1', name: 'FUTEBOL MASCULINO A', category: 'CATEGORIA PRINCIPAL', status: 'ALERTA', activeAthletes: 24, totalAthletes: 28, sweatRate: '1.8' },
@@ -15,6 +16,7 @@ const mockTeams: Team[] = [
 
 export default function TeamsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
 
     const filteredTeams = mockTeams.filter(team => 
         team.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -37,7 +39,7 @@ export default function TeamsScreen() {
                 <Button 
                     title="ADICIONAR EQUIPE" 
                     icon={<MaterialCommunityIcons name="account-multiple-plus-outline" size={20} color="#FFF" />}
-                    onPress={() => console.log('Abrir modal de adicionar equipe')}
+                    onPress={() => setModalVisible(true)}
                 />
 
                 {/* --- BARRA DE PESQUISA --- */}
@@ -67,7 +69,10 @@ export default function TeamsScreen() {
                         <Text style={styles.emptyText}>Nenhuma equipe encontrada.</Text>
                     )}
                 </View>
-
+                <ModalAddTeam 
+                visible={modalVisible} 
+                onClose={() => setModalVisible(false)} 
+            />
             </View>
         </Screen>
     );
