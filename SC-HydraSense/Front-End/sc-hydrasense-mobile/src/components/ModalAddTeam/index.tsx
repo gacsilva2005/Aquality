@@ -26,42 +26,71 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
     const [teamCode, setTeamCode] = useState('');
     const [categoria, setCategoria] = useState('');
     const [maxAtletas, setMaxAtletas] = useState('');
-    
-    // --- NOVO: ESTADO DE MÚLTIPLOS ATLETAS (ARRAY) ---
     const [atletasSelecionados, setAtletasSelecionados] = useState<string[]>([]); 
     
     const [dropdownAberto, setDropdownAberto] = useState(false);
+    
+    // --- ESTADO DE ERROS ---
     const [erros, setErros] = useState<Record<string, string>>({});
+
+    // Função para atualizar o valor e limpar o erro daquele campo simultaneamente
+    const handleChange = (field: string, value: any, setter: React.Dispatch<React.SetStateAction<any>>) => {
+        setter(value);
+        setErros((prev) => ({ ...prev, [field]: '' }));
+    };
 
     const handleGenerateCode = () => {
         const part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
         const part2 = Math.random().toString(36).substring(2, 6).toUpperCase();
-        setTeamCode(`${part1}-${part2}`);
+        handleChange('teamCode', `${part1}-${part2}`, setTeamCode);
     };
 
-    // Função que adiciona ou remove o atleta da lista de selecionados
     const toggleAtleta = (id: string) => {
         setAtletasSelecionados((prevSelecionados) => {
             if (prevSelecionados.includes(id)) {
-                // Se já tem, tira da lista
                 return prevSelecionados.filter(atletaId => atletaId !== id);
             } else {
-                // Se não tem, adiciona na lista
                 return [...prevSelecionados, id];
             }
         });
-        setErros((prev) => ({ ...prev, atleta: '' }));
+        setErros((prev) => ({ ...prev, atletas: '' }));
     };
 
     const handleSave = () => {
+        let novosErros: Record<string, string> = {};
+
+        // --- VALIDAÇÕES ---
+        if (!teamName.trim()) {
+            novosErros.teamName = 'O nome da equipe é obrigatório.';
+        }
+        if (!categoria) {
+            novosErros.categoria = 'Selecione uma categoria.';
+        }
+        if (!maxAtletas.trim() || parseInt(maxAtletas) <= 0) {
+            novosErros.maxAtletas = 'Informe uma quantidade válida.';
+        }
+        if (!teamCode.trim()) {
+            novosErros.teamCode = 'Insira ou gere um código de acesso.';
+        }
+        // Opcional: Se quiser obrigar a ter pelo menos 1 atleta, descomente a linha abaixo
+        // if (atletasSelecionados.length === 0) novosErros.atletas = 'Vincule pelo menos 1 atleta.';
+
+        // Se houver algum erro, paramos por aqui e mostramos na tela
+        if (Object.keys(novosErros).length > 0) {
+            setErros(novosErros);
+            return;
+        }
+
+        // Se passou em tudo, salva com sucesso!
         console.log("Salvando equipe:", { teamName, categoria, maxAtletas, teamCode, atletasSelecionados });
 
         setTeamName('');
         setTeamCode('');
         setCategoria('');
         setMaxAtletas('');
-        setAtletasSelecionados([]); // Limpa a lista
+        setAtletasSelecionados([]); 
         setDropdownAberto(false);
+        setErros({}); // Limpa os erros para a próxima vez
         onClose();
     };
 
@@ -87,49 +116,58 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
 
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
 
-                        {/* NOME E CATEGORIA... (Mantidos) */}
+                        {/* --- NOME DA EQUIPE --- */}
                         <View style={styles.inputGroup}>
                             <Text style={styles.sectionLabel}>NOME DA EQUIPE</Text>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, erros.teamName && styles.inputError]} // Borda vermelha se der erro
                                 placeholder="Ex: Elite Alpha"
                                 placeholderTextColor="#999"
                                 value={teamName}
-                                onChangeText={setTeamName}
+                                onChangeText={(text) => handleChange('teamName', text, setTeamName)}
                                 autoCapitalize="words"
                             />
+                            {erros.teamName && <Text style={styles.errorText}>{erros.teamName}</Text>}
                         </View>
 
+                        {/* --- CATEGORIA --- */}
                         <View style={styles.inputGroup}>
                             <Text style={styles.sectionLabel}>CATEGORIA DO ESPORTE</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScroll}>
                                 {ESPORTES.map((esp) => (
                                     <TouchableOpacity
                                         key={esp}
-                                        style={[styles.chip, categoria === esp && styles.chipActive]}
-                                        onPress={() => setCategoria(esp)}
+                                        style={[
+                                            styles.chip, 
+                                            categoria === esp && styles.chipActive,
+                                            erros.categoria && !categoria ? styles.chipError : null // Borda vermelha nos chips se esquecer
+                                        ]}
+                                        onPress={() => handleChange('categoria', esp, setCategoria)}
                                         activeOpacity={0.7}
                                     >
                                         <Text style={[styles.chipText, categoria === esp && styles.chipTextActive]}>{esp}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </ScrollView>
+                            {erros.categoria && <Text style={styles.errorText}>{erros.categoria}</Text>}
                         </View>
 
+                        {/* --- MÁXIMO DE ATLETAS --- */}
                         <View style={styles.inputGroup}>
                             <Text style={styles.sectionLabel}>MÁXIMO DE ATLETAS</Text>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, erros.maxAtletas && styles.inputError]}
                                 placeholder="Ex: 30"
                                 placeholderTextColor="#999"
                                 value={maxAtletas}
-                                onChangeText={setMaxAtletas}
+                                onChangeText={(text) => handleChange('maxAtletas', text, setMaxAtletas)}
                                 keyboardType="numeric"
                                 maxLength={3}
                             />
+                            {erros.maxAtletas && <Text style={styles.errorText}>{erros.maxAtletas}</Text>}
                         </View>
 
-                        {/* 4. O CAMPO DE ATLETAS (MULTI-SELECT) */}
+                        {/* --- VINCULAR ATLETAS --- */}
                         <View style={{ zIndex: 10, marginBottom: 20 }}>
                             <TouchableOpacity
                                 activeOpacity={0.7}
@@ -139,14 +177,13 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
                                 <View pointerEvents="none" style={{ flex: 1 }}>
                                     <InputCadastro
                                         label="VINCULAR ATLETAS"
-                                        // O texto do input muda com base em quantos foram selecionados
                                         value={
                                             atletasSelecionados.length > 0 
                                             ? `${atletasSelecionados.length} atleta(s) selecionado(s)` 
                                             : 'Selecione os atletas...'
                                         }
                                         onChangeText={() => { }}
-                                        errorMessage={erros.atleta}
+                                        errorMessage={erros.atletas} // Exibe erro se tiver (opcional)
                                     />
                                 </View>
 
@@ -158,7 +195,7 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
                                 />
                             </TouchableOpacity>
 
-                            {/* --- LISTA DE ATLETAS SELECIONADOS (CHIPS) --- */}
+                            {/* Chips de atletas selecionados */}
                             {atletasSelecionados.length > 0 && (
                                 <View style={styles.selectedAthletesContainer}>
                                     {atletasSelecionados.map(id => {
@@ -168,7 +205,7 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
                                             <TouchableOpacity 
                                                 key={`sel-${id}`} 
                                                 style={styles.selectedAthleteChip}
-                                                onPress={() => toggleAtleta(id)} // Clicar no chip remove o atleta
+                                                onPress={() => toggleAtleta(id)}
                                             >
                                                 <Text style={styles.selectedAthleteChipText}>
                                                     {atleta.nome} <Text style={{fontWeight: 'bold'}}>#{atleta.numero}</Text>
@@ -180,17 +217,15 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
                                 </View>
                             )}
 
-                            {/* --- MENU DROPDOWN DE OPÇÕES --- */}
+                            {/* Dropdown de opções */}
                             {dropdownAberto && (
                                 <View style={styles.dropdownListContainer}>
                                     <ScrollView nestedScrollEnabled style={styles.dropdownScroll} keyboardShouldPersistTaps="handled">
                                         {ATLETAS_MOCK.map((atleta) => {
                                             const isSelected = atletasSelecionados.includes(atleta.id);
-                                            
                                             return (
                                                 <TouchableOpacity
                                                     key={atleta.id}
-                                                    // Fica com fundo levemente diferente se já estiver selecionado
                                                     style={[styles.dropdownOption, isSelected && { backgroundColor: '#FFF5F5' }]}
                                                     onPress={() => toggleAtleta(atleta.id)}
                                                 >
@@ -200,8 +235,6 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
                                                     ]}>
                                                         {atleta.nome} <Text style={{ color: theme.colors.primary, fontWeight: 'bold' }}>#{atleta.numero}</Text>
                                                     </Text>
-
-                                                    {/* Checkbox visual para multi-select */}
                                                     <MaterialCommunityIcons 
                                                         name={isSelected ? "checkbox-marked" : "checkbox-blank-outline"} 
                                                         size={22} 
@@ -214,7 +247,6 @@ export function ModalAddTeam({ visible, onClose }: ModalAddTeamProps) {
                                 </View>
                             )}
                         </View>
-
                     </ScrollView>
 
                     <Button

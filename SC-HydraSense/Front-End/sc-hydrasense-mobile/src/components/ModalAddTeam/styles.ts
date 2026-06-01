@@ -198,4 +198,18 @@ export const styles = StyleSheet.create({
         fontSize: 12,
         color: '#FFFFFF',
     },
+    // --- ESTILOS DE ERRO (NOVOS) ---
+    errorText: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 12,
+        color: theme.colors.primary, 
+        marginTop: 4,
+    },
+    inputError: {
+        borderBottomColor: theme.colors.primary, 
+    },
+    chipError: {
+        borderColor: theme.colors.primary, 
+        borderWidth: 1,
+    },
 });
