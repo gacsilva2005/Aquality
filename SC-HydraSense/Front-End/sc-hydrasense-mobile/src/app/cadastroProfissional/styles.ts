@@ -95,5 +95,112 @@ export const styles = StyleSheet.create({
     color: '#333333',
     marginTop: 10,
   },
+  // ... seus estilos antigos ...
+
+    // --- ESTILOS DO MODAL DE CLUBES ---
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fundo escurecido transparente
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: '#FFFFFF',
+        width: '85%',
+        maxHeight: '70%', // Não deixa o modal ocupar a tela inteira
+        borderRadius: 16,
+        padding: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 5,
+    },
+    modalTitle: {
+        fontFamily: theme.fonts.headingBold,
+        fontSize: 18,
+        color: '#1A1A1A',
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+    clubList: {
+        marginBottom: 10,
+    },
+    clubOption: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 14,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F0F0F0',
+    },
+    clubOptionText: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 16,
+        color: '#4A4A4A',
+    },
+    clubOptionTextSelected: {
+        fontFamily: theme.fonts.headingBold,
+        color: theme.colors.primary, // Cor de destaque do seu tema (vermelho)
+    },
+    modalCancelButton: {
+        marginTop: 10,
+        paddingVertical: 12,
+        alignItems: 'center',
+        borderRadius: 8,
+        backgroundColor: '#F5F5F5',
+    },
+    modalCancelText: {
+        fontFamily: theme.fonts.headingBold,
+        fontSize: 14,
+        color: '#666',
+    },
+    
+
+    // --- ESTILOS DO DROPDOWN INLINE ---
+    dropdownInputContainer: {
+        position: 'relative',
+        justifyContent: 'center',
+    },
+    dropdownIcon: {
+        position: 'absolute',
+        right: 15,
+        // O valor do 'bottom' pode precisar de um ajuste leve dependendo de como o seu InputCadastro é desenhado por dentro
+        bottom: 25, 
+    },
+    dropdownListContainer: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+        borderRadius: 8,
+        marginTop: -10, // Puxa a lista um pouquinho para cima para "colar" no input
+        marginBottom: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    dropdownScroll: {
+        maxHeight: 200, // Limita a altura para mostrar uns 4 ou 5 clubes e exigir rolagem para o resto
+    },
+    dropdownOption: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 14,
+        paddingHorizontal: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F5F5F5',
+    },
+    dropdownOptionText: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 15,
+        color: '#4A4A4A',
+    },
+    dropdownOptionTextSelected: {
+        fontFamily: theme.fonts.headingBold,
+        color: theme.colors.primary, 
+    },
 });
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Modal, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 import { useRouter, Stack } from 'expo-router';
 import { Screen } from '../../components/Screen';
@@ -24,6 +24,7 @@ export default function CadastroProfissional() {
     const [codigo, setCodigo] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [modalClubesVisivel, setModalClubesVisivel] = useState(false);
     const [habilitarBiometria, setHabilitarBiometria] = useState(false);
 
     const [erros, setErros] = useState<Record<string, string>>({});
@@ -141,6 +142,11 @@ export default function CadastroProfissional() {
         setErros((prevErros) => ({ ...prevErros, perfil: '' }));
     };
 
+    const CLUBES = [
+        "Corinthians", "Palmeiras", "Santos", "São Paulo", "América-SP", 
+        "Guarani", "Ponte Preta", "Ituano", "Juventus", "Portuguesa"
+    ];
+
     return (
         <Screen backgroundColor="#F7F7F7" scrollable={true}>
             <Stack.Screen options={{ headerShown: false }} />
@@ -246,13 +252,62 @@ export default function CadastroProfissional() {
                     errorMessage={erros.senha}
                 />
 
-                <InputCadastro
-                    label="INSTITUIÇÃO OU CLUBE"
-                    value={time}
-                    onChangeText={(text) => handleChange('time', text, setTime)}
-                    autoCapitalize="words"
-                    errorMessage={erros.time}
-                />
+                {/* 4. O CAMPO DE INSTITUIÇÃO (DROPDOWN INLINE) */}
+                <View style={{ zIndex: 10 }}> {/* O zIndex garante que a lista fique por cima dos outros elementos se necessário */}
+                    <TouchableOpacity 
+                        activeOpacity={0.7} 
+                        // Alterna entre abrir e fechar a lista
+                        onPress={() => setModalClubesVisivel(!modalClubesVisivel)} 
+                        style={styles.dropdownInputContainer}
+                    >
+                        <View pointerEvents="none" style={{ flex: 1 }}>
+                            <InputCadastro
+                                label="INSTITUIÇÃO OU CLUBE"
+                                value={time ? time : 'Selecione um clube...'} 
+                                onChangeText={() => {}} 
+                                errorMessage={erros.time}
+                            />
+                        </View>
+                        
+                        {/* A SETINHA DINÂMICA (Aponta pra cima se aberto, pra baixo se fechado) */}
+                        <MaterialCommunityIcons 
+                            name={modalClubesVisivel ? "chevron-up" : "chevron-down"} 
+                            size={24} 
+                            color="#666" 
+                            style={styles.dropdownIcon}
+                        />
+                    </TouchableOpacity>
+
+                    {/* A LISTA DE CLUBES (Aparece logo abaixo do input quando clicado) */}
+                    {modalClubesVisivel && (
+                        <View style={styles.dropdownListContainer}>
+                            {/* nestedScrollEnabled permite rolar a lista mesmo dentro do ScrollView principal da tela */}
+                            <ScrollView nestedScrollEnabled style={styles.dropdownScroll} keyboardShouldPersistTaps="handled">
+                                {CLUBES.map((clube) => (
+                                    <TouchableOpacity
+                                        key={clube}
+                                        style={styles.dropdownOption}
+                                        onPress={() => {
+                                            handleChange('time', clube, setTime);
+                                            setModalClubesVisivel(false); // Fecha a lista após escolher
+                                        }}
+                                    >
+                                        <Text style={[
+                                            styles.dropdownOptionText, 
+                                            time === clube && styles.dropdownOptionTextSelected
+                                        ]}>
+                                            {clube}
+                                        </Text>
+                                        
+                                        {time === clube && (
+                                            <MaterialCommunityIcons name="check" size={20} color={theme.colors.primary} />
+                                        )}
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
+                    )}
+                </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 15 }}>
                     <Checkbox
@@ -274,7 +329,10 @@ export default function CadastroProfissional() {
                     <Text style={styles.backButtonText}>Já possui conta ? FAZER LOGIN</Text>
                 </TouchableOpacity>
 
+
+
             </View>
+            
         </Screen>
     );
 }

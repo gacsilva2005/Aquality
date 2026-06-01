@@ -1,25 +1,72 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import { Screen } from '../../../../components/Screen'; // Ajuste o caminho se necessário
-import { Header } from '../../../../components/Header'; // Ajuste o caminho se necessário
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { View, Text, TextInput } from 'react-native';
+import { Screen } from '../../../../components/Screen';
+import { Button } from '../../../../components/Button'; // Seu botão que agora aceita ícones!
+import { TeamCard, Team } from '../../../../components/TeamCard'; // Nosso novo card
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './styles';
-import { theme } from '@/src/global/themas';
+import { Header } from '@/src/components/Header';
 
-export default function EmConstrucao() {
+const mockTeams: Team[] = [
+    { id: '1', name: 'FUTEBOL MASCULINO A', category: 'CATEGORIA PRINCIPAL', status: 'ALERTA', activeAthletes: 24, totalAthletes: 28, sweatRate: '1.8' },
+    { id: '2', name: 'BASQUETE SUB-20', category: 'DESENVOLVIMENTO', status: 'IDEAL', activeAthletes: 12, totalAthletes: 12, sweatRate: '1.1' },
+    { id: '3', name: 'VÔLEI FEMININO B', category: 'CATEGORIA BASE', status: 'MONITORAR', activeAthletes: 14, totalAthletes: 16, sweatRate: '1.4' },
+];
+
+export default function TeamsScreen() {
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const filteredTeams = mockTeams.filter(team => 
+        team.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
-        <Screen
-            backgroundColor={theme.colors.background}
-            scrollable={false} // Não precisa de scroll aqui, vamos focar no meio da tela
-            HeaderComponent={<Header />}
-        >
+        <Screen backgroundColor="#F7F7F7" scrollable={true} HeaderComponent={<Header />}>
             <View style={styles.container}>
-
-                <Text style={styles.title}>PÁGINA EM CONSTRUÇÃO</Text>
                 
-                <Text style={styles.description}>
-                    Estamos preparando esta área com ferramentas incríveis para a sua gestão profissional. Em breve teremos novidades por aqui!
-                </Text>
+                {/* --- CABEÇALHO --- */}
+                <View style={styles.header}>
+                    <Text style={styles.pageTitle}>EQUIPES MONITORADAS</Text>
+                    <Text style={styles.pageDescription}>
+                        Gerencie os elencos, monitore cargas de treinamento e analise o desempenho geral das equipes da organização.
+                    </Text>
+                </View>
+
+                {/* --- BOTÃO ADICIONAR --- */}
+                {/* Substituímos a TouchableOpacity nativa pelo seu componente genérico e passamos o ícone */}
+                <Button 
+                    title="ADICIONAR EQUIPE" 
+                    icon={<MaterialCommunityIcons name="account-multiple-plus-outline" size={20} color="#FFF" />}
+                    onPress={() => console.log('Abrir modal de adicionar equipe')}
+                />
+
+                {/* --- BARRA DE PESQUISA --- */}
+                <View style={styles.searchContainer}>
+                    <Feather name="search" size={20} color="#999" style={styles.searchIcon} />
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Buscar equipe..."
+                        placeholderTextColor="#999"
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                        autoCorrect={false}
+                    />
+                </View>
+
+                {/* --- LISTA DE EQUIPES --- */}
+                <View style={styles.listContainer}>
+                    {filteredTeams.map((team) => (
+                        <TeamCard 
+                            key={team.id} 
+                            team={team} 
+                            onPress={() => console.log('Navegar para a equipe', team.id)} 
+                        />
+                    ))}
+
+                    {filteredTeams.length === 0 && (
+                        <Text style={styles.emptyText}>Nenhuma equipe encontrada.</Text>
+                    )}
+                </View>
 
             </View>
         </Screen>

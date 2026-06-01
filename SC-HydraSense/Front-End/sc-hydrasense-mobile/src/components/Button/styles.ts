@@ -12,15 +12,24 @@ export const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 20,
   },
+  // <-- NOVOS ESTILOS AQUI -->
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconContainer: {
+    marginRight: 8, // Espaçamento entre o ícone e o texto
+  },
+  // <------------------------>
   title: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-    letterSpacing: 0.5, // Dá um espacinho elegante entre as letras
+    letterSpacing: 0.5,
   },
-  // Criamos um estilo separado para quando o botão estiver desativado
   disabledContainer: {
-    backgroundColor: '#94A3B8', // Fica cinza
+    backgroundColor: '#94A3B8', 
     opacity: 0.7,
   }
 });
