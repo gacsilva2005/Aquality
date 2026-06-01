@@ -131,15 +131,15 @@ export default function CadastroProfissional() {
         }
     };
 
-    const handleChange = (field: string, value: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
-        setter(value);
-        setErros((prevErros) => ({ ...prevErros, [field]: '' }));
-    };
-
     // Função para selecionar o perfil e limpar o erro
     const handleSelectPerfil = (tipo: string) => {
         setPerfil(tipo);
         setErros((prevErros) => ({ ...prevErros, perfil: '' }));
+    };
+
+    const handleChange = (field: string, value: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
+        setter(value);
+        setErros((prevErros) => ({ ...prevErros, [field]: '' }));
     };
 
     const CLUBES = [

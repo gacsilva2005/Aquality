@@ -4,7 +4,7 @@ import { theme } from '@/src/global/themas';
 export const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)', 
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 20,
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 5,
     },
-    
+
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
     sectionLabel: {
         fontFamily: theme.fonts.bodyRegular,
         fontSize: 12,
-        color: '#8D7B7B', 
+        color: '#8D7B7B',
         textTransform: 'uppercase',
         letterSpacing: 0.5,
         marginBottom: 10,
@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         marginTop: 5,
         // Dá um respiro para os itens não colarem nos cantos ao rolar
-        marginHorizontal: -5, 
+        marginHorizontal: -5,
     },
     chip: {
         backgroundColor: '#F5F5F5',
@@ -123,7 +123,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#FFFFFF',
         borderWidth: 1,
-        borderColor: '#FCE4E4', 
+        borderColor: '#FCE4E4',
         borderRadius: 8,
         paddingVertical: 12,
         marginTop: 5,
@@ -133,5 +133,69 @@ export const styles = StyleSheet.create({
         fontFamily: theme.fonts.headingBold,
         fontSize: 14,
         color: '#1A1A1A',
-    }
+    },
+    // --- ESTILOS DO DROPDOWN INLINE ---
+    dropdownInputContainer: {
+        position: 'relative',
+        justifyContent: 'center',
+    },
+    dropdownIcon: {
+        position: 'absolute',
+        right: 15,
+        // O valor do 'bottom' pode precisar de um ajuste leve dependendo de como o seu InputCadastro é desenhado por dentro
+        bottom: 25,
+    },
+    dropdownListContainer: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+        borderRadius: 8,
+        marginTop: 10, // Puxa a lista um pouquinho para cima para "colar" no input
+        marginBottom: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    dropdownScroll: {
+        maxHeight: 200, // Limita a altura para mostrar uns 4 ou 5 clubes e exigir rolagem para o resto
+    },
+    dropdownOption: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F5F5F5',
+    },
+    dropdownOptionText: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 15,
+        color: '#4A4A4A',
+    },
+    dropdownOptionTextSelected: {
+        fontFamily: theme.fonts.headingBold,
+        color: theme.colors.primary,
+    },
+    selectedAthletesContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+        marginTop: 10,
+    },
+    selectedAthleteChip: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: theme.colors.critical, 
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 16,
+    },
+    selectedAthleteChipText: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 12,
+        color: '#FFFFFF',
+    },
 });
