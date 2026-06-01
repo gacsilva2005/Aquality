@@ -211,4 +211,49 @@ export const styles = StyleSheet.create({
     elevation: 0, // Tira a sombra para parecer "desativado"
   },
   
+  // --- ESTILOS DO DROPDOWN INLINE ---
+  dropdownInputContainer: {
+    position: 'relative',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  dropdownIcon: {
+    position: 'absolute',
+    right: 15,
+    bottom: 12, 
+  },
+  dropdownListContainer: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    marginTop: -5,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  dropdownScroll: {
+    maxHeight: 200,
+  },
+  dropdownOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F5F5',
+  },
+  dropdownOptionText: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 15,
+    color: '#4A4A4A',
+  },
+  dropdownOptionTextSelected: {
+    fontFamily: theme.fonts.headingBold,
+    color: theme.colors.primary, 
+  },
 });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput, Alert, ScrollView } from 'react-native';
 import { Screen } from '../../../../components/Screen';
 import { Header } from '../../../../components/Header';
 import { InputProfile } from '../../../../components/InputProfile';
@@ -11,6 +11,11 @@ import { useRouter } from 'expo-router';
 import { Divider } from '@/src/components/Divider';
 import { useUser } from '../../../../contexts/UserContext';
 import Constants from "expo-constants";
+
+const CLUBES = [
+    "Corinthians", "Palmeiras", "Santos", "São Paulo", "América-SP", 
+    "Guarani", "Ponte Preta", "Ituano", "Juventus", "Portuguesa"
+];
 
 export default function ProfileProfissional() {
     const router = useRouter();
@@ -28,7 +33,8 @@ export default function ProfileProfissional() {
     const [email, setEmail] = useState(user?.email || '');
     const [registro, setRegistro] = useState(user?.registro || '');
     const [especialidade, setEspecialidade] = useState(user?.especialidade || '');
-    const [instituicao, setInstituicao] = useState(user?.instituicao || '');
+    const [instituicao, setInstituicao] = useState(user?.clube?.nome || '');
+    const [modalClubesVisivel, setModalClubesVisivel] = useState(false);
 
     // Função para selecionar o perfil e limpar o erro
     const handleSelectPerfil = (tipo: string) => {
@@ -66,7 +72,7 @@ export default function ProfileProfissional() {
                     email: email,
                     registro: registro,
                     especialidade: especialidade,
-                    instituicao: instituicao
+                    clube: instituicao ? { nome: instituicao.trim() } : null
                 }),
             });
 
@@ -254,16 +260,54 @@ export default function ProfileProfissional() {
 
                 <Divider text="VÍNCULO INSTITUCIONAL" />
 
-                <View style={styles.professionalContainer}>
+                <View style={[styles.professionalContainer, { zIndex: 10 }]}>
                     <View style={styles.infoCard}>
                         <Text style={styles.infoLabel}>INSTITUIÇÃO OU CLUBE</Text>
                         {isEditing ? (
-                            <TextInput 
-                                style={[styles.infoValue, { borderBottomWidth: 1, borderColor: '#CCC', paddingBottom: 4 }]}
-                                value={instituicao}
-                                onChangeText={setInstituicao}
-                                placeholder="Digite a instituição..."
-                            />
+                            <View>
+                                <TouchableOpacity 
+                                    activeOpacity={0.7} 
+                                    onPress={() => setModalClubesVisivel(!modalClubesVisivel)} 
+                                    style={styles.dropdownInputContainer}
+                                >
+                                    <Text style={[styles.infoValue, { borderBottomWidth: 1, borderColor: '#CCC', paddingBottom: 4 }]}>
+                                        {instituicao ? instituicao : 'Selecione um clube...'}
+                                    </Text>
+                                    <MaterialCommunityIcons 
+                                        name={modalClubesVisivel ? "chevron-up" : "chevron-down"} 
+                                        size={20} 
+                                        color="#666" 
+                                        style={styles.dropdownIcon}
+                                    />
+                                </TouchableOpacity>
+
+                                {modalClubesVisivel && (
+                                    <View style={styles.dropdownListContainer}>
+                                        <ScrollView nestedScrollEnabled style={styles.dropdownScroll} keyboardShouldPersistTaps="handled">
+                                            {CLUBES.map((clube) => (
+                                                <TouchableOpacity
+                                                    key={clube}
+                                                    style={styles.dropdownOption}
+                                                    onPress={() => {
+                                                        setInstituicao(clube);
+                                                        setModalClubesVisivel(false);
+                                                    }}
+                                                >
+                                                    <Text style={[
+                                                        styles.dropdownOptionText, 
+                                                        instituicao === clube && styles.dropdownOptionTextSelected
+                                                    ]}>
+                                                        {clube}
+                                                    </Text>
+                                                    {instituicao === clube && (
+                                                        <MaterialCommunityIcons name="check" size={18} color={theme.colors.primary} />
+                                                    )}
+                                                </TouchableOpacity>
+                                            ))}
+                                        </ScrollView>
+                                    </View>
+                                )}
+                            </View>
                         ) : (
                             <Text style={styles.infoValue}>{instituicao || 'Não informado'}</Text>
                         )}
@@ -273,7 +317,7 @@ export default function ProfileProfissional() {
                         <Text style={styles.infoLabel}>CÓDIGO DE ACESSO DA EQUIPE</Text>
                         {/* Esse dado costuma ser gerado pelo sistema, então mantemos fixo para visualização */}
                         <Text style={[styles.infoValue, { color: theme.colors.primary }]}>
-                            {user?.codigoEquipe || 'SQUAD-2026-X'}
+                            {user?.clube?.codigo || 'Sem código'}
                         </Text>
                     </View>
                 </View>
