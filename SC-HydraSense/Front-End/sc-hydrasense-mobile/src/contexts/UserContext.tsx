@@ -15,11 +15,12 @@ interface UserData {
     pesoAtual?: string; 
     modalidade?: string;
     clube?: { 
+        id?: number;
         nome: string; 
-    };
+        codigo?: string;
+    } | null;
     registro?: string;
     especialidade?: string;
-    instituicao?: string;
     codigoEquipe?: string;
 }
 
