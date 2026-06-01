@@ -17,6 +17,10 @@ interface UserData {
     clube?: { 
         nome: string; 
     };
+    registro?: string;
+    especialidade?: string;
+    instituicao?: string;
+    codigoEquipe?: string;
 }
 
 interface UserContextData {

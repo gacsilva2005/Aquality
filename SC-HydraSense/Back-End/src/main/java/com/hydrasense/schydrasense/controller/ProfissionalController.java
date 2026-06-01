@@ -53,5 +53,15 @@ public class ProfissionalController {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Credenciais inválidas");
-    }
+     }
+
+     @PutMapping("/{id}")
+     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Profissional profissional) {
+         try {
+             Profissional atualizado = service.atualizar(id, profissional);
+             return ResponseEntity.ok(atualizado);
+         } catch (Exception e) {
+             return ResponseEntity.badRequest().body(e.getMessage());
+         }
+     }
 }

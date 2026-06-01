@@ -100,7 +100,7 @@ export default function LoginScreen() {
       const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
       const API_URL = `http://${ip}:8080`;
 
-      const response = await fetch(`${API_URL}/Atleta/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,9 +118,13 @@ export default function LoginScreen() {
 
       console.log('Login validado com sucesso!', dados);
 
-      setUser(dados);
+      setUser(dados.usuario);
 
-      router.replace('/(atleta)/(tabs)/dashboard'); // Rota atualizada
+      if (dados.tipo === 'profissional') {
+        router.replace('/(profissional)/(tabs)/dashboard');
+      } else {
+        router.replace('/(atleta)/(tabs)/dashboard');
+      }
     } catch (error) {
       console.error(error);
       Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique sua rede.');

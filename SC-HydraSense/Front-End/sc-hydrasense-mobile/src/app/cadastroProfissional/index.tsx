@@ -51,7 +51,7 @@ export default function CadastroProfissional() {
         // === ATALHO PARA DESENVOLVIMENTO ===
         // Se estiver testando e o backend ainda não existir, ele pula direto para a tela
         if (__DEV__ && email.trim() === 'dev@dev.com') {
-            router.replace('/(profissional)/(tabs)/teams');
+            router.replace('/(profissional)/(tabs)/dashboard');
             return;
         }
 
@@ -69,11 +69,11 @@ export default function CadastroProfissional() {
                 senha: senha.trim(),
                 dataNascimento: dataNascimentoStr,
                 instituicao: time.trim(),
-                registroProfissional: codigo.trim(),
-                tipoProfissional: perfil 
+                registro: codigo.trim(),
+                especialidade: perfil 
             };
 
-            const response = await fetch(`${API_URL}/Profissional`, {
+            const response = await fetch(`${API_URL}/profissionais`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,11 +82,41 @@ export default function CadastroProfissional() {
             });
 
             if (response.ok) {
+                // Se o usuário marcou para habilitar biometria
+                if (habilitarBiometria) {
+                    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+                    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+                    if (hasHardware && isEnrolled) {
+                        const authResult = await LocalAuthentication.authenticateAsync({
+                            promptMessage: 'Confirme sua identidade para habilitar a biometria',
+                            fallbackLabel: 'Usar senha',
+                        });
+
+                        if (authResult.success) {
+                            await SecureStore.setItemAsync('biometriaAtiva', 'true');
+                            await SecureStore.setItemAsync('biometric_email', email.trim());
+                            await SecureStore.setItemAsync('biometric_password', senha.trim());
+                            Alert.alert('Sucesso!', 'Conta criada e biometria habilitada com sucesso.');
+                            router.back();
+                            return;
+                        } else {
+                            Alert.alert('Aviso', 'Biometria não confirmada. Você poderá tentar habilitar depois.');
+                        }
+                    } else {
+                        Alert.alert('Aviso', 'Seu dispositivo não suporta ou não tem biometria cadastrada.');
+                    }
+                } else {
+                    // Se ele não marcou, garantimos que qualquer biometria anterior deste aparelho seja apagada
+                    await SecureStore.deleteItemAsync('biometriaAtiva');
+                    await SecureStore.deleteItemAsync('biometric_email');
+                    await SecureStore.deleteItemAsync('biometric_password');
+                }
+
                 Alert.alert('Sucesso!', 'Conta criada com sucesso.', [
                     { 
                         text: 'OK', 
-                        // ROTA CORRIGIDA (Sem o ponto inicial)
-                        onPress: () => router.replace('/(profissional)/(tabs)/teams') 
+                        onPress: () => router.back()
                     }
                 ]);
             } else {
