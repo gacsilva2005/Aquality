@@ -4,23 +4,27 @@ import {
   Text, 
   TouchableOpacityProps, 
   ActivityIndicator,
-  StyleProp,
-  ViewStyle,
-  View // <-- Não esqueça de importar o View
+  View 
 } from 'react-native';
 import { styles } from './styles';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   isLoading?: boolean;
-  icon?: React.ReactNode; // <-- 1. Nova propriedade opcional para o ícone
+  iconLeft?: React.ReactNode;  // <-- Ícone da esquerda
+  iconRight?: React.ReactNode; // <-- Ícone da direita
+  textColor?: string;
+  fontSize?: number;
 }
 
 export function Button({ 
   title, 
   isLoading = false, 
   style, 
-  icon, // <-- 2. Puxamos o ícone aqui
+  iconLeft,   // <-- Puxamos aqui
+  iconRight,  // <-- E aqui
+  textColor, 
+  fontSize,
   ...rest 
 }: ButtonProps) {
   
@@ -36,13 +40,24 @@ export function Button({
       {...rest}
     >
       {isLoading ? (
-        <ActivityIndicator color="#FFFFFF" size="small" />
+        <ActivityIndicator color={textColor || "#FFFFFF"} size="small" />
       ) : (
-        // 3. Container para deixar o ícone e o texto lado a lado
         <View style={styles.content}>
-          {/* Se o ícone for passado, ele é renderizado aqui com um margem */}
-          {icon && <View style={styles.iconContainer}>{icon}</View>}
-          <Text style={styles.title}>{title}</Text>
+          
+          {/* RENDERIZA O ÍCONE DA ESQUERDA (Se existir) */}
+          {iconLeft && <View style={styles.iconLeftContainer}>{iconLeft}</View>}
+          
+          <Text style={[
+            styles.title, 
+            textColor ? { color: textColor } : null,
+            fontSize ? { fontSize: fontSize } : null
+          ]}>
+            {title}
+          </Text>
+
+          {/* RENDERIZA O ÍCONE DA DIREITA (Se existir) */}
+          {iconRight && <View style={styles.iconRightContainer}>{iconRight}</View>}
+          
         </View>
       )}
     </TouchableOpacity>

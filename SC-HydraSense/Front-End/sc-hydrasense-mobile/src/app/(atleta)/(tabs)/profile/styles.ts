@@ -224,6 +224,18 @@ export const styles = StyleSheet.create({
     paddingBottom: 2,
     minWidth: 150,
   },
+
+  kitsButton: {
+    backgroundColor:theme.colors.surface,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+    borderRadius: 8,
+    width: '90%',
+    height: 100,
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
   professionalContainer: {
     paddingHorizontal: 20,
     marginTop: 15,

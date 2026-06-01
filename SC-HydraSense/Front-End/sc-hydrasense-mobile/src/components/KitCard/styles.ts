@@ -1,0 +1,168 @@
+import { StyleSheet } from 'react-native';
+import { theme } from '@/src/global/themas';
+
+export const styles = StyleSheet.create({
+    card: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        padding: 20,
+        borderLeftWidth: 4, 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 6,
+        elevation: 2,
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+    },
+    kitName: {
+        fontFamily: theme.fonts.headingBold,
+        fontSize: 16,
+        color: '#1A1A1A',
+        letterSpacing: 0.5,
+    },
+    kitModality: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 10,
+        color: '#999',
+        marginTop: 2,
+        letterSpacing: 0.5,
+    },
+    badgeDefault: {
+        backgroundColor: theme.colors.primary,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    badgeDefaultText: {
+        fontFamily: theme.fonts.bodyBold,
+        fontSize: 10,
+        color: '#FFFFFF',
+    },
+    weightContainer: {
+        marginTop: 15,
+    },
+    weightLabel: {
+        fontFamily: theme.fonts.bodyBold,
+        fontSize: 10,
+        color: theme.colors.primary, 
+        marginBottom: 2,
+    },
+    weightValueRow: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
+    },
+    weightNumber: {
+        fontFamily: theme.fonts.headingBold,
+        fontSize: 36,
+        color: '#1A1A1A',
+    },
+    weightUnit: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 16,
+        color: '#666',
+        marginLeft: 4,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#F5F5F5',
+        marginVertical: 15,
+    },
+    cardActions: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    toggleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    toggleLabel: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 10,
+        color: '#666',
+    },
+    switch: {
+        transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
+    },
+    actionButtonsRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    actionBtn: {
+        width: 36,
+        height: 36,
+        backgroundColor: '#F5F5F5',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    editLabel: {
+        fontFamily: theme.fonts.bodyBold,
+        fontSize: 10,
+        color: '#999',
+        marginBottom: 4,
+    },
+    editInputName: {
+        fontFamily: theme.fonts.headingBold,
+        fontSize: 16,
+        color: '#1A1A1A',
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+        paddingVertical: 5,
+    },
+    editInputWeight: {
+        fontFamily: theme.fonts.headingBold,
+        fontSize: 36,
+        color: '#1A1A1A',
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+        minWidth: 80,
+        padding: 0,
+    },
+    dropdownMini: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+        backgroundColor: '#F9F9F9',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        marginTop: 2,
+    },
+    dropdownMiniText: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 12,
+        color: '#1A1A1A',
+    },
+    dropdownMiniList: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+        borderRadius: 8,
+        marginTop: 4,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        marginBottom: 10,
+    },
+    dropdownMiniOption: {
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F5F5F5',
+    },
+    dropdownMiniOptionText: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 12,
+        color: '#4A4A4A',
+    }
+});
