@@ -279,6 +279,7 @@ export default function Profile() {
         style={styles.kitsButton}
         iconLeft={<MaterialCommunityIcons name="tshirt-crew" size={50} color={theme.colors.textSecondary} />}
         iconRight={<MaterialCommunityIcons name="chevron-right" size={30} color={theme.colors.textPrimary} />}
+        onPress={() => router.push('../kits')}
         />
 
         
