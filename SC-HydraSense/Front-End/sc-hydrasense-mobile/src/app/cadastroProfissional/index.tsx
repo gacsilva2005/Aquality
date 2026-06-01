@@ -69,7 +69,7 @@ export default function CadastroProfissional() {
                 email: email.trim(),
                 senha: senha.trim(),
                 dataNascimento: dataNascimentoStr,
-                instituicao: time.trim(),
+                clube: time ? { nome: time.trim() } : null,
                 registro: codigo.trim(),
                 especialidade: perfil 
             };
@@ -253,7 +253,8 @@ export default function CadastroProfissional() {
                 />
 
                 {/* 4. O CAMPO DE INSTITUIÇÃO (DROPDOWN INLINE) */}
-                <View style={{ zIndex: 10 }}> {/* O zIndex garante que a lista fique por cima dos outros elementos se necessário */}
+                {/* O zIndex garante que a lista fique por cima dos outros elementos se necessário */}
+                <View style={{ zIndex: 10 }}>
                     <TouchableOpacity 
                         activeOpacity={0.7} 
                         // Alterna entre abrir e fechar a lista
