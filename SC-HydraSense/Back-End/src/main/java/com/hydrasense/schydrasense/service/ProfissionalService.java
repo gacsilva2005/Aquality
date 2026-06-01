@@ -49,4 +49,18 @@ public class ProfissionalService {
 
         return Optional.empty();
     }
+
+    public Profissional atualizar(Long id, Profissional dados) {
+        return repository.findById(id).map(p -> {
+            p.setNome(dados.getNome());
+            p.setEmail(dados.getEmail());
+            p.setRegistro(dados.getRegistro());
+            p.setEspecialidade(dados.getEspecialidade());
+            p.setInstituicao(dados.getInstituicao());
+            if (dados.getSenha() != null && !dados.getSenha().trim().isEmpty()) {
+                p.setSenha(dados.getSenha());
+            }
+            return repository.save(p);
+        }).orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
+    }
 }
