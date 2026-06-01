@@ -67,6 +67,11 @@ public class Atleta {
     @OneToMany(mappedBy = "atleta", cascade = CascadeType.ALL)
     private List<SessaoDeTreino> sessoes = new ArrayList<>();
 
+    // Relação com equipes (muitos-para-muitos)
+    @ManyToMany(mappedBy = "atletas")
+    @JsonIgnoreProperties("atletas")
+    private List<Equipe> equipes = new ArrayList<>();
+
     // Construtor padrão JPA
     public Atleta() {}
 

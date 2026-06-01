@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { Screen } from '../../../../components/Screen';
 import { Button } from '../../../../components/Button'; // Seu botão que agora aceita ícones!
@@ -7,6 +7,8 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { Header } from '@/src/components/Header';
 import { ModalAddTeam } from '@/src/components/ModalAddTeam';
+import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
 const mockTeams: Team[] = [
     { id: '1', name: 'FUTEBOL MASCULINO A', category: 'CATEGORIA PRINCIPAL', status: 'ALERTA', activeAthletes: 24, totalAthletes: 28, sweatRate: '1.8' },
@@ -17,8 +19,52 @@ const mockTeams: Team[] = [
 export default function TeamsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [teams, setTeams] = useState<Team[]>(mockTeams);
 
-    const filteredTeams = mockTeams.filter(team => 
+    useEffect(() => {
+        carregarEquipes();
+    }, []);
+
+    const carregarEquipes = async () => {
+        try {
+            const usuarioSalvo = await SecureStore.getItemAsync('usuarioLogado');
+            let clubeId = null;
+            if (usuarioSalvo) {
+                const usuario = JSON.parse(usuarioSalvo);
+                clubeId = usuario?.clube?.id;
+            }
+
+            if (!clubeId) {
+                console.log("teams/index: Nenhum profissional logado. Usando clubeId = 1 de fallback.");
+                clubeId = 1;
+            }
+
+            const hostUri = Constants?.expoConfig?.hostUri;
+            const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+            const API_URL = `http://${ip}:8080`;
+
+            const response = await fetch(`${API_URL}/Equipe/clube/${clubeId}`);
+            if (response.ok) {
+                const data = await response.json();
+                
+                const equipesFormatadas: Team[] = data.map((equipe: any) => ({
+                    id: String(equipe.id),
+                    name: equipe.nome,
+                    category: equipe.categoria ? equipe.categoria.toUpperCase() : 'CATEGORIA PRINCIPAL',
+                    status: 'IDEAL',
+                    activeAthletes: equipe.atletas ? equipe.atletas.length : 0,
+                    totalAthletes: equipe.limiteAtletas || (equipe.atletas ? equipe.atletas.length : 0),
+                    sweatRate: '1.5'
+                }));
+
+                setTeams(equipesFormatadas);
+            }
+        } catch (error) {
+            console.log('Erro ao carregar equipes:', error);
+        }
+    };
+
+    const filteredTeams = teams.filter(team => 
         team.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -70,9 +116,10 @@ export default function TeamsScreen() {
                     )}
                 </View>
                 <ModalAddTeam 
-                visible={modalVisible} 
-                onClose={() => setModalVisible(false)} 
-            />
+                    visible={modalVisible} 
+                    onClose={() => setModalVisible(false)} 
+                    onTeamAdded={carregarEquipes}
+                />
             </View>
         </Screen>
     );
