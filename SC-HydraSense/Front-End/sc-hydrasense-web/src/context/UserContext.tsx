@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
+
+interface Clube {
+    id: number;
+    nome: string;
+    codigo?: string;
+}
 
 interface User {
     id: number;
@@ -6,6 +12,7 @@ interface User {
     email: string;
     telefone?: string;
     cargo?: string;
+    clube?: Clube;
 }
 
 interface UserContextType {
