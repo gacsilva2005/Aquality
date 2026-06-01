@@ -7,6 +7,7 @@ import { styles } from './styles';
 import { AthleteCard, Athlete } from '../../../../components/athleteCard';
 import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
+import { Header } from '@/src/components/Header';
 
 export default function Athletes() {
     const router = useRouter();
@@ -68,7 +69,7 @@ export default function Athletes() {
     );
 
     return (
-        <Screen backgroundColor="#F7F7F7" scrollable={true}>
+        <Screen backgroundColor="#F7F7F7" scrollable={true} HeaderComponent={<Header />}>
             <View style={styles.container}>
                 
                 <Text style={styles.pageTitle}>ATLETAS</Text>
