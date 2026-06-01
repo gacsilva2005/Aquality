@@ -24,7 +24,6 @@ import { router, useFocusEffect, Redirect } from 'expo-router';
 import Constants from 'expo-constants';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
   const { setUser } = useUser();
@@ -119,7 +118,7 @@ export default function LoginScreen() {
       console.log('Login validado com sucesso!', dados);
 
       setUser(dados.usuario);
-      await AsyncStorage.setItem('usuarioLogado', JSON.stringify(dados.usuario));
+      await SecureStore.setItemAsync('usuarioLogado', JSON.stringify(dados.usuario));
 
       if (dados.tipo === 'profissional') {
         router.replace('/(profissional)/(tabs)/dashboard');
