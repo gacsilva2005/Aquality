@@ -33,7 +33,7 @@ export default function ProfileProfissional() {
     const [email, setEmail] = useState(user?.email || '');
     const [registro, setRegistro] = useState(user?.registro || '');
     const [especialidade, setEspecialidade] = useState(user?.especialidade || '');
-    const [instituicao, setInstituicao] = useState(user?.clube?.nome || '');
+    const [clube, setClube] = useState(user?.clube?.nome || '');
     const [modalClubesVisivel, setModalClubesVisivel] = useState(false);
 
     // Função para selecionar o perfil e limpar o erro
@@ -72,7 +72,7 @@ export default function ProfileProfissional() {
                     email: email,
                     registro: registro,
                     especialidade: especialidade,
-                    clube: instituicao ? { nome: instituicao.trim() } : null
+                    clube: clube ? { nome: clube.trim() } : null
                 }),
             });
 
@@ -258,7 +258,7 @@ export default function ProfileProfissional() {
                     </TouchableOpacity>
                 </View>
 
-                <Divider text="VÍNCULO INSTITUCIONAL" />
+                <Divider text="VÍNCULO COM CLUBE" />
 
                 <View style={[styles.professionalContainer, { zIndex: 10 }]}>
                     <View style={styles.infoCard}>
@@ -271,7 +271,7 @@ export default function ProfileProfissional() {
                                     style={styles.dropdownInputContainer}
                                 >
                                     <Text style={[styles.infoValue, { borderBottomWidth: 1, borderColor: '#CCC', paddingBottom: 4 }]}>
-                                        {instituicao ? instituicao : 'Selecione um clube...'}
+                                        {clube ? clube : 'Selecione um clube...'}
                                     </Text>
                                     <MaterialCommunityIcons 
                                         name={modalClubesVisivel ? "chevron-up" : "chevron-down"} 
@@ -284,22 +284,22 @@ export default function ProfileProfissional() {
                                 {modalClubesVisivel && (
                                     <View style={styles.dropdownListContainer}>
                                         <ScrollView nestedScrollEnabled style={styles.dropdownScroll} keyboardShouldPersistTaps="handled">
-                                            {CLUBES.map((clube) => (
+                                            {CLUBES.map((clubeItem) => (
                                                 <TouchableOpacity
-                                                    key={clube}
+                                                    key={clubeItem}
                                                     style={styles.dropdownOption}
                                                     onPress={() => {
-                                                        setInstituicao(clube);
+                                                        setClube(clubeItem);
                                                         setModalClubesVisivel(false);
                                                     }}
                                                 >
                                                     <Text style={[
                                                         styles.dropdownOptionText, 
-                                                        instituicao === clube && styles.dropdownOptionTextSelected
+                                                        clube === clubeItem && styles.dropdownOptionTextSelected
                                                     ]}>
-                                                        {clube}
+                                                        {clubeItem}
                                                     </Text>
-                                                    {instituicao === clube && (
+                                                    {clube === clubeItem && (
                                                         <MaterialCommunityIcons name="check" size={18} color={theme.colors.primary} />
                                                     )}
                                                 </TouchableOpacity>
@@ -309,7 +309,7 @@ export default function ProfileProfissional() {
                                 )}
                             </View>
                         ) : (
-                            <Text style={styles.infoValue}>{instituicao || 'Não informado'}</Text>
+                            <Text style={styles.infoValue}>{clube || 'Não informado'}</Text>
                         )}
                     </View>
 
