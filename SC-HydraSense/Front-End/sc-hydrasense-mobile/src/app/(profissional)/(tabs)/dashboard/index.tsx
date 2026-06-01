@@ -1,27 +1,209 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import { Screen } from '../../../../components/Screen'; // Ajuste o caminho se necessário
-import { Header } from '../../../../components/Header'; // Ajuste o caminho se necessário
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, SafeAreaView, Modal } from 'react-native';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+
+// Importando as bibliotecas
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+
+// Importando os estilos e o tema
+import { theme } from '../../../../global/themas';
 import { styles } from './styles';
-import { theme } from '@/src/global/themas';
 
-export default function EmConstrucao() {
-    return (
-        <Screen
-            backgroundColor={theme.colors.background}
-            scrollable={false} // Não precisa de scroll aqui, vamos focar no meio da tela
-            HeaderComponent={<Header />}
-        >
-            <View style={styles.container}>
+export default function ReportsScreen() {
 
-                <Text style={styles.title}>PÁGINA EM CONSTRUÇÃO</Text>
-                
-                <Text style={styles.description}>
-                    Estamos preparando esta área com ferramentas incríveis para a sua gestão profissional. Em breve teremos novidades por aqui!
-                </Text>
+  // 1. Criando os estados para controlar o Pop-up
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    title: '',
+    message: '',
+    isError: false,
+  });
 
+  // Função auxiliar para chamar o pop-up facilmente
+  const showPopUp = (title: string, message: string, isError: boolean = false) => {
+    setModalConfig({ title, message, isError });
+    setModalVisible(true);
+  };
+
+  // Função que será chamada ao clicar em EXPORTAR
+  const handleExport = async () => {
+    try {
+      const cabecalho = 'Nome do Atleta,Status de Risco,Pontuacao\n';
+      const linha1 = 'Silva L.,SOBRECARGA AGUDA,92%\n';
+      const linha2 = 'Costa M.,FADIGA ALTA,85%\n';
+      const linha3 = 'Santos P.,DEFICIT DE SONO,78%\n';
+      
+      const conteudoCSV = cabecalho + linha1 + linha2 + linha3;
+
+      // @ts-ignore: Forçando o TS a aceitar que essa propriedade existe no Expo
+      const diretorio = FileSystem.documentDirectory;
+
+      if (!diretorio) {
+        showPopUp('Erro de Sistema', 'Diretório não encontrado no dispositivo.', true);
+        return;
+      }
+
+      const fileUri = diretorio + 'Relatorio_Equipe_HydraSense.csv';
+
+      // @ts-ignore: Forçando o TS a ignorar o erro de tipagem
+      await FileSystem.writeAsStringAsync(fileUri, conteudoCSV, {
+        encoding: 'utf8',
+      });
+
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (isAvailable) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType: 'text/csv',
+          dialogTitle: 'Exportar Relatório de Atletas',
+        });
+      } else {
+        showPopUp('Não Suportado', 'O compartilhamento não está disponível neste dispositivo.', true);
+      }
+
+    } catch (error) {
+      console.error(error);
+      showPopUp('Ops, algo deu errado', 'Não foi possível gerar o arquivo para exportação.', true);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
+        {/* HEADER */}
+        <View style={styles.headerContainer}>
+          <View>
+            <Text style={styles.headerTitle}>RELATÓRIOS</Text>
+            <Text style={styles.headerSubtitle}>Visão Geral da Equipe</Text>
+          </View>
+          <TouchableOpacity style={styles.exportButton} onPress={handleExport}>
+            <Feather name="download" size={16} color={theme.colors.textWhite} />
+            <Text style={styles.exportButtonText}>EXPORTAR</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* PRONTIDÃO DA EQUIPE */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Prontidão da Equipe</Text>
+          <View style={styles.scoreContainer}>
+            <Text style={styles.scoreLarge}>84</Text>
+            <Text style={styles.scoreLabel}>% MÉDIA</Text>
+          </View>
+          <View style={styles.badgeSuccess}>
+            <Feather name="trending-up" size={14} color={theme.colors.success} />
+            <Text style={styles.badgeSuccessText}>+2.4% vs Semana Passada</Text>
+          </View>
+        </View>
+
+        {/* TENDÊNCIAS DA SEMANA */}
+        <Text style={styles.sectionTitle}>TENDÊNCIAS DA SEMANA</Text>
+        <View style={styles.row}>
+          <View style={[styles.card, styles.halfCard]}>
+            <View style={styles.iconRow}>
+              <MaterialCommunityIcons name="fire" size={24} color={theme.colors.critical} />
+              <MaterialCommunityIcons name="fire" size={24} color={theme.colors.border} />
             </View>
-        </Screen>
-    );
+            <Text style={styles.cardSubtitle}>CARGA AGUDA</Text>
+            <Text style={styles.statValue}>4.2<Text style={styles.statUnit}>k</Text></Text>
+          </View>
+
+          <View style={[styles.card, styles.halfCard]}>
+            <View style={styles.iconRow}>
+              <MaterialCommunityIcons name="heart" size={24} color={theme.colors.primary} />
+              <MaterialCommunityIcons name="heart" size={24} color={theme.colors.border} />
+            </View>
+            <Text style={styles.cardSubtitle}>FADIGA (RPE)</Text>
+            <Text style={styles.statValue}>7.8</Text>
+          </View>
+        </View>
+
+        {/* MAPA DE RISCO */}
+        <View style={styles.riskHeader}>
+          <Text style={styles.sectionTitle}>MAPA DE RISCO</Text>
+          <View style={styles.riskBadge}>
+            <Text style={styles.riskBadgeText}>3 CRÍTICOS</Text>
+          </View>
+        </View>
+
+        {/* Lista de Atletas */}
+        <View style={styles.athleteList}>
+          {/* Atleta 1 - Crítico */}
+          <View style={[styles.athleteCard, { borderLeftColor: theme.colors.critical }]}>
+            <Image source={{ uri: 'https://i.pravatar.cc/100?img=11' }} style={styles.avatar} />
+            <View style={styles.athleteInfo}>
+              <Text style={styles.athleteName}>Silva, L.</Text>
+              <View style={styles.alertRow}>
+                <Feather name="alert-triangle" size={12} color={theme.colors.critical} />
+                <Text style={[styles.alertText, { color: theme.colors.critical }]}>SOBRECARGA AGUDA</Text>
+              </View>
+            </View>
+            <Text style={[styles.athleteScore, { color: theme.colors.critical }]}>92<Text style={styles.scoreUnit}>%</Text></Text>
+          </View>
+
+          {/* Atleta 2 - Alerta Primário */}
+          <View style={[styles.athleteCard, { borderLeftColor: theme.colors.primary }]}>
+            <Image source={{ uri: 'https://i.pravatar.cc/100?img=12' }} style={styles.avatar} />
+            <View style={styles.athleteInfo}>
+              <Text style={styles.athleteName}>Costa, M.</Text>
+              <View style={styles.alertRow}>
+                <Feather name="trending-up" size={12} color={theme.colors.primary} />
+                <Text style={[styles.alertText, { color: theme.colors.primary }]}>FADIGA ALTA</Text>
+              </View>
+            </View>
+            <Text style={[styles.athleteScore, { color: theme.colors.primary }]}>85<Text style={styles.scoreUnit}>%</Text></Text>
+          </View>
+
+          {/* Atleta 3 - Aviso (Warning) */}
+          <View style={[styles.athleteCard, { borderLeftColor: theme.colors.warning }]}>
+            <Image source={{ uri: 'https://i.pravatar.cc/100?img=13' }} style={styles.avatar} />
+            <View style={styles.athleteInfo}>
+              <Text style={styles.athleteName}>Santos, P.</Text>
+              <View style={styles.alertRow}>
+                <Feather name="moon" size={12} color={theme.colors.warning} />
+                <Text style={[styles.alertText, { color: theme.colors.warning }]}>DÉFICIT DE SONO</Text>
+              </View>
+            </View>
+            <Text style={[styles.athleteScore, { color: theme.colors.warning }]}>78<Text style={styles.scoreUnit}>%</Text></Text>
+          </View>
+        </View>
+        
+        <View style={{ height: 40 }} />
+      </ScrollView>
+
+      {/* POP-UP ESTILIZADO  */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)} // Para o botão de voltar do Android
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            
+            {/* Ícone dinâmico: Muda de cor/formato se for erro ou sucesso */}
+            <View style={[styles.modalIconContainer, { backgroundColor: modalConfig.isError ? theme.colors.primaryLight : 'rgba(22, 163, 74, 0.1)' }]}>
+              <Feather 
+                name={modalConfig.isError ? "alert-circle" : "check-circle"} 
+                size={32} 
+                color={modalConfig.isError ? theme.colors.primary : theme.colors.success} 
+              />
+            </View>
+
+            <Text style={styles.modalTitle}>{modalConfig.title}</Text>
+            <Text style={styles.modalMessage}>{modalConfig.message}</Text>
+
+            <TouchableOpacity 
+              style={[styles.modalButton, { backgroundColor: modalConfig.isError ? theme.colors.primary : theme.colors.success }]} 
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>ENTENDI</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
+
+    </SafeAreaView>
+  );
 }
