@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { Divider } from '@/src/components/Divider';
 import { useUser } from '../../../../contexts/UserContext';
 import Constants from "expo-constants";
+import { Button } from '@/src/components/Button';
 
 export default function Profile() {
     const router = useRouter();
@@ -269,6 +270,18 @@ export default function Profile() {
             </TouchableOpacity>
           </View>
         </View>
+        <Divider text="KITS E EQUIPAMENTOS " />
+
+        <Button 
+        title= "MEUS KITS"
+        fontSize={30}
+        textColor={theme.colors.textSecondary}
+        style={styles.kitsButton}
+        iconLeft={<MaterialCommunityIcons name="tshirt-crew" size={50} color={theme.colors.textSecondary} />}
+        iconRight={<MaterialCommunityIcons name="chevron-right" size={30} color={theme.colors.textPrimary} />}
+        />
+
+        
 
         <Divider text="INFORMAÇÕES PROFISSIONAIS" />
 

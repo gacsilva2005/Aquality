@@ -12,16 +12,19 @@ export const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 20,
   },
-  // <-- NOVOS ESTILOS AQUI -->
   content: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconContainer: {
-    marginRight: 8, // Espaçamento entre o ícone e o texto
+  // <-- ATUALIZAMOS OS CONTAINERS DOS ÍCONES -->
+  iconLeftContainer: {
+    marginRight: 8, // Empurra o texto um pouco para a direita
   },
-  // <------------------------>
+  iconRightContainer: {
+    marginLeft: 90, // Empurra o texto um pouco para a esquerda
+  },
+  // <---------------------------------------->
   title: {
     color: '#FFFFFF',
     fontSize: 16,
