@@ -60,6 +60,10 @@ public class EquipeService {
         return equipeRepository.save(equipe);
     }
 
+    public List<Equipe> listarTodas() {
+        return equipeRepository.findAll();
+    }
+
     public List<Equipe> listarPorClube(Long clubeId) {
         return equipeRepository.findByClubeId(clubeId);
     }
