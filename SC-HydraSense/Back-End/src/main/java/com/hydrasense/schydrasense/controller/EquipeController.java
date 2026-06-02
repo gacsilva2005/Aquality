@@ -59,4 +59,9 @@ public class EquipeController {
         equipeService.deletar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping
+    public ResponseEntity<List<Equipe>> listarTodas() {
+        return ResponseEntity.ok(equipeService.listarTodas());
+    }
 }
