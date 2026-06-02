@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import teamLogo from '../../assets/icone_petala.png';
 
 export function Equipes() {
@@ -9,9 +10,27 @@ export function Equipes() {
     const [esporteRef, setEsporteRef] = useState('');
     const [codigoAcesso, setCodigoAcesso] = useState('gerar');
     const [codigoFranquia, setCodigoFranquia] = useState('');
-    const [novasEquipes, setNovasEquipes] = useState<any[]>([]);
+    const [equipes, setEquipes] = useState<any[]>([]);
 
-    const handleCriarEquipe = () => {
+    useEffect(() => {
+        carregarEquipes();
+    }, []);
+
+    const carregarEquipes = async () => {
+        try {
+            const response = await fetch(
+                'http://localhost:8080/Equipe'
+            );
+
+            const data = await response.json();
+
+            setEquipes(Array.isArray(data) ? data : [data]);
+        } catch (error) {
+            console.error('Erro ao carregar equipes:', error);
+        }
+    };
+
+    const handleCriarEquipe = async () => {
         if (!nomeEquipe || !esporteRef) return;
         
         const novaEquipe = {
@@ -23,7 +42,7 @@ export function Equipes() {
             suorMedio: '0L/h'
         };
         
-        setNovasEquipes([...novasEquipes, novaEquipe]);
+        await carregarEquipes();
         
         setNomeEquipe('');
         setEsporteRef('');
@@ -48,7 +67,6 @@ export function Equipes() {
                     ADICIONAR EQUIPE
                 </button>
             </header>
-
             {/* === CARTÕES DE RESUMO GERAL === */}
             <section className="equipes-kpi-container">
                 <div className="equipes-kpi-card borda-critica">
@@ -86,80 +104,50 @@ export function Equipes() {
                     </h3>
 
                     <div className="equipes-roster-grid">
-
-                        <div className="equipe-card" onClick={() => navigate('/PageWeb/equipes/relatorio')}>
-                            <div className="equipe-card-status-dot"></div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                                <img src={teamLogo} alt="Logo Equipe" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
-                                <h4 className="equipe-card-nome" style={{ margin: 0 }}>FUTEBOL MASCULINO A</h4>
-                            </div>
-                            <p className="equipe-card-esporte">Esporte: Futebol de Campo</p>
-
-                            <div className="equipe-card-stats">
-                                <div className="equipe-stat-item">
-                                    <p>ATLETAS</p>
-                                    <p>24</p>
-                                </div>
-                                <div className="equipe-stat-item">
-                                    <p>ADERÊNCIA</p>
-                                    <p className="critico">96%</p>
-                                </div>
-                                <div className="equipe-stat-item">
-                                    <p>SUOR MÉDIO</p>
-                                    <p>1.4L/h</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="equipe-card" onClick={() => navigate('/PageWeb/equipes/relatorio')}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                                <img src={teamLogo} alt="Logo Equipe" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
-                                <h4 className="equipe-card-nome" style={{ margin: 0 }}>BASQUETE SUB-20</h4>
-                            </div>
-                            <p className="equipe-card-esporte">Esporte: Basquete</p>
-
-                            <div className="equipe-card-stats">
-                                <div className="equipe-stat-item">
-                                    <p>ATLETAS</p>
-                                    <p>18</p>
-                                </div>
-                                <div className="equipe-stat-item">
-                                    <p>ADERÊNCIA</p>
-                                    <p>88%</p>
-                                </div>
-                                <div className="equipe-stat-item">
-                                    <p>SUOR MÉDIO</p>
-                                    <p>1.1L/h</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {novasEquipes.map((equipe) => (
-                            <div key={equipe.id} className="equipe-card" onClick={() => navigate('/PageWeb/equipes/relatorio')}>
+                        {equipes.map((equipe) => (
+                            <div
+                                key={equipe.id}
+                                className="equipe-card"
+                                onClick={() =>
+                                    navigate(`/PageWeb/equipes/relatorio/${equipe.id}`)
+                                }
+                            >
                                 <div className="equipe-card-status-dot"></div>
+
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                                    <img src={teamLogo} alt="Logo Equipe" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
-                                    <h4 className="equipe-card-nome" style={{ margin: 0 }}>{equipe.nome}</h4>
+                                    <img
+                                        src={teamLogo}
+                                        alt="Logo Equipe"
+                                        style={{ width: '32px', height: '32px', objectFit: 'contain' }}
+                                    />
+
+                                    <h4 className="equipe-card-nome" style={{ margin: 0 }}>
+                                        {equipe.nome}
+                                    </h4>
                                 </div>
-                                <p className="equipe-card-esporte">Esporte: {equipe.esporte}</p>
+
+                                <p className="equipe-card-esporte">
+                                    Esporte: {equipe.categoria}
+                                </p>
 
                                 <div className="equipe-card-stats">
                                     <div className="equipe-stat-item">
                                         <p>ATLETAS</p>
-                                        <p>{equipe.atletas}</p>
+                                        <p>{equipe.atletas?.length || 0}</p>
                                     </div>
+
                                     <div className="equipe-stat-item">
-                                        <p>ADERÊNCIA</p>
-                                        <p className="critico">{equipe.aderencia}</p>
+                                        <p>LIMITE</p>
+                                        <p>{equipe.limiteAtletas}</p>
                                     </div>
+
                                     <div className="equipe-stat-item">
-                                        <p>SUOR MÉDIO</p>
-                                        <p>{equipe.suorMedio}</p>
+                                        <p>CLUBE</p>
+                                        <p>{equipe.clube?.nome || '-'}</p>
                                     </div>
                                 </div>
                             </div>
                         ))}
-
                     </div>
                 </section>
 
