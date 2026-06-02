@@ -124,6 +124,5 @@ Em breve, novas instruções de execução e acesso serão disponibilizadas.
 
 <br>
 
-Desenvolvido por **Equipe Aquality Company**  
-Todos os direitos autorais reservados para **Instituto Mauá de Tecnologia ©** 
-
+Desenvolvido por **Equipe Aquality**  
+© 2026 Instituto Mauá de Tecnologia — Todos os direitos reservados.
