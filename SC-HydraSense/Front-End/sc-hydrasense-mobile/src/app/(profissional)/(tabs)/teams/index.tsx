@@ -11,9 +11,9 @@ import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
 
 const mockTeams: Team[] = [
-    { id: '1', name: 'FUTEBOL MASCULINO A', category: 'CATEGORIA PRINCIPAL', status: 'ALERTA', activeAthletes: 24, totalAthletes: 28, adherence: '96', sweatRate: '1.8' },
-    { id: '2', name: 'BASQUETE SUB-20', category: 'DESENVOLVIMENTO', status: 'IDEAL', activeAthletes: 12, totalAthletes: 12, adherence: '88', sweatRate: '1.1' },
-    { id: '3', name: 'VÔLEI FEMININO B', category: 'CATEGORIA BASE', status: 'MONITORAR', activeAthletes: 14, totalAthletes: 16, adherence: '92', sweatRate: '1.4' },
+    { id: '1', name: 'FUTEBOL MASCULINO A', category: 'CATEGORIA PRINCIPAL', clube: 'HYDRASENSE F.C.', status: 'ALERTA', activeAthletes: 24, totalAthletes: 28, adherence: '96', sweatRate: '1.8' },
+    { id: '2', name: 'BASQUETE SUB-20', category: 'DESENVOLVIMENTO', clube: 'HYDRASENSE BASKET', status: 'IDEAL', activeAthletes: 12, totalAthletes: 12, adherence: '88', sweatRate: '1.1' },
+    { id: '3', name: 'VÔLEI FEMININO B', category: 'CATEGORIA BASE', clube: 'HYDRASENSE VOLEY', status: 'MONITORAR', activeAthletes: 14, totalAthletes: 16, adherence: '92', sweatRate: '1.4' },
 ];
 
 export default function TeamsScreen() {
@@ -51,6 +51,7 @@ export default function TeamsScreen() {
                     id: String(equipe.id),
                     name: equipe.nome,
                     category: equipe.categoria ? equipe.categoria.toUpperCase() : 'CATEGORIA PRINCIPAL',
+                    clube: equipe.clube?.nome || 'NÃO DEFINIDO',
                     status: 'IDEAL',
                     activeAthletes: equipe.atletas ? equipe.atletas.length : 0,
                     totalAthletes: equipe.limiteAtletas || (equipe.atletas ? equipe.atletas.length : 0),

@@ -10,6 +10,7 @@ export interface Team {
     id: string;
     name: string;
     category: string;
+    clube?: string;
     status: TeamStatus;
     activeAthletes: number;
     totalAthletes: number;
@@ -48,7 +49,8 @@ export function TeamCard({ team, onPress }: TeamCardProps) {
             <View style={styles.cardHeader}>
                 <View style={styles.teamInfo}>
                     <Text style={styles.teamName}>{team.name}</Text>
-                    <Text style={styles.teamCategory}>{team.category}</Text>
+                    <Text style={styles.teamCategory}>Esporte: {team.category}</Text>
+                    <Text style={styles.teamCategory}>Clube: {team.clube || '-'}</Text>
                 </View>
                 
                 <View style={[styles.badge, { backgroundColor: badgeProps.bg }]}>
