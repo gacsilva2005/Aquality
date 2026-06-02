@@ -141,7 +141,7 @@ export default function LoginScreen() {
   // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
   // Tire as duas barras (//) da linha abaixo para pular direto para a tela desejada:
   //
-   return <Redirect href="/(profissional)/(tabs)/dashboard" />;
+   //return <Redirect href="/(atleta)/(tabs)/dashboard" />;
   //
   // Para voltar pro Atleta, seria: href="/(atleta)/(tabs)/dashboard"
   //    return <Redirect href="/(atleta)/(tabs)/profile" />;
