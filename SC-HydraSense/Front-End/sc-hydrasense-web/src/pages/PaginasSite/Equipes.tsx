@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useUser } from '../../context/UserContext';
 import teamLogo from '../../assets/icone_petala.png';
 
 export function Equipes() {
@@ -12,22 +13,27 @@ export function Equipes() {
     const [codigoFranquia, setCodigoFranquia] = useState('');
     const [equipes, setEquipes] = useState<any[]>([]);
 
+    const { user } = useUser();
+
     useEffect(() => {
+      if (user?.clube?.id) {
         carregarEquipes();
-    }, []);
+      }
+    }, [user]);
 
     const carregarEquipes = async () => {
-        try {
-            const response = await fetch(
-                'http://localhost:8080/Equipe'
-            );
+      try {
+        const clubeId = user?.clube?.id;
 
-            const data = await response.json();
+        const response = await fetch(
+          `http://localhost:8080/Equipe/clube/${clubeId}`
+        );
 
-            setEquipes(Array.isArray(data) ? data : [data]);
-        } catch (error) {
-            console.error('Erro ao carregar equipes:', error);
-        }
+        const data = await response.json();
+        setEquipes(data);
+      } catch (error) {
+        console.error('Erro ao carregar equipes:', error);
+      }
     };
 
     const handleCriarEquipe = async () => {
