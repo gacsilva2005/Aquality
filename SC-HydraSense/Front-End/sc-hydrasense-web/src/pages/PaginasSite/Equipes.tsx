@@ -132,24 +132,29 @@ export function Equipes() {
                                     </h4>
                                 </div>
 
-                                <p className="equipe-card-esporte">
-                                    Esporte: {equipe.categoria}
-                                </p>
+                                <div style={{ marginBottom: '16px' }}>
+                                    <p className="equipe-card-esporte" style={{ marginBottom: '4px' }}>
+                                        Esporte: {equipe.categoria}
+                                    </p>
+                                    <p className="equipe-card-esporte" style={{ margin: 0 }}>
+                                        Clube: {equipe.clube?.nome || '-'}
+                                    </p>
+                                </div>
 
                                 <div className="equipe-card-stats">
                                     <div className="equipe-stat-item">
                                         <p>ATLETAS</p>
-                                        <p>{equipe.atletas?.length || 0}</p>
+                                        <p>{equipe.atletas?.length || 0}/{equipe.limiteAtletas || 30}</p>
                                     </div>
 
                                     <div className="equipe-stat-item">
-                                        <p>LIMITE</p>
-                                        <p>{equipe.limiteAtletas}</p>
+                                        <p>ADERÊNCIA</p>
+                                        <p className="critico">90%</p>
                                     </div>
 
                                     <div className="equipe-stat-item">
-                                        <p>CLUBE</p>
-                                        <p>{equipe.clube?.nome || '-'}</p>
+                                        <p>SUOR MÉDIO</p>
+                                        <p>1.5L/h</p>
                                     </div>
                                 </div>
                             </div>

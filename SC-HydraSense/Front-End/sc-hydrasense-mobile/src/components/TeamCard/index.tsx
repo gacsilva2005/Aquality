@@ -13,6 +13,7 @@ export interface Team {
     status: TeamStatus;
     activeAthletes: number;
     totalAthletes: number;
+    adherence: string;
     sweatRate: string;
 }
 
@@ -63,18 +64,29 @@ export function TeamCard({ team, onPress }: TeamCardProps) {
                 
                 {/* Atletas Ativos */}
                 <View style={styles.metricBlock}>
-                    <Text style={styles.metricLabel}>ATLETAS ATIVOS</Text>
+                    <Text style={styles.metricLabel} numberOfLines={1} adjustsFontSizeToFit>ATLETAS</Text>
                     <View style={styles.metricValueRow}>
-                        <Text style={styles.metricBigNumber}>{team.activeAthletes}</Text>
+                        <Text style={styles.metricBigNumber} adjustsFontSizeToFit numberOfLines={1}>{team.activeAthletes}</Text>
                         <Text style={styles.metricSmallNumber}>/{team.totalAthletes}</Text>
+                    </View>
+                </View>
+
+                {/* Aderência */}
+                <View style={styles.metricBlock}>
+                    <Text style={styles.metricLabel} numberOfLines={1} adjustsFontSizeToFit>ADERÊNCIA</Text>
+                    <View style={styles.metricValueRow}>
+                        <Text style={[styles.metricBigNumber, team.status === 'ALERTA' ? { color: '#C62828' } : {}]} adjustsFontSizeToFit numberOfLines={1}>
+                            {team.adherence}
+                        </Text>
+                        <Text style={styles.metricSmallNumber}>%</Text>
                     </View>
                 </View>
 
                 {/* Taxa Média de Suor */}
                 <View style={styles.metricBlock}>
-                    <Text style={styles.metricLabel}>TAXA MÉDIA DE SUDORESE</Text>
+                    <Text style={styles.metricLabel} numberOfLines={1} adjustsFontSizeToFit>SUOR MÉDIO</Text>
                     <View style={styles.metricValueRow}>
-                        <Text style={[styles.metricBigNumber, { color: '#C62828' }]}>
+                        <Text style={[styles.metricBigNumber, { color: '#C62828' }]} adjustsFontSizeToFit numberOfLines={1}>
                             {team.sweatRate}
                         </Text>
                         <Text style={styles.metricSmallNumber}>L/h</Text>

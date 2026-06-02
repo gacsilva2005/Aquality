@@ -35,7 +35,7 @@ export default function Dashboard() {
   const handleStartWorkout = (treinoSelecionado: string) => {
     setIsModalVisible(false);
     router.push({
-      pathname: '/pesagemPreTreino' as any,
+      pathname: '/confirmacaoKit' as any,
       params: { type: treinoSelecionado }
     });
   };
