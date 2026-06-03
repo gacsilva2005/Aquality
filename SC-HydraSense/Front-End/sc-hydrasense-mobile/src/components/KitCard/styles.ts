@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
         letterSpacing: 0.5,
     },
     badgeDefault: {
-        backgroundColor: theme.colors.primary,
+        backgroundColor: theme.colors.success,
         paddingHorizontal: 8,
         paddingVertical: 4,
         borderRadius: 12,

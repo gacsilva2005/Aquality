@@ -291,9 +291,7 @@ export default function AssistenteIA() {
           <Feather name="arrow-left" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>ASSISTENTE IA</Text>
-        <TouchableOpacity style={styles.headerMore}>
-          <Feather name="more-vertical" size={22} color={theme.colors.textPrimary} />
-        </TouchableOpacity>
+        <View style={{ width: 36 }} />
       </View>
 
       {/* ── MENSAGENS ── */}
