@@ -151,4 +151,32 @@ public class SessaoDeTreinoService {
                 .map(this::mapToResponseDTO)
                 .toList();
     }
+
+    public SessaoTreinoResponseDTO registrarPreTreino(Long sessaoId, PesagemPreTreinoDTO dto) {
+
+        SessaoDeTreino sessao = repository.findById(sessaoId)
+                .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
+
+        RegistroDoPeso pesagemPre = new RegistroDoPeso();
+        pesagemPre.setPeso(dto.pesoPreTreino());
+        pesagemPre.setDataHora(java.time.LocalDateTime.now());
+
+        pesoRepository.save(pesagemPre);
+
+        sessao.setPesagemPre(pesagemPre);
+
+        if (dto.sintomas() != null && !dto.sintomas().isBlank()) {
+            RegistroDeSintoma registroSintoma = new RegistroDeSintoma();
+
+            registroSintoma.setSintomas(dto.sintomas());
+            registroSintoma.setDataHora(java.time.LocalDateTime.now());
+
+            registroSintoma.setSessaoDeTreino(sessao);
+            sessao.setRegistroDeSintoma(registroSintoma);
+        }
+
+        SessaoDeTreino salva = repository.save(sessao);
+
+        return mapToResponseDTO(salva);
+    }
 }
