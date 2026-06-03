@@ -43,7 +43,7 @@ export function KitCard({
 
     const animatedBorderStyle = useAnimatedStyle(() => {
         return {
-            borderLeftColor: withTiming(kit.isDefault ? '#1A1A1A' : theme.colors.primary, { 
+            borderLeftColor: withTiming(kit.isDefault ? theme.colors.success : theme.colors.primary, { 
                 duration: 400 
             })
         };
@@ -138,13 +138,13 @@ export function KitCard({
                         
                         {kit.isDefault && (
                             <View style={styles.badgeDefault}>
-                                <Text style={styles.badgeDefaultText}>PADRÃO</Text>
+                                <Text style={styles.badgeDefaultText}>ATIVADO</Text>
                             </View>
                         )}
                     </View>
 
                     <View style={styles.weightContainer}>
-                        <Text style={styles.weightLabel}>PESO TOTAL</Text>
+                        <Text style={[styles.weightLabel, kit.isDefault && { color: theme.colors.success }]}>PESO TOTAL</Text>
                         <View style={styles.weightValueRow}>
                             <Text style={styles.weightNumber}>{kit.weight.toLocaleString('pt-BR')}</Text>
                             <Text style={styles.weightUnit}>g</Text>
@@ -155,11 +155,11 @@ export function KitCard({
 
                     <View style={styles.cardActions}>
                         <View style={styles.toggleContainer}>
-                            <Text style={styles.toggleLabel}>
-                                {kit.isDefault ? 'PADRÃO' : 'DEFINIR COMO\nPADRÃO'}
+                            <Text style={[styles.toggleLabel, kit.isDefault && { color: theme.colors.success, fontWeight: 'bold' }]}>
+                                {kit.isDefault ? 'ATIVADO' : 'DESATIVADO'}
                             </Text>
                             <Switch
-                                trackColor={{ false: "#E0E0E0", true: theme.colors.primary }}
+                                trackColor={{ false: "#E0E0E0", true: theme.colors.success }}
                                 thumbColor="#FFFFFF"
                                 ios_backgroundColor="#E0E0E0"
                                 onValueChange={() => onSetDefault(kit.id)}

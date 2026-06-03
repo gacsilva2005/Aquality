@@ -266,7 +266,7 @@ export default function ConfirmacaoKit() {
                             Você ainda não tem kits de equipamento cadastrados para esta modalidade.
                         </Text>
                         <TouchableOpacity style={styles.btnCriarKit} activeOpacity={0.8} onPress={() => router.push('/kits' as any)}>
-                            <Text style={styles.btnCriarKitText}>CRIAR KIT AGORA</Text>
+                            <Text style={styles.btnCriarKitText}>SELECIONAR KIT</Text>
                         </TouchableOpacity>
                     </View>
                 )}
