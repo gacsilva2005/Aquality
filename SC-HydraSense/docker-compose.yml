@@ -39,6 +39,7 @@ services:
       - backend
 
   assistente-ia:
+    profiles: ["ai"]
     build:
       context: ./AssistenteAI/IA
     container_name: hydrasense-assistente-ia
