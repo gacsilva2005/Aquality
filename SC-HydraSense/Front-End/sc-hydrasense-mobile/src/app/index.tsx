@@ -137,15 +137,15 @@ export default function LoginScreen() {
     performLogin(email, password);
   };
 
+    // ==========================================
+   // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
+   // Tire as duas barras (//) da linha abaixo para pular direto para a tela desejada:
+   //
+   // return <Redirect href="/(profissional)/(tabs)/dashboard" />;
+   //
+   // Para voltar pro Atleta, seria: href="/(atleta)/(tabs)/dashboard"
+   return <Redirect href="/(atleta)/(tabs)/dashboard" />;
    // ==========================================
-  // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
-  // Tire as duas barras (//) da linha abaixo para pular direto para a tela desejada:
-  //
-   //return <Redirect href="/(profissional)/(tabs)/dashboard" />;
-  //
-  // Para voltar pro Atleta, seria: href="/(atleta)/(tabs)/dashboard"
-  //    return <Redirect href="/(atleta)/(tabs)/profile" />;
-  // ==========================================
 
   return (
     <Screen 

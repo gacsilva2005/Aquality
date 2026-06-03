@@ -10,11 +10,26 @@ import { Button } from '@/src/components/Button';
 
 export default function PesagemPosTreino() {
     const [pesoInput, setPesoInput] = useState('');
-    const { sessaoId, type, seconds, water } = useLocalSearchParams<{
+    const [sintomasSelecionados, setSintomasSelecionados] = useState<string[]>([]);
+    const [outrosSintomas, setOutrosSintomas] = useState('');
+
+    const toggleSintoma = (sintoma: string) => {
+        if (sintomasSelecionados.includes(sintoma)) {
+            setSintomasSelecionados(sintomasSelecionados.filter(s => s !== sintoma));
+        } else {
+            setSintomasSelecionados([...sintomasSelecionados, sintoma]);
+        }
+    };
+
+    const { sessaoId, type, seconds, water, urineVolume, urineMoment, urineColor, thirst } = useLocalSearchParams<{
         sessaoId: string;
         type: string;
         seconds: string;
         water: string;
+        urineVolume?: string;
+        urineMoment?: string;
+        urineColor?: string;
+        thirst?: string;
     }>();
 
     const handleConfirmarPeso = async () => {
@@ -31,6 +46,25 @@ export default function PesagemPosTreino() {
             return;
         }
 
+        // ==========================================
+        // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
+        // Bypass na API para ir direto à tela de resumo final
+        router.replace({
+            pathname: '/treinoFinalizado',
+            params: {
+                sessaoId,
+                type,
+                seconds,
+                water,
+                pesoPosTreino: pesoNumerico.toString(),
+                taxaSudorese: '1.2', // Mock
+                balancoHidrico: '-0.5', // Mock
+                statusHidratacao: 'Desidratado', // Mock
+            },
+        });
+        return;
+        // ==========================================
+
         try {
             const hostUri = Constants?.expoConfig?.hostUri;
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
@@ -45,6 +79,12 @@ export default function PesagemPosTreino() {
                     pesoPosTreino: pesoNumerico,
                     hidratacaoMl: Number(water || 0),
                     duracaoSegundos: Number(seconds || 0),
+                    volumeUrinario: Number(urineVolume || 0),
+                    corUrina: urineColor ? Number(urineColor) : null,
+                    sede: thirst ? Number(thirst) : null,
+                    sintomas: sintomasSelecionados.length > 0 || outrosSintomas.length > 0 
+                        ? JSON.stringify({ selecionados: sintomasSelecionados, outros: outrosSintomas }) 
+                        : null,
                 }),
             });
 
@@ -78,24 +118,8 @@ export default function PesagemPosTreino() {
         }
     };
 
-    // --- ANIMAÇÃO: ACENDER DAS LUZES (LIGHTS ON) ---
-    const themeAnimation = useRef(new Animated.Value(0)).current;
-
-    useEffect(() => {
-        Animated.timing(themeAnimation, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: false,
-        }).start();
-    }, []);
-
-    const animatedBackgroundColor = themeAnimation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['#0e0e0e', theme.colors.background] // Sai do preto e vai para o branco
-    });
-
     return (
-        <Animated.View style={{ flex: 1, backgroundColor: animatedBackgroundColor }}>
+        <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
             <Screen style={styles.container}>
                 <Stack.Screen options={{ headerShown: false, animation: 'fade' }} />
 
@@ -128,10 +152,52 @@ export default function PesagemPosTreino() {
                         <Text style={styles.unitText}>KG</Text>
                     </View>
 
+                    {/* --- SINTOMAS --- */}
+                    <View style={styles.sintomasContainer}>
+                        <Text style={styles.sintomasTitle}>SINTOMAS PÓS-TREINO</Text>
+                        <View style={styles.sintomasTagsContainer}>
+                            {['Vertigem', 'Enjoo', 'Cãibra'].map((sintoma) => {
+                                const isSelected = sintomasSelecionados.includes(sintoma);
+                                let iconName = 'alert-circle-outline';
+                                if (sintoma === 'Vertigem') iconName = 'head-sync-outline';
+                                if (sintoma === 'Enjoo') iconName = 'emoticon-sick-outline';
+                                if (sintoma === 'Cãibra') iconName = 'lightning-bolt-outline';
+
+                                return (
+                                    <TouchableOpacity
+                                        key={sintoma}
+                                        style={[styles.sintomaTag, isSelected && styles.sintomaTagSelected]}
+                                        onPress={() => toggleSintoma(sintoma)}
+                                        activeOpacity={0.7}
+                                    >
+                                        <MaterialCommunityIcons 
+                                            name={iconName as any} 
+                                            size={16} 
+                                            color={isSelected ? theme.colors.primary : '#333333'} 
+                                        />
+                                        <Text style={[styles.sintomaTagText, isSelected && styles.sintomaTagTextSelected]}>
+                                            {sintoma}
+                                        </Text>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
+                        
+                        <TextInput
+                            style={styles.textArea}
+                            placeholder="Outros sintomas..."
+                            placeholderTextColor="#999999"
+                            multiline
+                            numberOfLines={4}
+                            value={outrosSintomas}
+                            onChangeText={setOutrosSintomas}
+                        />
+                    </View>
+
                     {/* --- BOTÃO DE CONFIRMAR --- */}
                     <View style={styles.footer}>
                         <Button
-                            title="VER RESULTADOS"
+                            title="PRÓXIMO ➔"
                             onPress={handleConfirmarPeso}
                             style={{ backgroundColor: theme.colors.primary, height: 60 }}
                         />
@@ -139,6 +205,6 @@ export default function PesagemPosTreino() {
 
                 </View>
             </Screen>
-        </Animated.View>
+        </View>
     );
 }

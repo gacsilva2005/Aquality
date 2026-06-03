@@ -3,153 +3,247 @@ import {
   View,
   Text,
   TouchableOpacity,
+  ScrollView,
+  StyleSheet,
 } from 'react-native';
-import { Feather, FontAwesome5 } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { Screen } from '../../../../components/Screen';
-import { Header } from '../../../../components/Header';
 import { styles } from './urineColor_styles';
 import { theme } from '../../../../global/themas';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Button } from '../../../../components/Button';
 
+// Cores originais mantidas
 const URINE_LEVELS = [
-  { id: 1, label: 'NÍVEL 1', color: '#FEFCE8' },
-  { id: 2, label: 'NÍVEL 2', color: '#FEF9C3' },
-  { id: 3, label: 'NÍVEL 3', color: '#FEF08A' },
-  { id: 4, label: 'NÍVEL 4', color: '#FDE047' },
-  { id: 5, label: 'NÍVEL 5', color: '#EAB308' },
-  { id: 6, label: 'NÍVEL 6', color: '#CA8A04' },
-  { id: 7, label: 'NÍVEL 7', color: '#A16207' },
-  { id: 8, label: 'NÍVEL 8', color: '#713F12' },
+  { id: 1, color: '#FEFCE8' },
+  { id: 2, color: '#FEF9C3' },
+  { id: 3, color: '#FEF08A' },
+  { id: 4, color: '#FDE047' },
+  { id: 5, color: '#EAB308' },
+  { id: 6, color: '#CA8A04' },
+  { id: 7, color: '#A16207' },
+  { id: 8, color: '#713F12' },
 ];
 
-function getStatus(id: number): string {
-  if (id <= 3) return 'ÓTIMO';
-  if (id <= 6) return 'ATENÇÃO';
-  return 'CRÍTICO';
-}
-
-function getStatusColor(id: number): string {
-  if (id <= 3) return theme.colors.success;
-  if (id <= 6) return theme.colors.warning;
-  return theme.colors.primary;
-}
-
 export default function UrineColor() {
-  const [selected, setSelected] = useState<number | null>(null);
+  // Parâmetros recebidos da tela de treino
+  const { sessaoId, type, seconds, water } = useLocalSearchParams<{
+    sessaoId: string;
+    type: string;
+    seconds: string;
+    water: string;
+  }>();
 
-  function handleFinalize() {
-    if (!selected) return;
-    router.replace('/(tabs)/performance' as any);
-  }
+  const [moment, setMoment] = useState<'Durante' | 'Após'>('Durante');
+  const [volume, setVolume] = useState<number>(0);
+  const [noUrine, setNoUrine] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<number | null>(null);
+  const [thirst, setThirst] = useState<number>(5);
+
+  const adjustVolume = (amount: number) => {
+    if (noUrine) setNoUrine(false);
+    setVolume((prev) => Math.max(0, prev + amount));
+  };
+
+  const handleToggleNoUrine = () => {
+    setNoUrine(!noUrine);
+    if (!noUrine) {
+      setVolume(0);
+    }
+  };
+
+  const handleFinalize = (isSkip = false) => {
+    const finalVolume = isSkip || noUrine ? 0 : volume;
+    
+    // Navega para o pós-treino repassando tudo que veio do treinoAtivo + as infos da urina
+    router.push({
+      pathname: '/pesagemPosTreino',
+      params: {
+        sessaoId,
+        type,
+        seconds,
+        water,
+        urineVolume: finalVolume.toString(),
+        urineMoment: moment,
+        urineColor: selectedColor ? selectedColor.toString() : '',
+        thirst: thirst.toString(),
+      }
+    });
+  };
 
   return (
-    <Screen
-      backgroundColor={theme.colors.background}
-      scrollable={true}
-      HeaderComponent={<Header />}
-    >
-      <View style={styles.mainContent}>
-
-        {/* ── TÍTULO ── */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.pageSubtitle}>MÉTRICA DE HIDRATAÇÃO</Text>
-          <View style={styles.titleRow}>
-            <Text style={styles.titleLine}>COR DA URINA</Text>
-            <Text style={styles.stepText}>ETAPA 01 / 03</Text>
-          </View>
-          <View style={styles.titleUnderline} />
+    <Screen backgroundColor={theme.colors.background}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
+        {/* HEADER */}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <Feather name="arrow-left" size={24} color="#0e0e0e" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>VOLUME URINÁRIO</Text>
+          <TouchableOpacity style={styles.helpButton}>
+            <Feather name="help-circle" size={20} color="#666" />
+          </TouchableOpacity>
         </View>
 
-        {/* ── INSTRUÇÃO ── */}
-        <View style={styles.instructionCard}>
-          <Text style={styles.instructionText}>
-            Selecione o bloco de cor que mais se aproxima da sua amostra de urina atual. Isso fornece uma base fisiológica imediata para o seu status de hidratação.
+        <Text style={styles.descriptionText}>
+          O volume urinado é subtraído da sua perda hídrica para um cálculo mais preciso.
+        </Text>
+
+        {/* STEPPER VISUAL */}
+        <View style={styles.stepperContainer}>
+          <View style={styles.stepperLineContainer}>
+             <View style={styles.stepperLineBackground} />
+             {/* Simulação do progresso até o meio (DUR/PÓS) */}
+             <View style={styles.stepperLineActive} />
+             <View style={styles.stepDotActive} />
+             <View style={styles.stepDotActive} />
+             <View style={styles.stepDot} />
+          </View>
+          <View style={styles.stepperLabelsContainer}>
+            <Text style={[styles.stepLabel, styles.stepLabelActive]}>PRÉ</Text>
+            <Text style={[styles.stepLabel, styles.stepLabelActive]}>DUR/PÓS</Text>
+            <Text style={styles.stepLabel}>RES</Text>
+          </View>
+          <Text style={styles.stepperSubtitle}>
+            PRÉ = antes do treino; RES = Resultado final
           </Text>
         </View>
 
-        {/* ── GRADE DE CORES ── */}
-        <View style={styles.colorGrid}>
-          {URINE_LEVELS.map(level => {
-            const isSelected = selected === level.id;
-            return (
-              <TouchableOpacity
-                key={level.id}
-                style={[styles.card, isSelected && styles.cardSelected]}
-                onPress={() => setSelected(level.id)}
-                activeOpacity={0.8}
-              >
-                {/* Check no canto superior direito do card */}
-                {isSelected && (
-                  <View style={styles.checkBadge}>
-                    <Feather name="check" size={12} color={theme.colors.textWhite} />
-                  </View>
-                )}
-
-                {/* Bloco de cor centralizado dentro do card */}
-                <View style={[styles.colorBlock, { backgroundColor: level.color }]} />
-
-                {/* Label embaixo dentro do card */}
-                <Text style={[
-                  styles.colorLabel,
-                  isSelected && styles.colorLabelSelected,
-                ]}>
-                  {level.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        {/* ── STATUS ── */}
-        {selected && (
-          <View style={[styles.statusBanner, { borderLeftColor: getStatusColor(selected) }]}>
-            <Text style={[styles.statusText, { color: getStatusColor(selected) }]}>
-              {getStatus(selected)}
+        {/* TOGGLE: DURANTE / LOGO APÓS */}
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity 
+            style={[styles.toggleButton, moment === 'Durante' && styles.toggleButtonActive]}
+            onPress={() => setMoment('Durante')}
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.toggleButtonText, moment === 'Durante' && styles.toggleButtonTextActive]}>
+              Durante a sessão
             </Text>
-            <Text style={styles.statusDescription}>
-              {selected <= 3
-                ? 'Hidratação ótima. Continue assim!'
-                : selected <= 6
-                ? 'Hidratação moderada. Aumente a ingestão de água.'
-                : 'Desidratação severa. Intervenção imediata necessária.'}
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.toggleButton, moment === 'Após' && styles.toggleButtonActive]}
+            onPress={() => setMoment('Após')}
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.toggleButtonText, moment === 'Após' && styles.toggleButtonTextActive]}>
+              Logo após
             </Text>
-          </View>
-        )}
-
-        {/* ── CONTEXTO DE ANÁLISE ── */}
-        <View style={styles.infoCard}>
-          <View style={styles.infoCardHeader}>
-            <Feather name="info" size={14} color={theme.colors.primary} />
-            <Text style={styles.infoCardTitle}>CONTEXTO DE ANÁLISE</Text>
-          </View>
-          <Text style={styles.infoCardText}>
-            Níveis 1-3 indicam hidratação ótima. Níveis 4-6 sugerem desidratação moderada. Níveis 7-8 requerem intervenção imediata.
-          </Text>
+          </TouchableOpacity>
         </View>
 
-        {/* ── PROTOCOLO DE LABORATÓRIO ── */}
-        <View style={styles.infoCard}>
-          <View style={styles.infoCardHeader}>
-            <FontAwesome5 name="flask" size={13} color={theme.colors.primary} />
-            <Text style={styles.infoCardTitle}>PROTOCOLO DE LABORATÓRIO</Text>
-          </View>
-          <Text style={styles.infoCardText}>
-            Certifique-se de avaliar a amostra sob luz natural ou luz calibrada para máxima precisão.
-          </Text>
+        {/* BOTÃO ESTIMATIVA PADRÃO */}
+        <View style={styles.estimateContainer}>
+          <TouchableOpacity style={styles.estimateButton} onPress={() => { setVolume(300); setNoUrine(false); }}>
+            <Text style={styles.estimateButtonText}>Usar estimativa padrão (300 ml)</Text>
+            <Text style={styles.estimateSubText}>Baseado em dados médios da literatura</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* ── BOTÃO FINALIZAR ── */}
-        <TouchableOpacity
-          style={[styles.btnFinalize, !selected && styles.btnFinalizeDisabled]}
-          onPress={handleFinalize}
-          disabled={!selected}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.btnFinalizeText}>FINALIZAR SESSÃO</Text>
-          <Feather name="arrow-right" size={16} color={theme.colors.textWhite} />
+        {/* CONTADOR DE VOLUME */}
+        <View style={styles.counterCard}>
+          <View style={styles.counterRow}>
+            {/* Botão -50 */}
+            <TouchableOpacity style={styles.counterActionButton} onPress={() => adjustVolume(-50)}>
+               <MaterialCommunityIcons name="minus" size={24} color={theme.colors.primary} />
+               <Text style={styles.counterActionSubText}>-50 ml</Text>
+            </TouchableOpacity>
+            
+            {/* Valor Central */}
+            <View style={styles.counterValueContainer}>
+              <Text style={styles.counterValueText}>{volume}</Text>
+              <Text style={styles.counterUnitText}>ml</Text>
+            </View>
+
+            {/* Botão +50 */}
+            <TouchableOpacity style={styles.counterActionButton} onPress={() => adjustVolume(50)}>
+               <MaterialCommunityIcons name="plus" size={24} color={theme.colors.primary} />
+               <Text style={styles.counterActionSubText}>+50 ml</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* BOTÕES RÁPIDOS */}
+          <View style={styles.quickAddRow}>
+            <TouchableOpacity style={styles.quickAddButton} onPress={() => { setVolume(100); setNoUrine(false); }}>
+              <Text style={styles.quickAddButtonText}>100 ML</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickAddButton} onPress={() => { setVolume(250); setNoUrine(false); }}>
+              <Text style={styles.quickAddButtonText}>250 ML</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickAddButton} onPress={() => { setVolume(500); setNoUrine(false); }}>
+              <Text style={styles.quickAddButtonText}>500 ML</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* CHECKBOX NÃO URINEI */}
+        <TouchableOpacity style={styles.checkboxContainer} onPress={handleToggleNoUrine} activeOpacity={0.8}>
+          <View style={[styles.checkboxBox, noUrine && styles.checkboxChecked]}>
+            {noUrine && <Feather name="check" size={16} color="#FFF" />}
+          </View>
+          <Text style={styles.checkboxLabel}>Não urinei nesta sessão</Text>
         </TouchableOpacity>
 
-      </View>
+        {/* SEÇÃO: ESTADO BASAL */}
+        <View style={styles.basalSection}>
+          <Text style={styles.sectionTitle}>ESTADO BASAL</Text>
+          
+          {/* CORES DA URINA */}
+          <Text style={styles.colorTitle}>COR DA URINA (1-8)</Text>
+          <View style={styles.colorGridRow}>
+             {URINE_LEVELS.map(level => (
+               <TouchableOpacity 
+                 key={level.id}
+                 style={[
+                   styles.colorBlockItem, 
+                   { backgroundColor: level.color },
+                   selectedColor === level.id && styles.colorBlockSelected
+                 ]}
+                 onPress={() => setSelectedColor(level.id)}
+                 activeOpacity={0.9}
+               />
+             ))}
+          </View>
+
+          {/* SLIDER DE SEDE */}
+          <View style={styles.thirstHeader}>
+            <Text style={styles.thirstTitle}>SEDE (0-10)</Text>
+            <Text style={styles.thirstValue}>{thirst}</Text>
+          </View>
+          <View style={styles.thirstLabels}>
+             <Text style={styles.thirstLabelText}>0 = SEM SEDE</Text>
+             <Text style={styles.thirstLabelText}>10 = SEDE EXTREMA</Text>
+          </View>
+          {/* SIMULAÇÃO DE SLIDER MANUAL (BÁSICO) PODE SER TROCADO POR EXPO-SLIDER DEPOIS */}
+          <View style={styles.sliderTrack}>
+            <View style={[styles.sliderFill, { width: `${thirst * 10}%` }]} />
+            {/* Overlay invisível para clique rápido de 0 a 10 */}
+            <View style={[StyleSheet.absoluteFill, { flexDirection: 'row' }]}>
+              {[0,1,2,3,4,5,6,7,8,9,10].map(val => (
+                <TouchableOpacity 
+                  key={val} 
+                  style={{ flex: 1 }} 
+                  onPress={() => setThirst(val)}
+                />
+              ))}
+            </View>
+          </View>
+        </View>
+
+        {/* RODAPÉ */}
+        <View style={styles.footer}>
+          <Button 
+            title="SALVAR E CONTINUAR" 
+            onPress={() => handleFinalize(false)} 
+            style={{ backgroundColor: theme.colors.primary, height: 60 }}
+          />
+          <TouchableOpacity style={styles.skipLink} onPress={() => handleFinalize(true)}>
+            <Text style={styles.skipLinkText}>Pular por agora</Text>
+            <Text style={styles.skipSubText}>Se pular, usaremos 0 ml neste cálculo.</Text>
+          </TouchableOpacity>
+        </View>
+
+      </ScrollView>
     </Screen>
   );
 }

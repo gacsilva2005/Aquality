@@ -73,8 +73,8 @@ export default function TreinoAtivo() {
                     return;
                 }
 
-                router.replace({
-                    pathname: '/pesagemPosTreino',
+                router.push({
+                    pathname: '/urineColor',
                     params: {
                         sessaoId: sessaoId.toString(),
                         type: workoutType,

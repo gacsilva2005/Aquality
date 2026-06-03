@@ -16,6 +16,16 @@ export default function PesagemPreTreino() {
     const { user } = useUser();
 
   const [pesoInput, setPesoInput] = useState('');
+  const [sintomasSelecionados, setSintomasSelecionados] = useState<string[]>([]);
+  const [outrosSintomas, setOutrosSintomas] = useState('');
+
+  const toggleSintoma = (sintoma: string) => {
+    if (sintomasSelecionados.includes(sintoma)) {
+      setSintomasSelecionados(sintomasSelecionados.filter(s => s !== sintoma));
+    } else {
+      setSintomasSelecionados([...sintomasSelecionados, sintoma]);
+    }
+  };
 
     const handleConfirmarPeso = async () => {
 
@@ -26,6 +36,19 @@ export default function PesagemPreTreino() {
             Alert.alert('Atenção', 'Por favor, insira um peso válido antes de iniciar o treino.');
             return;
         }
+
+        // ==========================================
+        // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
+        // Bypass na API para ir direto à tela de cronômetro
+        router.replace({
+            pathname: '/treinoAtivo',
+            params: {
+                type: workoutType,
+                sessaoId: '999',
+            },
+        });
+        return;
+        // ==========================================
 
         if (!user?.id) {
             Alert.alert('Erro', 'Usuário não encontrado. Faça login novamente.');
@@ -47,6 +70,9 @@ export default function PesagemPreTreino() {
                     atletaId: user.id,
                     modalidade: workoutType,
                     pesoPreTreino: pesoNumerico,
+                    sintomas: sintomasSelecionados.length > 0 || outrosSintomas.length > 0 
+                        ? JSON.stringify({ selecionados: sintomasSelecionados, outros: outrosSintomas }) 
+                        : null,
                 }),
             });
 
@@ -119,10 +145,52 @@ export default function PesagemPreTreino() {
           <Text style={styles.unitText}>KG</Text>
         </View>
 
+        {/* --- SINTOMAS --- */}
+        <View style={styles.sintomasContainer}>
+          <Text style={styles.sintomasTitle}>SINTOMAS PRÉ-TREINO</Text>
+          <View style={styles.sintomasTagsContainer}>
+            {['Vertigem', 'Enjoo', 'Cãibra'].map((sintoma) => {
+              const isSelected = sintomasSelecionados.includes(sintoma);
+              let iconName = 'alert-circle-outline';
+              if (sintoma === 'Vertigem') iconName = 'head-sync-outline';
+              if (sintoma === 'Enjoo') iconName = 'emoticon-sick-outline';
+              if (sintoma === 'Cãibra') iconName = 'lightning-bolt-outline';
+
+              return (
+                <TouchableOpacity
+                  key={sintoma}
+                  style={[styles.sintomaTag, isSelected && styles.sintomaTagSelected]}
+                  onPress={() => toggleSintoma(sintoma)}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons 
+                    name={iconName as any} 
+                    size={16} 
+                    color={isSelected ? theme.colors.primary : '#333333'} 
+                  />
+                  <Text style={[styles.sintomaTagText, isSelected && styles.sintomaTagTextSelected]}>
+                    {sintoma}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          
+          <TextInput
+            style={styles.textArea}
+            placeholder="Outros sintomas..."
+            placeholderTextColor="#999999"
+            multiline
+            numberOfLines={4}
+            value={outrosSintomas}
+            onChangeText={setOutrosSintomas}
+          />
+        </View>
+
         {/* --- BOTÃO DE CONFIRMAR --- */}
         <View style={styles.footer}>
           <Button 
-            title="INICIAR TREINO" 
+            title="PRÓXIMO ➔" 
             onPress={handleConfirmarPeso} 
             style={{ backgroundColor: theme.colors.primary, height: 60 }}
           />
