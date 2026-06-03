@@ -13,5 +13,6 @@ public record SessaoTreinoResponseDTO(
         Integer hidratacaoMl,
         Float taxaSudorese,
         Float balancoHidrico,
-        String statusHidratacao
+        String statusHidratacao,
+        String sintomas
 ) {}
