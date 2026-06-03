@@ -9,8 +9,9 @@ export function Equipes() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [nomeEquipe, setNomeEquipe] = useState('');
     const [esporteRef, setEsporteRef] = useState('');
-    const [codigoAcesso, setCodigoAcesso] = useState('gerar');
-    const [codigoFranquia, setCodigoFranquia] = useState('');
+    const [limiteAtletas, setLimiteAtletas] = useState('');
+    const [atletasIds, setAtletasIds] = useState<number[]>([]);
+    const [atletas, setAtletas] = useState<any[]>([]);
     const [equipes, setEquipes] = useState<any[]>([]);
 
     const { user } = useUser();
@@ -18,8 +19,20 @@ export function Equipes() {
     useEffect(() => {
       if (user?.clube?.id) {
         carregarEquipes();
+        carregarAtletas();
       }
     }, [user]);
+
+    const carregarAtletas = async () => {
+      try {
+        const clubeId = user?.clube?.id;
+        const response = await fetch(`http://localhost:8080/Atleta/clube/${clubeId}`);
+        const data = await response.json();
+        setAtletas(data);
+      } catch (error) {
+        console.error('Erro ao carregar atletas:', error);
+      }
+    };
 
     const carregarEquipes = async () => {
       try {
@@ -37,27 +50,42 @@ export function Equipes() {
     };
 
     const handleCriarEquipe = async () => {
-        if (!nomeEquipe || !esporteRef) return;
-        
-        const novaEquipe = {
-            id: Date.now(),
-            nome: nomeEquipe.toUpperCase(),
-            esporte: esporteRef,
-            atletas: 0,
-            aderencia: '0%',
-            suorMedio: '0L/h'
-        };
-        
-        await carregarEquipes();
-        
-        setNomeEquipe('');
-        setEsporteRef('');
-        setCodigoAcesso('gerar');
-        setCodigoFranquia('');
-        setIsModalOpen(false);
+        if (!nomeEquipe || !esporteRef || !limiteAtletas) return;
+
+        try {
+            const clubeId = user?.clube?.id;
+            const payload = {
+                nome: nomeEquipe.toUpperCase(),
+                categoria: esporteRef,
+                limiteAtletas: parseInt(limiteAtletas, 10),
+                clubeId: clubeId,
+                atletasIds: atletasIds
+            };
+
+            const response = await fetch(`http://localhost:8080/Equipe`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                await carregarEquipes();
+                setNomeEquipe('');
+                setEsporteRef('');
+                setLimiteAtletas('');
+                setAtletasIds([]);
+                setIsModalOpen(false);
+            } else {
+                console.error("Erro ao criar equipe");
+            }
+        } catch (error) {
+            console.error('Erro na requisição:', error);
+        }
     };
 
-    const isFormValid = nomeEquipe.trim() !== '' && esporteRef !== '';
+    const isFormValid = nomeEquipe.trim() !== '' && esporteRef !== '' && limiteAtletas !== '';
 
     return (
         <>
@@ -243,56 +271,56 @@ export function Equipes() {
                             </div>
                             
                             <div className="modal-field">
-                                <label>ESPORTE DE REFERÊNCIA</label>
-                                <select 
-                                    className={esporteRef === '' ? 'is-placeholder' : ''}
-                                    value={esporteRef} 
-                                    onChange={e => setEsporteRef(e.target.value)}
-                                >
-                                    <option value="" disabled>Selecione um esporte</option>
-                                    <option value="Futebol de Campo">Futebol de Campo</option>
-                                    <option value="Basquete">Basquete</option>
-                                    <option value="Vôlei">Vôlei</option>
-                                    <option value="Corrida">Corrida</option>
-                                </select>
+                                <label>CATEGORIA DO ESPORTE</label>
+                                <div className="modal-chips-container">
+                                    {['Futebol', 'Natação', 'Corrida', 'Musculação', 'Ciclismo'].map(esp => (
+                                        <button 
+                                            key={esp} 
+                                            className={`chip-btn ${esporteRef === esp ? 'active' : ''}`}
+                                            onClick={() => setEsporteRef(esp)}
+                                            type="button"
+                                        >
+                                            {esp}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                             
-                            <div className="modal-access-box">
-                                <h3 className="modal-access-title">CÓDIGO DE ACESSO</h3>
-                                <div className="modal-radio-group">
-                                    <label className="modal-radio-label">
-                                        <input 
-                                            type="radio" 
-                                            name="codigoAcesso" 
-                                            value="gerar"
-                                            checked={codigoAcesso === 'gerar'}
-                                            onChange={() => setCodigoAcesso('gerar')}
-                                        />
-                                        Gerar Novo Código
-                                    </label>
-                                    <label className="modal-radio-label">
-                                        <input 
-                                            type="radio" 
-                                            name="codigoAcesso" 
-                                            value="existente"
-                                            checked={codigoAcesso === 'existente'}
-                                            onChange={() => setCodigoAcesso('existente')}
-                                        />
-                                        Inserir Código Existente
-                                    </label>
-                                </div>
-                                
-                                <div className="modal-validation-group">
-                                    <label>CÓDIGO DA FRANQUIA/ORGANIZAÇÃO</label>
-                                    <div className="modal-validation-input-row">
-                                        <input 
-                                            type="text" 
-                                            placeholder="XYZ-9876" 
-                                            value={codigoFranquia}
-                                            onChange={e => setCodigoFranquia(e.target.value)}
-                                        />
-                                        <button className="modal-btn-validate">VALIDAR</button>
-                                    </div>
+                            <div className="modal-field">
+                                <label>MÁXIMO DE ATLETAS</label>
+                                <input 
+                                    type="number" 
+                                    placeholder="Ex: 30" 
+                                    value={limiteAtletas}
+                                    onChange={e => setLimiteAtletas(e.target.value)}
+                                    min="1"
+                                />
+                            </div>
+
+                            <div className="modal-field">
+                                <label>VINCULAR ATLETAS</label>
+                                <div className="modal-atletas-list">
+                                    {atletas.map(atleta => (
+                                        <label key={atleta.id} className="atleta-checkbox">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={atletasIds.includes(atleta.id)}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setAtletasIds([...atletasIds, atleta.id]);
+                                                    } else {
+                                                        setAtletasIds(atletasIds.filter(id => id !== atleta.id));
+                                                    }
+                                                }}
+                                            />
+                                            {atleta.nome}
+                                        </label>
+                                    ))}
+                                    {atletas.length === 0 && (
+                                        <p style={{ fontSize: '13px', color: '#6c757d', margin: 0, padding: '4px' }}>
+                                            Nenhum atleta encontrado neste clube.
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -307,7 +335,7 @@ export function Equipes() {
                                 disabled={!isFormValid}
                                 style={{ padding: '12px 20px', fontSize: '12px' }}
                             >
-                                CRIAR EQUIPE
+                                SALVAR EQUIPE
                             </button>
                         </div>
                     </div>

@@ -181,7 +181,10 @@ export function ModalAddTeam({ visible, onClose, onTeamAdded }: ModalAddTeamProp
                 <View style={styles.content}>
 
                     <View style={styles.header}>
-                        <Text style={styles.title}>ADICIONAR EQUIPE</Text>
+                        <View style={{ flex: 1, paddingRight: 10 }}>
+                            <Text style={styles.title}>ADICIONAR EQUIPE</Text>
+                            <Text style={styles.subtitle}>Configure os parâmetros do novo grupo de atletas.</Text>
+                        </View>
                         <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                             <Feather name="x" size={24} color="#1A1A1A" />
                         </TouchableOpacity>
@@ -321,11 +324,18 @@ export function ModalAddTeam({ visible, onClose, onTeamAdded }: ModalAddTeamProp
                             )}
                         </View>
 
-                        <Button
-                            title="SALVAR EQUIPE"
-                            onPress={handleSave}
-                            style={{ marginTop: 20, marginBottom: 10 }}
-                        />
+                        <View style={styles.footerButtons}>
+                            <TouchableOpacity style={styles.cancelButton} onPress={onClose} activeOpacity={0.7}>
+                                <Text style={styles.cancelButtonText}>CANCELAR</Text>
+                            </TouchableOpacity>
+                            <View style={styles.saveButtonWrapper}>
+                                <Button
+                                    title="SALVAR EQUIPE"
+                                    onPress={handleSave}
+                                    style={{ marginTop: 0, marginBottom: 0 }}
+                                />
+                            </View>
+                        </View>
                     </ScrollView>
 
                 </View>
