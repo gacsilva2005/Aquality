@@ -118,24 +118,8 @@ export default function PesagemPosTreino() {
         }
     };
 
-    // --- ANIMAÇÃO: ACENDER DAS LUZES (LIGHTS ON) ---
-    const themeAnimation = useRef(new Animated.Value(0)).current;
-
-    useEffect(() => {
-        Animated.timing(themeAnimation, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: false,
-        }).start();
-    }, []);
-
-    const animatedBackgroundColor = themeAnimation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['#0e0e0e', theme.colors.background] // Sai do preto e vai para o branco
-    });
-
     return (
-        <Animated.View style={{ flex: 1, backgroundColor: animatedBackgroundColor }}>
+        <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
             <Screen style={styles.container}>
                 <Stack.Screen options={{ headerShown: false, animation: 'fade' }} />
 
@@ -221,6 +205,6 @@ export default function PesagemPosTreino() {
 
                 </View>
             </Screen>
-        </Animated.View>
+        </View>
     );
 }

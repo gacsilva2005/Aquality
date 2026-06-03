@@ -73,7 +73,7 @@ export default function TreinoAtivo() {
                     return;
                 }
 
-                router.replace({
+                router.push({
                     pathname: '/urineColor',
                     params: {
                         sessaoId: sessaoId.toString(),

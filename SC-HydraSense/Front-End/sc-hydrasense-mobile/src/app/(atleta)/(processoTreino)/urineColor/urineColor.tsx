@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
 import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { Screen } from '../../../../components/Screen';
@@ -55,7 +56,7 @@ export default function UrineColor() {
     const finalVolume = isSkip || noUrine ? 0 : volume;
     
     // Navega para o pós-treino repassando tudo que veio do treinoAtivo + as infos da urina
-    router.replace({
+    router.push({
       pathname: '/pesagemPosTreino',
       params: {
         sessaoId,
