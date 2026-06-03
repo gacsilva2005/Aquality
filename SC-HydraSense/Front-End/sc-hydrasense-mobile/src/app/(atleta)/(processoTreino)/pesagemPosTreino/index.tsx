@@ -46,24 +46,7 @@ export default function PesagemPosTreino() {
             return;
         }
 
-        // ==========================================
-        // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
-        // Bypass na API para ir direto à tela de resumo final
-        router.replace({
-            pathname: '/treinoFinalizado',
-            params: {
-                sessaoId,
-                type,
-                seconds,
-                water,
-                pesoPosTreino: pesoNumerico.toString(),
-                taxaSudorese: '1.2', // Mock
-                balancoHidrico: '-0.5', // Mock
-                statusHidratacao: 'Desidratado', // Mock
-            },
-        });
-        return;
-        // ==========================================
+
 
         try {
             const hostUri = Constants?.expoConfig?.hostUri;
