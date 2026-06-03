@@ -14,6 +14,7 @@ import { theme } from '../../../../global/themas';
 import { router, useFocusEffect } from 'expo-router';
 import { useUser } from '../../../../contexts/UserContext';
 import Constants from 'expo-constants';
+import * as SecureStore from 'expo-secure-store';
 
 // CÁLCULOS DO CÍRCULO DE PROGRESSO
 const { width } = Dimensions.get('window');
@@ -32,13 +33,31 @@ export default function Dashboard() {
 
   // Modal de seleção de treino
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const handleStartWorkout = (treinoSelecionado: string) => {
-    setIsModalVisible(false);
-    router.push({
-      pathname: '/confirmacaoKit' as any,
-      params: { type: treinoSelecionado }
-    });
-  };
+    const handleStartWorkout = async (treinoSelecionado: string) => {
+        const usuarioSalvo = await SecureStore.getItemAsync('usuarioLogado');
+
+        if (!usuarioSalvo) {
+            console.log('Nenhum usuário salvo no SecureStore');
+            return;
+        }
+
+        const usuario = JSON.parse(usuarioSalvo);
+
+        if (!usuario?.id) {
+            console.log('Usuário salvo sem id:', usuario);
+            return;
+        }
+
+        setIsModalVisible(false);
+
+        router.push({
+            pathname: '/confirmacaoKit' as any,
+            params: {
+                type: treinoSelecionado,
+                atletaId: usuario.id.toString(),
+            },
+        });
+    };
 
   // Estados do header de hidratação
   const [consumed, setConsumed] = useState(0);

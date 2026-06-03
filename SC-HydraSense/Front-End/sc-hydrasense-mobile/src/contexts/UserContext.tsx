@@ -1,5 +1,12 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
+interface Kit {
+    id: number;
+    nome: string;
+    modalidade: string;
+    pesoTotal: number; // em gramas
+}
+
 interface UserData {
     dataNascimento: string;
     id?: number;

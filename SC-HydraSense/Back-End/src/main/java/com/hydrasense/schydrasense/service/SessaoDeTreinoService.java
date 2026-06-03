@@ -1,11 +1,9 @@
 package com.hydrasense.schydrasense.service;
 
 import com.hydrasense.schydrasense.dto.*;
-import com.hydrasense.schydrasense.model.Atleta;
-import com.hydrasense.schydrasense.model.RegistroDeHidratacao;
-import com.hydrasense.schydrasense.model.RegistroDoPeso;
-import com.hydrasense.schydrasense.model.SessaoDeTreino;
+import com.hydrasense.schydrasense.model.*;
 import com.hydrasense.schydrasense.repository.AtletaRepository;
+import com.hydrasense.schydrasense.repository.KitRepository;
 import com.hydrasense.schydrasense.repository.RegistroDoPesoRepository;
 import com.hydrasense.schydrasense.repository.SessaoDeTreinoRepository;
 import org.springframework.stereotype.Service;
@@ -20,17 +18,20 @@ public class SessaoDeTreinoService {
     private final AtletaRepository atletaRepository;
     private final RegistroDoPesoRepository pesoRepository;
     private final CalculadoraFisiologica calculadoraFisiologica;
+    private final KitRepository kitRepository;
 
     public SessaoDeTreinoService(
             SessaoDeTreinoRepository sessaoRepository,
             AtletaRepository atletaRepository,
             RegistroDoPesoRepository pesoRepository,
-            CalculadoraFisiologica calculadoraFisiologica
+            CalculadoraFisiologica calculadoraFisiologica,
+            KitRepository kitRepository
     ) {
         this.repository = sessaoRepository;
         this.atletaRepository = atletaRepository;
         this.pesoRepository = pesoRepository;
         this.calculadoraFisiologica = calculadoraFisiologica;
+        this.kitRepository = kitRepository;
     }
 
     private SessaoTreinoResponseDTO mapToResponseDTO(SessaoDeTreino sessao) {
@@ -100,18 +101,20 @@ public class SessaoDeTreinoService {
         Atleta atleta = atletaRepository.findById(dto.atletaId())
                 .orElseThrow(() -> new RuntimeException("Atleta não encontrado"));
 
-        RegistroDoPeso pesagemPre = new RegistroDoPeso();
-        pesagemPre.setPeso(dto.pesoPreTreino());
-
-        pesoRepository.save(pesagemPre);
-
         SessaoDeTreino sessao = new SessaoDeTreino();
-
         sessao.setAtleta(atleta);
         sessao.setModalidade(dto.modalidade());
-        sessao.setPesagemPre(pesagemPre);
-
         sessao.iniciarTreino();
+
+        boolean usarEquipamento = Boolean.TRUE.equals(dto.usarEquipamento());
+        sessao.setUsouEquipamento(usarEquipamento);
+
+        if (usarEquipamento && dto.kitId() != null) {
+            Kit kit = kitRepository.findById(dto.kitId())
+                    .orElseThrow(() -> new RuntimeException("Kit não encontrado: " + dto.kitId()));
+            sessao.setKit(kit);
+        }
+        // ──────────────────────────────────────────────────────────────────────
 
         SessaoDeTreino salva = repository.save(sessao);
         return mapToResponseDTO(salva);
