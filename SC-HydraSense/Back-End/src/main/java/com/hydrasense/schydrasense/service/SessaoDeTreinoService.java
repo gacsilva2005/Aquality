@@ -37,6 +37,7 @@ public class SessaoDeTreinoService {
     private SessaoTreinoResponseDTO mapToResponseDTO(SessaoDeTreino sessao) {
         Float pesoPre = (sessao.getPesagemPre() != null) ? sessao.getPesagemPre().getPeso() : null;
         Float pesoPos = (sessao.getPesagemPos() != null) ? sessao.getPesagemPos().getPeso() : null;
+        String sintomas = sessao.getRegistroDeSintoma() != null ? sessao.getRegistroDeSintoma().getSintomas() : null;
         Integer hidratacaoMl = (sessao.getRegistroDeHidratacao() != null) ? sessao.getRegistroDeHidratacao().getVolume().intValue() : null;
         
         Integer duracaoSegundos = 0;
@@ -57,7 +58,8 @@ public class SessaoDeTreinoService {
                 hidratacaoMl,
                 sessao.getTaxaSudorese(),
                 sessao.getBalancoHidrico(),
-                statusHidratacao
+                statusHidratacao,
+                sintomas
         );
     }
 
