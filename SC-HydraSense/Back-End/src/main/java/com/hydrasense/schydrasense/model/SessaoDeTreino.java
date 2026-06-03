@@ -39,6 +39,14 @@ public class SessaoDeTreino {
     @Setter
     private Float balancoHidrico;
 
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "kit_id")
+    private Kit kit;
+
+    @Setter
+    private Boolean usouEquipamento;
+
     // Relação 1:1 Registro de Sintoma
     @Setter
     @OneToOne(mappedBy = "sessaoDeTreino", cascade = CascadeType.ALL)
@@ -96,6 +104,13 @@ public class SessaoDeTreino {
         this.dataHoraFim = LocalDateTime.now();
     }
 
+    public Float getDescontoKitKg() {
+        if (Boolean.TRUE.equals(usouEquipamento) && kit != null && kit.getPesoTotal() != null) {
+            return kit.getPesoTotal() / 1000f; // converte gramas → kg
+        }
+        return 0f;
+    }
+
     public void finalizar(
             RegistroDoPeso pesagemPos,
             RegistroDeHidratacao hidratacao,
@@ -111,15 +126,26 @@ public class SessaoDeTreino {
             finalizarTreino();
         }
 
-        Float pesoPreVal = (this.pesagemPre != null) ? this.pesagemPre.getPeso() : 0.0f;
-        Float pesoPosVal = (this.pesagemPos != null) ? this.pesagemPos.getPeso() : 0.0f;
-        Integer volumeHidratacao = (this.registroDeHidratacao != null) ? this.registroDeHidratacao.getVolume().intValue() : 0;
+        Float descontoKg = getDescontoKitKg();
+
+        Float pesoPreVal = (this.pesagemPre != null)
+                ? this.pesagemPre.getPeso() - descontoKg
+                : 0.0f;
+
+        Float pesoPosVal = (this.pesagemPos != null)
+                ? this.pesagemPos.getPeso() - descontoKg
+                : 0.0f;
+
+        Integer volumeHidratacao = (this.registroDeHidratacao != null)
+                ? this.registroDeHidratacao.getVolume().intValue()
+                : 0;
 
         Double duracaoMinutosPrecisos = (duracaoSegundos != null && duracaoSegundos > 0)
                 ? duracaoSegundos / 60.0
                 : (double) this.calcularDuracaoTotal();
 
-        this.taxaSudorese = calculadora.calcularTaxaSudorese(pesoPreVal, pesoPosVal, volumeHidratacao, duracaoMinutosPrecisos);
+        this.taxaSudorese = calculadora.calcularTaxaSudorese(
+                pesoPreVal, pesoPosVal, volumeHidratacao, duracaoMinutosPrecisos);
         this.balancoHidrico = calculadora.calcularBalancoHidrico(pesoPreVal, pesoPosVal);
     }
 

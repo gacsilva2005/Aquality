@@ -1,10 +1,12 @@
 package com.hydrasense.schydrasense.controller;
 
 import com.hydrasense.schydrasense.dto.*;
+import com.hydrasense.schydrasense.model.Kit;
 import com.hydrasense.schydrasense.model.SessaoDeTreino;
 import com.hydrasense.schydrasense.service.SessaoDeTreinoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.hydrasense.schydrasense.service.KitService;
 
 import java.util.List;
 
@@ -14,9 +16,11 @@ import java.util.List;
 public class SessaoDeTreinoController {
 
     private final SessaoDeTreinoService service;
+    private final KitService kitService;
 
-    public SessaoDeTreinoController(SessaoDeTreinoService service) {
+    public SessaoDeTreinoController(SessaoDeTreinoService service,  KitService kitService) {
         this.service = service;
+        this.kitService = kitService;
     }
 
     @PostMapping
@@ -54,5 +58,13 @@ public class SessaoDeTreinoController {
     @GetMapping("/{sessaoId}")
     public ResponseEntity<SessaoTreinoResponseDTO> buscarPorId(@PathVariable Long sessaoId) {
         return ResponseEntity.ok(service.buscarPorId(sessaoId));
+    }
+
+    @GetMapping("/kits/atleta/{atletaId}")
+    public ResponseEntity<List<Kit>> listarKitsDoAtleta(
+            @PathVariable Long atletaId,
+            @RequestParam(required = false) String modalidade
+    ) {
+        return ResponseEntity.ok(kitService.listarPorAtleta(atletaId, modalidade));
     }
 }
