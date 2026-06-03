@@ -34,6 +34,12 @@ export const styles = StyleSheet.create({
         color: '#1A1A1A',
         letterSpacing: 0.5,
     },
+    subtitle: {
+        fontFamily: theme.fonts.bodyRegular,
+        fontSize: 14,
+        color: '#666',
+        marginTop: 5,
+    },
 
     inputGroup: {
         marginBottom: 25,
@@ -211,5 +217,28 @@ export const styles = StyleSheet.create({
     chipError: {
         borderColor: theme.colors.primary, 
         borderWidth: 1,
+    },
+    footerButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+        marginBottom: 10,
+        gap: 15,
+    },
+    cancelButton: {
+        flex: 1,
+        backgroundColor: '#F5F5F5',
+        paddingVertical: 14,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    cancelButtonText: {
+        fontFamily: theme.fonts.headingBold,
+        fontSize: 14,
+        color: '#666',
+    },
+    saveButtonWrapper: {
+        flex: 1,
     },
 });

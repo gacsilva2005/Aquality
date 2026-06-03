@@ -2759,6 +2759,7 @@
 }
 
 .modal-field input[type="text"],
+.modal-field input[type="number"],
 .modal-field select {
     width: 100%;
     padding: 12px;
@@ -2772,7 +2773,8 @@
     box-sizing: border-box;
 }
 
-.modal-field input[type="text"]::placeholder {
+.modal-field input[type="text"]::placeholder,
+.modal-field input[type="number"]::placeholder {
     color: #6c757d;
 }
 
@@ -2785,94 +2787,75 @@
 }
 
 .modal-field input[type="text"]:focus,
+.modal-field input[type="number"]:focus,
 .modal-field select:focus {
     border-color: #D90429;
 }
 
-.modal-access-box {
-    background-color: #f0f1f3;
-    padding: 16px;
-    border-radius: 6px;
+.modal-chips-container {
     display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.modal-access-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: #212529;
-    font-family: var(--font-body, sans-serif);
-    margin: 0;
-}
-
-.modal-radio-group {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-}
-
-.modal-radio-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: #212529;
-    cursor: pointer;
-}
-
-.modal-radio-label input[type="radio"] {
-    accent-color: #D90429;
-    width: 16px;
-    height: 16px;
-}
-
-.modal-validation-group {
-    display: flex;
-    flex-direction: column;
     gap: 8px;
+    flex-wrap: wrap;
     margin-top: 4px;
 }
 
-.modal-validation-group label {
-    font-size: 10px;
-    text-transform: uppercase;
-    color: #343a40;
-    font-weight: 700;
+.chip-btn {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-body, sans-serif);
 }
 
-.modal-validation-input-row {
-    display: flex;
-    gap: 8px;
+.chip-btn:hover {
+    background-color: #e9ecef;
 }
 
-.modal-validation-input-row input {
-    flex: 1;
-    padding: 10px;
+.chip-btn.active {
+    background-color: #D90429;
+    border-color: #D90429;
+    color: #fff;
+    font-weight: 600;
+}
+
+.modal-atletas-list {
+    max-height: 150px;
+    overflow-y: auto;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.atleta-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
     font-size: 13px;
-    outline: none;
-    background-color: #fff;
-}
-
-.modal-btn-validate {
-    padding: 0 16px;
-    background-color: #dee2e6;
-    color: #495057;
-    border: none;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.2s;
-}
-
-.modal-btn-validate:hover {
-    background-color: #ced4da;
     color: #212529;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    text-transform: none;
+    font-weight: 400 !important;
+}
+
+.atleta-checkbox:hover {
+    background-color: #f8f9fa;
+}
+
+.atleta-checkbox input[type="checkbox"] {
+    accent-color: #D90429;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
 }
 
 .modal-footer {
