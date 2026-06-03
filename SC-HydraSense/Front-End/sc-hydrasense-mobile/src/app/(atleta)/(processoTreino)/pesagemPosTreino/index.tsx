@@ -21,11 +21,15 @@ export default function PesagemPosTreino() {
         }
     };
 
-    const { sessaoId, type, seconds, water } = useLocalSearchParams<{
+    const { sessaoId, type, seconds, water, urineVolume, urineMoment, urineColor, thirst } = useLocalSearchParams<{
         sessaoId: string;
         type: string;
         seconds: string;
         water: string;
+        urineVolume?: string;
+        urineMoment?: string;
+        urineColor?: string;
+        thirst?: string;
     }>();
 
     const handleConfirmarPeso = async () => {
@@ -42,6 +46,25 @@ export default function PesagemPosTreino() {
             return;
         }
 
+        // ==========================================
+        // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
+        // Bypass na API para ir direto à tela de resumo final
+        router.replace({
+            pathname: '/treinoFinalizado',
+            params: {
+                sessaoId,
+                type,
+                seconds,
+                water,
+                pesoPosTreino: pesoNumerico.toString(),
+                taxaSudorese: '1.2', // Mock
+                balancoHidrico: '-0.5', // Mock
+                statusHidratacao: 'Desidratado', // Mock
+            },
+        });
+        return;
+        // ==========================================
+
         try {
             const hostUri = Constants?.expoConfig?.hostUri;
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
@@ -56,6 +79,9 @@ export default function PesagemPosTreino() {
                     pesoPosTreino: pesoNumerico,
                     hidratacaoMl: Number(water || 0),
                     duracaoSegundos: Number(seconds || 0),
+                    volumeUrinario: Number(urineVolume || 0),
+                    corUrina: urineColor ? Number(urineColor) : null,
+                    sede: thirst ? Number(thirst) : null,
                     sintomas: sintomasSelecionados.length > 0 || outrosSintomas.length > 0 
                         ? JSON.stringify({ selecionados: sintomasSelecionados, outros: outrosSintomas }) 
                         : null,

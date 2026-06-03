@@ -29,11 +29,7 @@ export default function TreinoFinalizado() {
     const rate = parseFloat(taxaSudorese || '0').toFixed(1);
     const balance = parseFloat(balancoHidrico || '0').toFixed(1);
 
-    const handleRegistrarUrina = () => {
-        // Futuramente, aqui vai navegar para a tela de registro de urina
-        console.log("Navegar para registro de urina");
-        router.push('/urineColor' as any);
-    };
+    // Remoção da função handleRegistrarUrina, pois foi movida para antes do pós-treino
 
     const handlePerfoarmance = () => {
         // Navega para a tela de desempenho
@@ -125,11 +121,7 @@ export default function TreinoFinalizado() {
                     {/* ---------------------------------- */}
 
                     <View style={styles.buttonsContainer}>
-                        <Button
-                            onPress={handleRegistrarUrina}
-                            title="REGISTRAR URINA"
-                            style= {{ backgroundColor: theme.colors.primary, height: 60}}
-                        />
+                        {/* Botão Registrar Urina removido daqui */}
 
                         <Button
                             onPress={handlePerfoarmance}

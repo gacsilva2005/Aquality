@@ -37,6 +37,19 @@ export default function PesagemPreTreino() {
             return;
         }
 
+        // ==========================================
+        // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
+        // Bypass na API para ir direto à tela de cronômetro
+        router.replace({
+            pathname: '/treinoAtivo',
+            params: {
+                type: workoutType,
+                sessaoId: '999',
+            },
+        });
+        return;
+        // ==========================================
+
         if (!user?.id) {
             Alert.alert('Erro', 'Usuário não encontrado. Faça login novamente.');
             return;
