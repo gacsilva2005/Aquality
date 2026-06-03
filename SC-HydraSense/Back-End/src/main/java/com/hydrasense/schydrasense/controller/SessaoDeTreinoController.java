@@ -60,6 +60,14 @@ public class SessaoDeTreinoController {
         return ResponseEntity.ok(service.buscarPorId(sessaoId));
     }
 
+    @PutMapping("/{sessaoId}/pre-treino")
+    public ResponseEntity<SessaoTreinoResponseDTO> registrarPreTreino(
+            @PathVariable Long sessaoId,
+            @RequestBody PesagemPreTreinoDTO dto
+    ) {
+        return ResponseEntity.ok(service.registrarPreTreino(sessaoId, dto));
+    }
+
     @GetMapping("/kits/atleta/{atletaId}")
     public ResponseEntity<List<Kit>> listarKitsDoAtleta(
             @PathVariable Long atletaId,

@@ -11,7 +11,10 @@ import { useUser } from '../../../../contexts/UserContext';
 
 export default function PesagemPreTreino() {
   // Captura o tipo de treino se você estiver passando pelo router.push('/pesagemPreTreino?type=Corrida')
-  const { type } = useLocalSearchParams<{ type: string }>();
+    const { type, sessaoId } = useLocalSearchParams<{
+        type: string;
+        sessaoId: string;
+    }>();
   const workoutType = type || 'Treino Livre';
     const { user } = useUser();
 
@@ -37,32 +40,30 @@ export default function PesagemPreTreino() {
             return;
         }
 
-
-
-        if (!user?.id) {
-            Alert.alert('Erro', 'Usuário não encontrado. Faça login novamente.');
-            return;
-        }
-
         try {
             const hostUri = Constants?.expoConfig?.hostUri;
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
             const API_URL = `http://${ip}:8080`;
 
-            console.log("URL:", `${API_URL}/sessoes-de-treino/iniciar`);
-            const response = await fetch(`${API_URL}/sessoes-de-treino/iniciar`, {
-                method: 'POST',
+            console.log("URL:", `${API_URL}/sessoes-de-treino/${sessaoId}/pre-treino`);
+
+            const response = await fetch(
+                `${API_URL}/sessoes-de-treino/${sessaoId}/pre-treino`,
+                {
+                    method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    atletaId: user.id,
-                    modalidade: workoutType,
-                    pesoPreTreino: pesoNumerico,
-                    sintomas: sintomasSelecionados.length > 0 || outrosSintomas.length > 0 
-                        ? JSON.stringify({ selecionados: sintomasSelecionados, outros: outrosSintomas }) 
-                        : null,
-                }),
+                    body: JSON.stringify({
+                        pesoPreTreino: pesoNumerico,
+                        sintomas:
+                            sintomasSelecionados.length > 0 || outrosSintomas.length > 0
+                                ? JSON.stringify({
+                                    selecionados: sintomasSelecionados,
+                                    outros: outrosSintomas,
+                                })
+                                : null,
+                    }),
             });
 
             const texto = await response.text();
@@ -86,7 +87,7 @@ export default function PesagemPreTreino() {
                 pathname: '/treinoAtivo',
                 params: {
                     type: workoutType,
-                    sessaoId: sessao.id.toString(),
+                    sessaoId,
                 },
             });
 
