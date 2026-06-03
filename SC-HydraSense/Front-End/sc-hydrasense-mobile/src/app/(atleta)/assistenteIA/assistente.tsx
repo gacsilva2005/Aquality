@@ -16,6 +16,7 @@ import { Audio } from 'expo-av';
 import { styles } from './assistente_styles';
 import { theme } from '../../../global/themas';
 import { useRouter } from 'expo-router';
+import { useUser } from '../../../contexts/UserContext';
 import Constants from 'expo-constants';
 
 // TIPOS
@@ -124,6 +125,7 @@ function stripBold(text: string): string {
 // COMPONENTE PRINCIPAL
 export default function AssistenteIA() {
   const router    = useRouter();
+  const { user }  = useUser();
   const scrollRef = useRef<ScrollView>(null);
 
   const [messages,    setMessages]    = useState<Message[]>(INITIAL_MESSAGES);
@@ -160,7 +162,7 @@ export default function AssistenteIA() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          session_id: 'user-default', // TODO: integrar com UserContext no futuro
+          session_id: user?.id ? String(user.id) : 'user-default',
           message: text,
         }),
       });
@@ -289,9 +291,7 @@ export default function AssistenteIA() {
           <Feather name="arrow-left" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>ASSISTENTE IA</Text>
-        <TouchableOpacity style={styles.headerMore}>
-          <Feather name="more-vertical" size={22} color={theme.colors.textPrimary} />
-        </TouchableOpacity>
+        <View style={{ width: 36 }} />
       </View>
 
       {/* ── MENSAGENS ── */}

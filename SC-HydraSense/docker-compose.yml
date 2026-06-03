@@ -38,5 +38,23 @@ services:
     depends_on:
       - backend
 
+  assistente-ia:
+    profiles: ["ai"]
+    build:
+      context: ./AssistenteAI/IA
+    container_name: hydrasense-assistente-ia
+    env_file:
+      - .env
+    environment:
+      - BACKEND_API_URL=http://hydrasense-backend:8080
+    ports:
+      - "8000:8000"
+    depends_on:
+      - backend
+    volumes:
+      - ./AssistenteAI/PDFs:/app/../PDFs
+      - ia_chroma_data:/app/chroma_data
+
 volumes:
   mysql_data:
+  ia_chroma_data:
