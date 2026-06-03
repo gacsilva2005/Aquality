@@ -67,6 +67,62 @@ export const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 100,
+    marginTop: 20,
+    marginBottom: 40,
+  },
+
+  // --- SINTOMAS ---
+  sintomasContainer: {
+    width: '100%',
+    marginTop: 20,
+  },
+  sintomasTitle: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 14,
+    color: '#333333',
+    marginBottom: 10,
+    textTransform: 'uppercase',
+  },
+  sintomasTagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 20,
+  },
+  sintomaTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    backgroundColor: '#FFFFFF',
+  },
+  sintomaTagSelected: {
+    borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary + '10', // Cor primária com transparência
+  },
+  sintomaTagText: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 14,
+    color: '#333333',
+    marginLeft: 8,
+  },
+  sintomaTagTextSelected: {
+    color: theme.colors.primary,
+    fontFamily: theme.fonts.headingBold,
+  },
+  textArea: {
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 12,
+    padding: 16,
+    height: 100,
+    backgroundColor: '#FFFFFF',
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 14,
+    color: '#333333',
+    textAlignVertical: 'top',
   },
 });
