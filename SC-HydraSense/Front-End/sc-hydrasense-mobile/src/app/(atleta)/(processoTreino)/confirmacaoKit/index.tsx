@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'rea
 import { router, useLocalSearchParams } from 'expo-router';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Screen } from '../../../../components/Screen';
+import { Button } from '../../../../components/Button';
 import { theme } from '../../../../global/themas';
 import { styles } from './styles';
 import Constants from "expo-constants";
@@ -121,7 +122,7 @@ export default function ConfirmacaoKit() {
             const sessao = await response.json();
 
             router.push({
-                pathname: '/pesagemPreTreino' as any,
+                pathname: '/checklist' as any,
                 params: {
                     type,
                     sessaoId: sessao.id,
@@ -265,9 +266,11 @@ export default function ConfirmacaoKit() {
                         <Text style={styles.emptyDescription}>
                             Você ainda não tem kits de equipamento cadastrados para esta modalidade.
                         </Text>
-                        <TouchableOpacity style={styles.btnCriarKit} activeOpacity={0.8} onPress={() => router.push('/kits' as any)}>
-                            <Text style={styles.btnCriarKitText}>SELECIONAR KIT</Text>
-                        </TouchableOpacity>
+                        <Button
+                            title="SELECIONAR KIT"
+                            onPress={() => router.push('/kits' as any)}
+                            style={styles.btnCriarKit}
+                        />
                     </View>
                 )}
 
@@ -279,14 +282,12 @@ export default function ConfirmacaoKit() {
                                 <Text style={styles.btnTreinarSemEquipamentoText}>TREINAR SEM EQUIPAMENTO</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={styles.btnConfirmar}
+                            <Button
+                                title="CONFIRMAR E IR PARA CHECKLIST"
                                 onPress={handleConfirmarComKit}
-                                activeOpacity={0.9}
-                            >
-                                <Text style={styles.btnConfirmarText}>CONFIRMAR E IR PARA CHECKLIST</Text>
-                                <Feather name="arrow-right" size={20} color="#FFF" />
-                            </TouchableOpacity>
+                                style={styles.btnConfirmar}
+                                iconRight={<Feather name="arrow-right" size={20} color="#FFF" />}
+                            />
                         </>
                     ) : (
                         <View style={styles.emptyFooterWrapper}>
@@ -298,10 +299,13 @@ export default function ConfirmacaoKit() {
                                 Nenhum peso será descontado nesta sessão.
                             </Text>
 
-                            <View style={styles.btnConfirmarDisabled}>
-                                <Text style={styles.btnConfirmarDisabledText}>CONFIRMAR E IR PARA CHECKLIST</Text>
-                                <Feather name="arrow-right" size={20} color="#999" />
-                            </View>
+                            <Button
+                                title="CONFIRMAR E IR PARA CHECKLIST"
+                                style={styles.btnConfirmarDisabled}
+                                iconRight={<Feather name="arrow-right" size={20} color="#999" />}
+                                disabled={true}
+                                textColor="#999"
+                            />
                         </View>
                     )}
                 </View>
