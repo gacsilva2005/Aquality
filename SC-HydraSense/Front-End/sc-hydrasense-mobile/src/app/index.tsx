@@ -139,19 +139,9 @@ export default function LoginScreen() {
     }
   };
 
-  const handleLogin = () => {
-    performLogin(email, password);
-  };
-
-    // ==========================================
-   // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
-   // Tire as duas barras (//) da linha abaixo para pular direto para a tela desejada:
-   //
-    return <Redirect href="/(profissional)/(tabs)/profile" />;
-   //
-   // Para voltar pro Atleta, seria: href="/(atleta)/(tabs)/dashboard"
-    //return <Redirect href="/cadastroProfissional" />;
-   // ==========================================
+ const handleLogin = () => {
+  performLogin(email, password);
+};
 
   return (
     <Screen 
