@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { AlertCircle, CheckCircle, Info, X } from 'lucide-react';
 import './Toast.css';
 
@@ -22,9 +22,9 @@ interface ToastContextData {
 const ToastContext = createContext<ToastContextData>({} as ToastContextData);
 
 export const globalToast = {
-    success: (title: string, message: string) => {},
-    error: (title: string, message: string) => {},
-    warning: (title: string, message: string) => {},
+    success: (_title: string, _message: string) => {},
+    error: (_title: string, _message: string) => {},
+    warning: (_title: string, _message: string) => {},
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {

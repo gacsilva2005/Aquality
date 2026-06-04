@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ArrowLeft, Save, User, Mail, Shield, AlertCircle, CheckCircle, X } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Save, User, Mail, Shield } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 
 interface NovoAtletaProps {

@@ -7,7 +7,7 @@ interface HeaderPageWebProps {
     onMenuClick?: () => void;
 }
 
-export function HeaderPageWeb({ usuario, onPerfilClick, onMenuClick }: HeaderPageWebProps) {
+export function HeaderPageWeb({ onPerfilClick, onMenuClick }: HeaderPageWebProps) {
     return (
         <header className="hydro-header">
             <div className="hydro-header-logo-container">

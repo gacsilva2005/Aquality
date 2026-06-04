@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, User, Mail, Phone, Users, Save, Pencil, Check } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
 import  { useUser } from '../../context/UserContext';
 
 interface SideBarPagePerfilProps {
@@ -9,7 +9,7 @@ interface SideBarPagePerfilProps {
 }
 
 export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) {
-    const navigate = useNavigate();
+
     const { user } = useUser();
     console.log(JSON.stringify(user, null, 2));
     // Estado dos campos editáveis
