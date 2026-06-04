@@ -2,14 +2,7 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ImageBackground,
-  ScrollView,
-  Modal,
-  StyleSheet,
 } from 'react-native';
 import { Button } from '../../../components/Button';
 import { Screen } from '../../../components/Screen';
@@ -20,34 +13,24 @@ import { Input } from '../../../components/Input';
 import { theme } from '../../../global/themas';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
+import { useAlert } from '@/src/contexts/alertContext'; // Importando nosso hook global
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
-
-  // ── Modal customizado ──
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
-  const [modalOnOk, setModalOnOk] = useState<() => void>(() => () => setModalVisible(false));
-
-  function showModal(title: string, message: string, onOk?: () => void) {
-    setModalTitle(title);
-    setModalMessage(message);
-    setModalOnOk(() => () => { setModalVisible(false); onOk?.(); });
-    setModalVisible(true);
-  }
+  
+  const alert = useAlert(); 
 
   const handleResetPassword = async () => {
     const cleanEmail = email.trim();
 
     if (!cleanEmail) {
-      showModal('Campo Obrigatório', 'Por favor, informe seu e-mail para recuperar a senha.');
+      alert.warning('Campo Obrigatório', 'Por favor, informe seu e-mail para recuperar a senha.');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(cleanEmail)) {
-      showModal('E-mail Inválido', 'Insira um formato de e-mail válido.');
+      alert.warning('E-mail Inválido', 'Insira um formato de e-mail válido.');
       return;
     }
 
@@ -70,11 +53,11 @@ export default function ForgotPasswordScreen() {
       console.log("RESPOSTA:", respostaTexto);
 
       if (!response.ok) {
-        showModal('Erro', 'Não foi possível enviar o código. Verifique o e-mail informado.');
+        alert.error('Erro', 'Não foi possível enviar o código. Verifique o e-mail informado.');
         return;
       }
 
-      showModal(
+      alert.success(
         'Código Enviado',
         'Enviamos um código de verificação para o seu e-mail.',
         () => router.push({
@@ -85,7 +68,7 @@ export default function ForgotPasswordScreen() {
 
     } catch (error) {
       console.log(error);
-      showModal(
+      alert.error(
         'Erro de Conexão',
         'Não foi possível conectar ao servidor.'
       );
@@ -94,14 +77,13 @@ export default function ForgotPasswordScreen() {
 
   return (
     <Screen 
-          bgImage={require('../../../assets/images/logo.png')}
-          backgroundColor="#4A0E17"
-          // Aqui controlamos a posição e tamanho sem esticar!
-          imageStyle={{ 
-            height: 500,          
-            transform: [{ translateY: -20 }], 
-          }} 
-        >
+      bgImage={require('../../../assets/images/logo.png')}
+      backgroundColor="#4A0E17"
+      imageStyle={{ 
+        height: 500,          
+        transform: [{ translateY: -20 }], 
+      }} 
+    >
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Reaproveitando o Cabeçalho */}
@@ -160,81 +142,6 @@ export default function ForgotPasswordScreen() {
         </View>
       </View>
 
-      {/* ── MODAL CUSTOMIZADO ── */}
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={modalStyles.overlay}>
-          <View style={modalStyles.container}>
-            <View style={modalStyles.iconWrapper}>
-              <Feather name="mail" size={28} color={theme.colors.primary} />
-            </View>
-            <Text style={modalStyles.title}>{modalTitle}</Text>
-            <Text style={modalStyles.message}>{modalMessage}</Text>
-            <TouchableOpacity style={modalStyles.btnOk} onPress={modalOnOk} activeOpacity={0.8}>
-              <Text style={modalStyles.btnOkText}>OK</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
     </Screen>
   );
 }
-
-const modalStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.xl,
-  },
-  container: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.xl,
-    width: '100%',
-    alignItems: 'center',
-  },
-  iconWrapper: {
-    width: 56,
-    height: 56,
-    borderRadius: theme.borderRadius.full,
-    backgroundColor: theme.colors.primaryLight,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
-  },
-  title: {
-    fontFamily: theme.fonts.headingBold,
-    fontSize: 18,
-    color: theme.colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: theme.spacing.sm,
-  },
-  message: {
-    fontFamily: theme.fonts.bodyRegular,
-    fontSize: 14,
-    color: theme.colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: theme.spacing.lg,
-  },
-  btnOk: {
-    backgroundColor: theme.colors.primary,
-    width: '100%',
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.sm,
-    alignItems: 'center',
-  },
-  btnOkText: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 14,
-    color: theme.colors.textWhite,
-    letterSpacing: 1,
-  },
-});

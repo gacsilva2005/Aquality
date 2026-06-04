@@ -6,6 +6,7 @@ import { Screen } from '../../../components/Screen';
 import { Button } from '../../../components/Button'; 
 import { KitCard, Kit } from '../../../components/KitCard'; 
 import { styles } from './styles';
+import { useAlert } from '@/src/contexts/alertContext';
 
 const INITIAL_KITS: Kit[] = [
     { id: '1', name: 'KIT BIKE PROVA', modality: 'BIKE', weight: 1050, isDefault: true },
@@ -14,6 +15,7 @@ const INITIAL_KITS: Kit[] = [
 ];
 
 export default function MeusKitsScreen() {
+    const alert = useAlert();
     const router = useRouter();
     
     const [kits, setKits] = useState<Kit[]>(() => {
@@ -44,7 +46,7 @@ export default function MeusKitsScreen() {
     };
 
     const handleDelete = (id: string, name: string) => {
-        Alert.alert(
+        alert.warning(
             "Remover Kit",
             `Tem certeza que deseja remover o ${name}?`,
             [{ text: "Cancelar", style: "cancel" }, { text: "Remover", style: "destructive", onPress: () => setKits(prev => prev.filter(k => k.id !== id)) }]
@@ -73,7 +75,7 @@ export default function MeusKitsScreen() {
 
     const saveEditing = () => {
         if (!editName.trim() || !editWeight.trim()) {
-            Alert.alert("Erro", "Preencha todos os campos para salvar.");
+            alert.error("Erro", "Preencha todos os campos para salvar.");
             return;
         }
 
@@ -122,7 +124,7 @@ export default function MeusKitsScreen() {
                     <Button 
                         title="ADICIONAR NOVO KIT" 
                         iconLeft={<Feather name="plus" size={20} color="#FFF" />}
-                        onPress={() => Alert.alert("Novo Kit", "Abrir modal de criação")}
+                        onPress={() => alert.error("Novo Kit", "Abrir modal de criação")}
                         style={{ marginBottom: 0 }}
                     />
                 </View>

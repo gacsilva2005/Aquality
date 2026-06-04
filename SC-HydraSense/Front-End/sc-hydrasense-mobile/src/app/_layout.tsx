@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 
 // Use o atalho @/ para evitar problemas de caminho (../)
 import { UserProvider } from "@/src/contexts/UserContext"; 
+import { AlertProvider } from '@/src/contexts/alertContext';
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,9 +32,11 @@ export default function RootLayout() {
   }
 
   return (
+    <AlertProvider>
     <UserProvider>
       {/* Esconde o cabeçalho para TUDO que estiver na raiz (login, cadastro, etc) */}
       <Stack screenOptions={{ headerShown: false }} />
     </UserProvider>
+    </AlertProvider>
   );
 }

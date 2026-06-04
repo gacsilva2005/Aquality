@@ -8,8 +8,10 @@ import { Screen } from '../../../../components/Screen';
 import { Button } from '@/src/components/Button';
 import Constants from 'expo-constants';
 import { useUser } from '../../../../contexts/UserContext';
+import { useAlert } from '@/src/contexts/alertContext';
 
 export default function PesagemPreTreino() {
+  const alert = useAlert();
   // Captura o tipo de treino se você estiver passando pelo router.push('/pesagemPreTreino?type=Corrida')
     const { type, sessaoId } = useLocalSearchParams<{
         type: string;
@@ -36,7 +38,7 @@ export default function PesagemPreTreino() {
         const pesoNumerico = parseFloat(pesoFormatado);
 
         if (!pesoInput || isNaN(pesoNumerico) || pesoNumerico <= 0) {
-            Alert.alert('Atenção', 'Por favor, insira um peso válido antes de iniciar o treino.');
+            alert.error('Atenção', 'Por favor, insira um peso válido antes de iniciar o treino.');
             return;
         }
 
@@ -70,7 +72,7 @@ export default function PesagemPreTreino() {
 
             console.log("STATUS:", response.status);
             if (!response.ok) {
-                Alert.alert('Erro', 'Não foi possível iniciar o treino.');
+                alert.error('Erro', 'Não foi possível iniciar o treino.');
                 return;
             }
 
@@ -94,7 +96,7 @@ export default function PesagemPreTreino() {
         } catch (error) {
             console.error(error);
 
-            Alert.alert(
+            alert.error(
                 'Erro',
                 'Não foi possível iniciar o treino.'
             );

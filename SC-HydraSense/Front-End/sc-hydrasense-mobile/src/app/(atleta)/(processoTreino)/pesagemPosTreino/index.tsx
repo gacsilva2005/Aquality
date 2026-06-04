@@ -7,8 +7,10 @@ import { styles } from './styles';
 import { theme } from '@/src/global/themas';
 import { Screen } from '../../../../components/Screen';
 import { Button } from '@/src/components/Button';
+import { useAlert } from '@/src/contexts/alertContext';
 
 export default function PesagemPosTreino() {
+    const alert = useAlert(); //
     const [pesoInput, setPesoInput] = useState('');
     const [sintomasSelecionados, setSintomasSelecionados] = useState<string[]>([]);
     const [outrosSintomas, setOutrosSintomas] = useState('');
@@ -37,12 +39,12 @@ export default function PesagemPosTreino() {
         const pesoNumerico = parseFloat(pesoFormatado);
 
         if (!pesoInput || isNaN(pesoNumerico) || pesoNumerico <= 0) {
-            Alert.alert('Atenção', 'Por favor, insira um peso válido para finalizar a sessão.');
+            alert.warning('Atenção', 'Por favor, insira um peso válido para finalizar a sessão.');
             return;
         }
 
         if (!sessaoId) {
-            Alert.alert('Erro', 'Sessão de treino não encontrada.');
+            alert.error('Erro', 'Sessão de treino não encontrada.');
             return;
         }
 
@@ -75,7 +77,7 @@ export default function PesagemPosTreino() {
 
             if (!response.ok) {
                 console.log('Erro backend:', texto);
-                Alert.alert('Erro', 'Não foi possível finalizar a sessão de treino.');
+                alert.error('Erro', 'Não foi possível finalizar a sessão de treino.');
                 return;
             }
 
@@ -97,7 +99,7 @@ export default function PesagemPosTreino() {
 
         } catch (error) {
             console.error(error);
-            Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
+            alert.error('Erro', 'Não foi possível conectar ao servidor.');
         }
     };
 

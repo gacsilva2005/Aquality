@@ -8,9 +8,8 @@ import {
   Platform,
   ImageBackground,
   ScrollView,
-  Alert
 } from 'react-native';
-import { ModalTipoCadastro } from '../components/modalTipoCadastro'; // Atualizado
+import { ModalTipoCadastro } from '../components/modalTipoCadastro'; 
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Screen } from '../components/Screen';
@@ -24,9 +23,12 @@ import { router, useFocusEffect, Redirect } from 'expo-router';
 import Constants from 'expo-constants';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
+import { useAlert } from '../contexts/alertContext'; 
 
 export default function LoginScreen() {
   const { setUser } = useUser();
+  const alert = useAlert(); 
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -83,13 +85,15 @@ export default function LoginScreen() {
     const cleanPassword = loginPassword.trim();
 
     if (!cleanEmail || !cleanPassword) {
-      Alert.alert('Campos Obrigatórios', 'Por favor, preencha o seu e-mail e a sua senha para acessar o portal.');
+      // 🌟 Usando o aviso laranja
+      alert.warning('Campos Obrigatórios', 'Por favor, preencha o seu e-mail e a sua senha para acessar o portal.');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (cleanEmail !== 'dev' && !emailRegex.test(cleanEmail)) {
-      Alert.alert('E-mail Inválido', 'Por favor, insira um formato de e-mail válido (ex: atleta@performance.com).');
+      // 🌟 Usando o aviso laranja
+      alert.warning('E-mail Inválido', 'Por favor, insira um formato de e-mail válido (ex: atleta@performance.com).');
       return;
     }
 
@@ -108,7 +112,8 @@ export default function LoginScreen() {
       });
 
       if (!response.ok) {
-        Alert.alert('Erro de Autenticação', 'E-mail ou senha inválidos. Tente novamente.');
+        // 🌟 Usando o erro vermelho
+        alert.error('Erro de Autenticação', 'E-mail ou senha inválidos. Tente novamente.');
         setCarregando(false);
         return;
       }
@@ -127,7 +132,8 @@ export default function LoginScreen() {
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique sua rede.');
+      // 🌟 Usando o erro vermelho
+      alert.error('Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique sua rede.');
     } finally {
       setCarregando(false);
     }
@@ -141,10 +147,10 @@ export default function LoginScreen() {
    // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
    // Tire as duas barras (//) da linha abaixo para pular direto para a tela desejada:
    //
-   // return <Redirect href="/(profissional)/(tabs)/dashboard" />;
+    return <Redirect href="/(profissional)/(tabs)/profile" />;
    //
    // Para voltar pro Atleta, seria: href="/(atleta)/(tabs)/dashboard"
-   // return <Redirect href="/(atleta)/(tabs)/dashboard" />;
+    //return <Redirect href="/cadastroProfissional" />;
    // ==========================================
 
   return (
