@@ -12,10 +12,11 @@ import { useAlert } from '@/src/contexts/alertContext';
 
 export default function PesagemPreTreino() {
   const alert = useAlert();
-  // Captura o tipo de treino se você estiver passando pelo router.push('/pesagemPreTreino?type=Corrida')
-    const { type, sessaoId } = useLocalSearchParams<{
+    const { type, sessaoId, corUrina, sede } = useLocalSearchParams<{
         type: string;
         sessaoId: string;
+        corUrina?: string;
+        sede?: string;
     }>();
   const workoutType = type || 'Treino Livre';
     const { user } = useUser();
@@ -58,6 +59,8 @@ export default function PesagemPreTreino() {
                 },
                     body: JSON.stringify({
                         pesoPreTreino: pesoNumerico,
+                        corUrina: corUrina ? parseInt(corUrina) : null,
+                        sede: sede ? parseInt(sede) : null,
                         sintomas:
                             sintomasSelecionados.length > 0 || outrosSintomas.length > 0
                                 ? JSON.stringify({
@@ -90,6 +93,8 @@ export default function PesagemPreTreino() {
                 params: {
                     type: workoutType,
                     sessaoId,
+                    corUrinaPre: corUrina,
+                    sedePre: sede,
                 },
             });
 
