@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     marginRight: 8, // Empurra o texto um pouco para a direita
   },
   iconRightContainer: {
-    marginLeft: 90, // Empurra o texto um pouco para a esquerda
+    marginLeft: 12, 
   },
   // <---------------------------------------->
   title: {

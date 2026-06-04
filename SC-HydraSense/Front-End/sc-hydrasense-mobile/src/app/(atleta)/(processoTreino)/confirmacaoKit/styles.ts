@@ -251,12 +251,6 @@ export const styles = StyleSheet.create({
   },
   btnConfirmar: {
     backgroundColor: theme.colors.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 18,
-    borderRadius: 12,
-    gap: 12,
   },
   btnConfirmarText: {
     fontFamily: theme.fonts.bodyBold,
@@ -340,12 +334,6 @@ export const styles = StyleSheet.create({
   },
   btnConfirmarDisabled: {
     backgroundColor: '#EBEBEB',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 18,
-    borderRadius: 8,
-    gap: 12,
   },
   btnConfirmarDisabledText: {
     fontFamily: theme.fonts.bodyBold,

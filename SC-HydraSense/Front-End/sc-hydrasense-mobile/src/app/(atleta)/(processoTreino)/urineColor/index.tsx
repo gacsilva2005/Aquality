@@ -12,6 +12,7 @@ import { styles } from './urineColor_styles';
 import { theme } from '../../../../global/themas';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Button } from '../../../../components/Button';
+import { EstadoBasal } from '@/src/components/EstadoBasal';
 
 // Cores originais mantidas
 const URINE_LEVELS = [
@@ -90,25 +91,7 @@ export default function UrineColor() {
           O volume urinado é subtraído da sua perda hídrica para um cálculo mais preciso.
         </Text>
 
-        {/* STEPPER VISUAL */}
-        <View style={styles.stepperContainer}>
-          <View style={styles.stepperLineContainer}>
-             <View style={styles.stepperLineBackground} />
-             {/* Simulação do progresso até o meio (DUR/PÓS) */}
-             <View style={styles.stepperLineActive} />
-             <View style={styles.stepDotActive} />
-             <View style={styles.stepDotActive} />
-             <View style={styles.stepDot} />
-          </View>
-          <View style={styles.stepperLabelsContainer}>
-            <Text style={[styles.stepLabel, styles.stepLabelActive]}>PRÉ</Text>
-            <Text style={[styles.stepLabel, styles.stepLabelActive]}>DUR/PÓS</Text>
-            <Text style={styles.stepLabel}>RES</Text>
-          </View>
-          <Text style={styles.stepperSubtitle}>
-            PRÉ = antes do treino; RES = Resultado final
-          </Text>
-        </View>
+        {/* O stepper foi removido por ser considerado inútil no fluxo atual */}
 
         {/* TOGGLE: DURANTE / LOGO APÓS */}
         <View style={styles.toggleContainer}>
@@ -186,48 +169,12 @@ export default function UrineColor() {
 
         {/* SEÇÃO: ESTADO BASAL */}
         <View style={styles.basalSection}>
-          <Text style={styles.sectionTitle}>ESTADO BASAL</Text>
-          
-          {/* CORES DA URINA */}
-          <Text style={styles.colorTitle}>COR DA URINA (1-8)</Text>
-          <View style={styles.colorGridRow}>
-             {URINE_LEVELS.map(level => (
-               <TouchableOpacity 
-                 key={level.id}
-                 style={[
-                   styles.colorBlockItem, 
-                   { backgroundColor: level.color },
-                   selectedColor === level.id && styles.colorBlockSelected
-                 ]}
-                 onPress={() => setSelectedColor(level.id)}
-                 activeOpacity={0.9}
-               />
-             ))}
-          </View>
-
-          {/* SLIDER DE SEDE */}
-          <View style={styles.thirstHeader}>
-            <Text style={styles.thirstTitle}>SEDE (0-10)</Text>
-            <Text style={styles.thirstValue}>{thirst}</Text>
-          </View>
-          <View style={styles.thirstLabels}>
-             <Text style={styles.thirstLabelText}>0 = SEM SEDE</Text>
-             <Text style={styles.thirstLabelText}>10 = SEDE EXTREMA</Text>
-          </View>
-          {/* SIMULAÇÃO DE SLIDER MANUAL (BÁSICO) PODE SER TROCADO POR EXPO-SLIDER DEPOIS */}
-          <View style={styles.sliderTrack}>
-            <View style={[styles.sliderFill, { width: `${thirst * 10}%` }]} />
-            {/* Overlay invisível para clique rápido de 0 a 10 */}
-            <View style={[StyleSheet.absoluteFill, { flexDirection: 'row' }]}>
-              {[0,1,2,3,4,5,6,7,8,9,10].map(val => (
-                <TouchableOpacity 
-                  key={val} 
-                  style={{ flex: 1 }} 
-                  onPress={() => setThirst(val)}
-                />
-              ))}
-            </View>
-          </View>
+          <EstadoBasal 
+            corUrina={selectedColor}
+            setCorUrina={setSelectedColor}
+            sede={thirst}
+            setSede={setThirst}
+          />
         </View>
 
         {/* RODAPÉ */}

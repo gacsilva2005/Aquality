@@ -19,7 +19,7 @@ export function Atletas() {
 
     const buscarAtletas = async () => {
         try {
-            const clubeId = user.clube.id;
+            const clubeId = user?.clube?.id;
 
             const response = await fetch(`http://localhost:8080/Atleta/clube/${clubeId}`);
 

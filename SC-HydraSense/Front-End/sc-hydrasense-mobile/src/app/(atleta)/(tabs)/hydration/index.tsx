@@ -19,14 +19,15 @@ interface HydrationRecord {
 }
 
 // Cálculos do Círculo de Progresso
-const alert = useAlert();
-const { width } = Dimensions.get('window');
-const CIRCLE_SIZE = width * 0.55;
 const STROKE_WIDTH = 12;
-const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function Hydration() {
+  const alert = useAlert();
+  const { width } = Dimensions.get('window');
+  const CIRCLE_SIZE = width * 0.55;
+  const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
   const { user } = useUser();
   const [consumed, setConsumed] = useState(0);
   const goal = 3000; // Meta: 3000ml
