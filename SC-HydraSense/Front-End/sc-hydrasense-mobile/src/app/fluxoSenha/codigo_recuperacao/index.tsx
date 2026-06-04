@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Modal,
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
@@ -15,28 +14,15 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
 import { theme } from '../../../global/themas';
 import { Button } from '../../../components/Button';
+import { useAlert } from '@/src/contexts/alertContext'; // Hook global de alertas
 
 export default function PinVerificationScreen() {
   const { email } = useLocalSearchParams<{ email: string }>();
+  const alert = useAlert(); 
   
   // Estado para os 6 dígitos do PIN
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef<Array<TextInput | null>>([]);
-
-  // ── Modal customizado ──
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
-  const [modalType, setModalType] = useState<'info' | 'error'>('info');
-  const [modalOnOk, setModalOnOk] = useState<() => void>(() => () => setModalVisible(false));
-
-  function showModal(title: string, message: string, type: 'info' | 'error' = 'info', onOk?: () => void) {
-    setModalTitle(title);
-    setModalMessage(message);
-    setModalType(type);
-    setModalOnOk(() => () => { setModalVisible(false); onOk?.(); });
-    setModalVisible(true);
-  }
 
   // ── Lógica dos Inputs de PIN ──
   const handleCodeChange = (text: string, index: number) => {
@@ -65,7 +51,8 @@ export default function PinVerificationScreen() {
     const fullCode = code.join('');
     
     if (fullCode.length < 6) {
-      showModal('Código Incompleto', 'Por favor, insira os 6 dígitos do código.', 'error');
+      // 🌟 Usando o aviso laranja (atenção)
+      alert.warning('Código Incompleto', 'Por favor, insira os 6 dígitos do código.');
       return;
     }
 
@@ -81,30 +68,29 @@ export default function PinVerificationScreen() {
       });
 
       if (!response.ok) {
-        showModal(
-          'PIN INCORRETO', 
-          'Acesso negado. Por favor, verifique suas credenciais e tente novamente.', 
-          'error'
+        // 🌟 Usando o erro vermelho
+        alert.error(
+          'PIN Incorreto', 
+          'Acesso negado. Por favor, verifique suas credenciais e tente novamente.'
         );
         return;
       }
 
-      showModal(
+      // 🌟 Usando o sucesso verde com callback para redirecionar
+      alert.success(
         'Código Validado',
         'Seu código foi verificado com sucesso. Você já pode redefinir sua senha.',
-        'info',
         () => router.push({
-          pathname: './redefinir_senha', // Ajuste para a rota correta
+          pathname: './redefinir_senha', // Ajuste para a rota correta se necessário
           params: { email, token: fullCode }
         })
       );
 
     } catch (error) {
       console.log(error);
-      showModal('Erro de Conexão', 'Não foi possível conectar ao servidor.', 'error');
+      alert.error('Erro de Conexão', 'Não foi possível conectar ao servidor.');
     }
   };
-
 
   // ── Reenvio do Código ──
   const handleResendCode = async () => {
@@ -120,13 +106,13 @@ export default function PinVerificationScreen() {
       });
 
       if (!response.ok) {
-        showModal('Erro', 'Não foi possível reenviar o código. Tente novamente.', 'error');
+        alert.error('Erro', 'Não foi possível reenviar o código. Tente novamente.');
         return;
       }
 
-      showModal('Código Reenviado', 'Um novo código foi enviado para o seu e-mail.', 'info');
+      alert.success('Código Reenviado', 'Um novo código foi enviado para o seu e-mail.');
     } catch (error) {
-      showModal('Erro de Conexão', 'Não foi possível conectar ao servidor.', 'error');
+      alert.error('Erro de Conexão', 'Não foi possível conectar ao servidor.');
     }
   };
 
@@ -185,56 +171,6 @@ export default function PinVerificationScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-
-      {/* ── MODAL CUSTOMIZADO ── */}
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={modalStyles.overlay}>
-          <View style={modalStyles.container}>
-            
-            {/* Ícone quadrado com bordas arredondadas */}
-            <View style={[
-              modalStyles.iconWrapper, 
-              modalType === 'error' ? modalStyles.iconWrapperError : null
-            ]}>
-              <Feather 
-                name={modalType === 'error' ? "alert-triangle" : "shield"} 
-                size={32} 
-                color={modalType === 'error' ? '#B91C1C' : theme.colors.primary} 
-              />
-            </View>
-
-            {/* Título (Fica vermelho se for erro) */}
-            <Text style={[
-              modalStyles.title,
-              modalType === 'error' && { color: theme.colors.primary }
-            ]}>
-              {modalTitle}
-            </Text>
-
-            <Text style={modalStyles.message}>{modalMessage}</Text>
-            
-            <TouchableOpacity 
-              style={[
-                modalStyles.btnOk,
-                modalType === 'error' && { backgroundColor: theme.colors.critical }
-              ]} 
-              onPress={modalOnOk} 
-              activeOpacity={0.8}
-            >
-              <Text style={modalStyles.btnOkText}>
-                {modalType === 'error' ? 'TENTAR NOVAMENTE' : 'OK'}
-              </Text>
-            </TouchableOpacity>
-
-          </View>
-        </View>
-      </Modal>
-
     </SafeAreaView>
   );
 }
@@ -296,7 +232,7 @@ const styles = StyleSheet.create({
   pinContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 8, // Mantém os campos juntos e uniformes
+    gap: 8, 
     width: '100%',
     marginBottom: theme.spacing.xl,
   },
@@ -329,64 +265,5 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
     marginLeft: theme.spacing.sm,
     letterSpacing: 0.5,
-  },
-});
-
-// ── Estilos do Modal ──
-const modalStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.xl,
-  },
-  container: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.md,
-    paddingTop: 32,
-    paddingBottom: 24,
-    paddingHorizontal: 24,
-    width: '100%',
-    alignItems: 'center',
-  },
-  iconWrapper: {
-    width: 72,
-    height: 72,
-    borderRadius: 16,
-    backgroundColor: theme.colors.primaryLight,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  iconWrapperError: {
-    backgroundColor: '#FCE8E8',
-  },
-  title: {
-    fontFamily: theme.fonts.bodyRegular,
-    fontSize: 16,
-    color: theme.colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  message: {
-    fontFamily: theme.fonts.bodyRegular,
-    fontSize: 15,
-    color: theme.colors.textBrown,
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 32,
-  },
-  btnOk: {
-    backgroundColor: theme.colors.primary,
-    width: '100%',
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.sm,
-    alignItems: 'center',
-  },
-  btnOkText: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 14,
-    color: theme.colors.textWhite,
   },
 });

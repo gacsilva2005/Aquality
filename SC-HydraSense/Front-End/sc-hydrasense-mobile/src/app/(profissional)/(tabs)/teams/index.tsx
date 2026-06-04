@@ -86,7 +86,7 @@ export default function TeamsScreen() {
                 {/* Substituímos a TouchableOpacity nativa pelo seu componente genérico e passamos o ícone */}
                 <Button 
                     title="ADICIONAR EQUIPE" 
-                    icon={<MaterialCommunityIcons name="account-multiple-plus-outline" size={20} color="#FFF" />}
+                    iconLeft={<MaterialCommunityIcons name="account-multiple-plus-outline" size={20} color="#FFF" />}
                     onPress={() => setModalVisible(true)}
                 />
 

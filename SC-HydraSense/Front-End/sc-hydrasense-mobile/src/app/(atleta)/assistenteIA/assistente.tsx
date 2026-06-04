@@ -18,6 +18,7 @@ import { theme } from '../../../global/themas';
 import { useRouter } from 'expo-router';
 import { useUser } from '../../../contexts/UserContext';
 import Constants from 'expo-constants';
+import { useAlert } from '@/src/contexts/alertContext';
 
 // TIPOS
 type MessageRole = 'user' | 'assistant';
@@ -124,6 +125,7 @@ function stripBold(text: string): string {
 
 // COMPONENTE PRINCIPAL
 export default function AssistenteIA() {
+  const alert = useAlert(); // pop-up
   const router    = useRouter();
   const { user }  = useUser();
   const scrollRef = useRef<ScrollView>(null);
@@ -197,7 +199,7 @@ export default function AssistenteIA() {
       // Pede permissão de microfone
       const { granted } = await Audio.requestPermissionsAsync();
       if (!granted) {
-        Alert.alert('Permissão negada', 'Permita o acesso ao microfone nas configurações do dispositivo.');
+        alert.warning('Permissão negada', 'Permita o acesso ao microfone nas configurações do dispositivo.');
         return;
       }
 
@@ -214,7 +216,7 @@ export default function AssistenteIA() {
       recordingRef.current = recording;
       setIsRecording(true);
     } catch (e) {
-      Alert.alert('Erro', 'Não foi possível iniciar a gravação.');
+      alert.error('Erro', 'Não foi possível iniciar a gravação.');
     }
   }
 
@@ -254,10 +256,10 @@ export default function AssistenteIA() {
       if (data.transcript) {
         setInput(data.transcript);
       } else {
-        Alert.alert('Aviso', 'Não foi possível transcrever o áudio. Tente novamente.');
+        alert.warning('Aviso', 'Não foi possível transcrever o áudio. Tente novamente.');
       }
     } catch (e) {
-      Alert.alert('Erro', 'Não foi possível processar o áudio.');
+      alert.error('Erro', 'Não foi possível processar o áudio.');
     } finally {
       setIsProcessing(false);
     }

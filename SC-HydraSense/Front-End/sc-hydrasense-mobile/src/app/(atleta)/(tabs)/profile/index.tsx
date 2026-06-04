@@ -1,21 +1,22 @@
 // src/app/(tabs)/profile/index.tsx
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput, Modal, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native';
 import { Screen } from '../../../../components/Screen';
 import { Header } from '../../../../components/Header';
 import { InputProfile } from '../../../../components/InputProfile';
 import { styles } from './styles';
 import { theme } from '@/src/global/themas';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
-import { Feather } from '@expo/vector-icons'; // Importação do Feather adicionada
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { Divider } from '@/src/components/Divider';
 import { useUser } from '../../../../contexts/UserContext';
 import Constants from "expo-constants";
 import { Button } from '@/src/components/Button';
+import { useAlert } from '@/src/contexts/alertContext'; 
 
 export default function Profile() {
+    const alert = useAlert();
     const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
 
@@ -25,21 +26,6 @@ export default function Profile() {
         profileImage,
         setProfileImage
     } = useUser();
-
-    // ── ESTADOS DO MODAL CUSTOMIZADO ──
-    const [modalVisible, setModalVisible] = useState(false);
-    const [modalTitle, setModalTitle] = useState('');
-    const [modalMessage, setModalMessage] = useState('');
-    const [modalIcon, setModalIcon] = useState<'info' | 'check-circle' | 'alert-circle'>('info');
-    const [modalOnOk, setModalOnOk] = useState<() => void>(() => () => setModalVisible(false));
-
-    function showModal(title: string, message: string, icon: 'info' | 'check-circle' | 'alert-circle', onOk?: () => void) {
-        setModalTitle(title);
-        setModalMessage(message);
-        setModalIcon(icon);
-        setModalOnOk(() => () => { setModalVisible(false); onOk?.(); });
-        setModalVisible(true);
-    }
 
     const [weight, setWeight] = useState(
         user?.pesoAtual?.toString() || ''
@@ -76,22 +62,22 @@ export default function Profile() {
         user?.modalidade || ''
     );
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
 
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
-    }
-  };
+        if (!result.canceled) {
+            setProfileImage(result.assets[0].uri);
+        }
+    };
 
     const handleSave = async () => {
         if (!user || !user.id) {
-            showModal('Erro', 'Usuário não encontrado!', 'alert-circle');
+            alert.error('Erro', 'Usuário não encontrado!');
             return;
         }
 
@@ -119,8 +105,7 @@ export default function Profile() {
             console.log('RESPOSTA:', responseText);
 
             if (!response.ok) {
-                // Substituição do Alert nativo
-                showModal('Erro', 'Não foi possível atualizar o perfil', 'alert-circle');
+                alert.error('Erro', 'Não foi possível atualizar o perfil.');
                 return;
             }
 
@@ -128,269 +113,187 @@ export default function Profile() {
 
             setUser(updatedUser);
 
-            // Substituição do Alert nativo
-            showModal('Sucesso', 'Perfil atualizado!', 'check-circle');
+            alert.success('Sucesso', 'Perfil atualizado com sucesso!');
             setIsEditing(false);
 
         } catch (error) {
             console.log(error);
-            // Substituição do Alert nativo
-            showModal('Erro', 'Erro de conexão com servidor', 'alert-circle');
+            alert.error('Erro', 'Erro de conexão com o servidor.');
         }
     };
 
-  const handleLogout = () => {
-    console.log("Sessão encerrada");
-    router.replace('/');
-  };
+    const handleLogout = () => {
+        console.log("Sessão encerrada");
+        router.replace('/');
+    };
 
-  return (
-    <Screen
-      backgroundColor={theme.colors.background}
-      scrollable={true}
-      HeaderComponent={<Header/>}
-    >
-      <View style={styles.mainContent}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleLine}>SEU</Text>
-          <Text style={styles.titleLine}>PERFIL</Text>
-        </View>
-
-        <Text style={styles.description}>
-          Gerencie seus parâmetros fisiológicos e equipamentos para cálculos precisos de taxa de suor.
-        </Text>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>CONFIGURAÇÕES PESSOAIS</Text>
-          <TouchableOpacity
-            onPress={isEditing ? handleSave : () => setIsEditing(true)}
-            style={styles.editButton}
-          >
-            <MaterialCommunityIcons
-              name={isEditing ? "check-circle" : "pencil-circle"}
-              size={24}
-              color={isEditing ? "#27ae60" : theme.colors.primary}
-            />
-            <Text style={[styles.editText, isEditing && { color: "#27ae60" }]}>
-              {isEditing ? "SALVAR" : "EDITAR"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.photoSection}>
-          <View style={styles.photoContainer}>
-            <Image
-              source={profileImage ? { uri: profileImage } : require('../../../../assets/images/logo.png')}
-              style={styles.profilePhoto}
-            />
-            {isEditing && (
-              <TouchableOpacity
-                style={styles.changePhotoButton}
-                onPress={pickImage}
-              >
-                <MaterialCommunityIcons name="camera-flip" size={20} color="#FFF" />
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.photoTextContainer}>
-            {isEditing ? (
-                <TextInput
-                    style={[styles.photoTitle, styles.nameInput]}
-                    value={user?.nome || ''}
-                    onChangeText={(text) =>
-                        setUser({
-                            ...user!,
-                            nome: text,
-                        })
-                    }
-                autoFocus
-                placeholder="SEU NOME"
-                autoCorrect={false}
-                spellCheck={false}
-                autoCapitalize="characters"
-              />
-            ) : (
-                <Text style={styles.photoTitle}>{user?.nome}</Text>
-            )}
-            <Text style={styles.photoSubtitle}>
-              {isEditing ? "Toque no ícone para alterar" : "Clique em EDITAR para mudar"}
-            </Text>
-          </View>
-        </View>
-
-        <InputProfile
-          label="PESO ATUAL (KG)"
-          value={weight}
-          onChangeText={setWeight}
-          editable={isEditing}
-          placeholder='Ex: 70'
-          observation="USE SEMPRE A MESMA BALANÇA"
-          style={isEditing ? styles.inputUnlocked : styles.inputLocked}
-        />
-
-        <InputProfile
-          label="ALTURA (CM)"
-          value={height}
-          onChangeText={setHeight}
-          editable={isEditing}
-          placeholder="Ex: 170"
-          style={isEditing ? styles.inputUnlocked : styles.inputLocked}
-        />
-
-        <InputProfile
-          label="IDADE"
-          value={age}
-          onChangeText={setAge}
-          editable={isEditing}
-          placeholder="Ex: 30"
-          style={isEditing ? styles.inputUnlocked : styles.inputLocked}
-        />
-
-        <View style={[styles.genderContainer, !isEditing && { opacity: 0.5 }]}>
-          <Text style={styles.inputLabel}>SEXO BIOLÓGICO</Text>
-          <View style={styles.genderRow}>
-            <TouchableOpacity
-              disabled={!isEditing}
-              style={[styles.genderButton, gender === 'M' && styles.genderButtonSelected]}
-              onPress={() => setGender('M')}
-            >
-              <Text style={[styles.genderText, gender === 'M' && styles.genderTextSelected]}>
-                MASCULINO
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              disabled={!isEditing}
-              style={[styles.genderButton, gender === 'F' && styles.genderButtonSelected]}
-              onPress={() => setGender('F')}
-            >
-              <Text style={[styles.genderText, gender === 'F' && styles.genderTextSelected]}>
-                FEMININO
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Divider text="KITS E EQUIPAMENTOS " />
-
-        <Button 
-        title= "MEUS KITS"
-        fontSize={30}
-        textColor={theme.colors.textSecondary}
-        style={styles.kitsButton}
-        iconLeft={<MaterialCommunityIcons name="tshirt-crew" size={50} color={theme.colors.textSecondary} />}
-        iconRight={<MaterialCommunityIcons name="chevron-right" size={30} color={theme.colors.textPrimary} />}
-        onPress={() => router.push('../kits')}
-        />
-
-        
-
-        <Divider text="INFORMAÇÕES PROFISSIONAIS" />
-
-        <View style={styles.professionalContainer}>
-          <View style={styles.infoCard}>
-            <Text style={styles.infoLabel}>EQUIPE (ORGANIZAÇÃO)</Text>
-              <Text style={styles.infoValue}>
-                  {user?.clube?.nome || 'Sem equipe'}
-              </Text>
-          </View>
-
-          <View style={styles.infoCard}>
-            <Text style={styles.infoLabel}>TIME (CATEGORIA)</Text>
-            <Text style={styles.infoValue}>{time}</Text>
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={handleLogout}
-          activeOpacity={0.7}
+    return (
+        <Screen
+            backgroundColor={theme.colors.background}
+            scrollable={true}
+            HeaderComponent={<Header />}
         >
-          <MaterialCommunityIcons
-            name="logout-variant"
-            size={22}
-            color={theme.colors.primary}
-          />
-          <Text style={styles.logoutText}>ENCERRAR SESSÃO</Text>
-        </TouchableOpacity>
-      </View>
+            <View style={styles.mainContent}>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.titleLine}>SEU</Text>
+                    <Text style={styles.titleLine}>PERFIL</Text>
+                </View>
 
-      {/* ── MODAL CUSTOMIZADO ADICIONADO ── */}
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={modalStyles.overlay}>
-          <View style={modalStyles.container}>
-            <View style={modalStyles.iconWrapper}>
-              <Feather name={modalIcon} size={28} color={theme.colors.primary} />
+                <Text style={styles.description}>
+                    Gerencie seus parâmetros fisiológicos e equipamentos para cálculos precisos de taxa de suor.
+                </Text>
+
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>CONFIGURAÇÕES PESSOAIS</Text>
+                    <TouchableOpacity
+                        onPress={isEditing ? handleSave : () => setIsEditing(true)}
+                        style={styles.editButton}
+                    >
+                        <MaterialCommunityIcons
+                            name={isEditing ? "check-circle" : "pencil-circle"}
+                            size={24}
+                            color={isEditing ? "#27ae60" : theme.colors.primary}
+                        />
+                        <Text style={[styles.editText, isEditing && { color: "#27ae60" }]}>
+                            {isEditing ? "SALVAR" : "EDITAR"}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.photoSection}>
+                    <View style={styles.photoContainer}>
+                        <Image
+                            source={profileImage ? { uri: profileImage } : require('../../../../assets/images/logo.png')}
+                            style={styles.profilePhoto}
+                        />
+                        {isEditing && (
+                            <TouchableOpacity
+                                style={styles.changePhotoButton}
+                                onPress={pickImage}
+                            >
+                                <MaterialCommunityIcons name="camera-flip" size={20} color="#FFF" />
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                    <View style={styles.photoTextContainer}>
+                        {isEditing ? (
+                            <TextInput
+                                style={[styles.photoTitle, styles.nameInput]}
+                                value={user?.nome || ''}
+                                onChangeText={(text) =>
+                                    setUser({
+                                        ...user!,
+                                        nome: text,
+                                    })
+                                }
+                                autoFocus
+                                placeholder="SEU NOME"
+                                autoCorrect={false}
+                                spellCheck={false}
+                                autoCapitalize="characters"
+                            />
+                        ) : (
+                            <Text style={styles.photoTitle}>{user?.nome}</Text>
+                        )}
+                        <Text style={styles.photoSubtitle}>
+                            {isEditing ? "Toque no ícone para alterar" : "Clique em EDITAR para mudar"}
+                        </Text>
+                    </View>
+                </View>
+
+                <InputProfile
+                    label="PESO ATUAL (KG)"
+                    value={weight}
+                    onChangeText={setWeight}
+                    editable={isEditing}
+                    placeholder='Ex: 70'
+                    observation="USE SEMPRE A MESMA BALANÇA"
+                    style={isEditing ? styles.inputUnlocked : styles.inputLocked}
+                />
+
+                <InputProfile
+                    label="ALTURA (CM)"
+                    value={height}
+                    onChangeText={setHeight}
+                    editable={isEditing}
+                    placeholder="Ex: 170"
+                    style={isEditing ? styles.inputUnlocked : styles.inputLocked}
+                />
+
+                <InputProfile
+                    label="IDADE"
+                    value={age}
+                    onChangeText={setAge}
+                    editable={isEditing}
+                    placeholder="Ex: 30"
+                    style={isEditing ? styles.inputUnlocked : styles.inputLocked}
+                />
+
+                <View style={[styles.genderContainer, !isEditing && { opacity: 0.5 }]}>
+                    <Text style={styles.inputLabel}>SEXO BIOLÓGICO</Text>
+                    <View style={styles.genderRow}>
+                        <TouchableOpacity
+                            disabled={!isEditing}
+                            style={[styles.genderButton, gender === 'M' && styles.genderButtonSelected]}
+                            onPress={() => setGender('M')}
+                        >
+                            <Text style={[styles.genderText, gender === 'M' && styles.genderTextSelected]}>
+                                MASCULINO
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            disabled={!isEditing}
+                            style={[styles.genderButton, gender === 'F' && styles.genderButtonSelected]}
+                            onPress={() => setGender('F')}
+                        >
+                            <Text style={[styles.genderText, gender === 'F' && styles.genderTextSelected]}>
+                                FEMININO
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <Divider text="KITS E EQUIPAMENTOS " />
+
+                <Button
+                    title="MEUS KITS"
+                    fontSize={30}
+                    textColor={theme.colors.textSecondary}
+                    style={styles.kitsButton}
+                    iconLeft={<MaterialCommunityIcons name="tshirt-crew" size={50} color={theme.colors.textSecondary} />}
+                    iconRight={<MaterialCommunityIcons name="chevron-right" size={30} color={theme.colors.textPrimary} />}
+                    onPress={() => router.push('../kits')}
+                />
+
+                <Divider text="INFORMAÇÕES PROFISSIONAIS" />
+
+                <View style={styles.professionalContainer}>
+                    <View style={styles.infoCard}>
+                        <Text style={styles.infoLabel}>EQUIPE (ORGANIZAÇÃO)</Text>
+                        <Text style={styles.infoValue}>
+                            {user?.clube?.nome || 'Sem equipe'}
+                        </Text>
+                    </View>
+
+                    <View style={styles.infoCard}>
+                        <Text style={styles.infoLabel}>TIME (CATEGORIA)</Text>
+                        <Text style={styles.infoValue}>{time}</Text>
+                    </View>
+                </View>
+
+                <TouchableOpacity
+                    style={styles.logoutButton}
+                    onPress={handleLogout}
+                    activeOpacity={0.7}
+                >
+                    <MaterialCommunityIcons
+                        name="logout-variant"
+                        size={22}
+                        color={theme.colors.primary}
+                    />
+                    <Text style={styles.logoutText}>ENCERRAR SESSÃO</Text>
+                </TouchableOpacity>
             </View>
-            <Text style={modalStyles.title}>{modalTitle}</Text>
-            <Text style={modalStyles.message}>{modalMessage}</Text>
-            <TouchableOpacity style={modalStyles.btnOk} onPress={modalOnOk} activeOpacity={0.8}>
-              <Text style={modalStyles.btnOkText}>OK</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </Screen>
-  );
+        </Screen>
+    );
 }
-
-// ── ESTILOS DO MODAL ──
-const modalStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing?.xl || 24, // Fallback caso não exista espaçamento xl
-  },
-  container: {
-    backgroundColor: theme.colors.surface || '#FFFFFF',
-    borderRadius: theme.borderRadius?.lg || 12,
-    padding: theme.spacing?.xl || 24,
-    width: '100%',
-    alignItems: 'center',
-  },
-  iconWrapper: {
-    width: 56,
-    height: 56,
-    borderRadius: theme.borderRadius?.full || 28,
-    backgroundColor: theme.colors.primaryLight || '#FEE2E2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: theme.spacing?.md || 16,
-  },
-  title: {
-    fontFamily: theme.fonts?.headingBold,
-    fontSize: 18,
-    color: theme.colors.textPrimary || '#1F2937',
-    textAlign: 'center',
-    marginBottom: theme.spacing?.sm || 8,
-    fontWeight: 'bold', // Adicionado como segurança caso falte a fonte
-  },
-  message: {
-    fontFamily: theme.fonts?.bodyRegular,
-    fontSize: 14,
-    color: theme.colors.textSecondary || '#4B5563',
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: theme.spacing?.lg || 24,
-  },
-  btnOk: {
-    backgroundColor: theme.colors.primary || '#E53E3E',
-    width: '100%',
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius?.sm || 8,
-    alignItems: 'center',
-  },
-  btnOkText: {
-    fontFamily: theme.fonts?.bodyBold,
-    fontSize: 14,
-    color: theme.colors.textWhite || '#FFFFFF',
-    letterSpacing: 1,
-    fontWeight: 'bold', // Adicionado como segurança caso falte a fonte
-  },
-});

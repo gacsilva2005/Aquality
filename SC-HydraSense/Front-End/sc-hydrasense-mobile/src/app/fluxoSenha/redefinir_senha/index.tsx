@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Modal,
   StyleSheet,
   SafeAreaView,
   ScrollView,
@@ -18,6 +17,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
 import { theme } from '../../../global/themas'; 
 import { Button } from '../../../components/Button'; 
+import { useAlert } from '@/src/contexts/alertContext'; 
 
 export default function ResetPasswordScreen() {
   const { email, token } = useLocalSearchParams<{ email: string, token: string }>();
@@ -26,8 +26,7 @@ export default function ResetPasswordScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // ── Modal de Sucesso (Imagem: Parabéns) ──
-  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const alert = useAlert();
 
   // ── Lógica de Validação dos Requisitos ──
   const hasMinChars = password.length >= 8;
@@ -37,7 +36,7 @@ export default function ResetPasswordScreen() {
   const handleConfirmReset = async () => {
     // Só prossegue se os requisitos forem atendidos e as senhas baterem
     if (password !== confirmPassword) {
-      alert("As senhas não coincidem!");
+      alert.warning("Atenção", "As senhas inseridas não coincidem!");
       return;
     }
 
@@ -57,16 +56,18 @@ export default function ResetPasswordScreen() {
       });
 
       if (response.ok) {
-        setSuccessModalVisible(true); // Abre o pop-up de "Parabéns"
+        alert.success(
+          "PARABÉNS!", 
+          "NOVA SENHA SALVA", 
+          () => router.replace('/')
+        );
       } else {
-        alert("Erro ao redefinir. O tempo do código pode ter expirado.");
+        alert.error("Erro", "Erro ao redefinir. O tempo do código pode ter expirado.");
       }
     } catch (error) {
-      alert("Não foi possível conectar ao servidor.");
+      alert.error("Erro de Conexão", "Não foi possível conectar ao servidor.");
     }
   };
-
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,113 +80,85 @@ export default function ResetPasswordScreen() {
         {/* 2. O Touchable garante que clicar em qualquer lugar vazio fecha o teclado */}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView 
- contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }} 
- keyboardShouldPersistTaps="handled"
- showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }} 
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
  
- <View style={styles.header}>
-   <Text style={styles.mainTitle}>REDEFINIR SENHA</Text>
-   <Text style={styles.description}>
-     Insira sua nova senha abaixo. Certifique-se de que ela atenda aos requisitos de segurança do laboratório.
-   </Text>
- </View>
+            <View style={styles.header}>
+              <Text style={styles.mainTitle}>REDEFINIR SENHA</Text>
+              <Text style={styles.description}>
+                Insira sua nova senha abaixo. Certifique-se de que ela atenda aos requisitos de segurança do laboratório.
+              </Text>
+            </View>
 
- {/* Transformamos o antigo KeyboardAvoidingView em uma View normal */}
- <View style={styles.content}>
-   <View style={styles.formCard}>
-     
-     {/* Campo Nova Senha */}
-     <View style={styles.inputGroup}>
-       <Text style={styles.inputLabel}>NOVA SENHA</Text>
-       <View style={styles.passwordWrapper}>
-         <TextInput
-           style={styles.input}
-           secureTextEntry={!showPassword}
-           value={password}
-           onChangeText={setPassword}
-           placeholder="********"
-           placeholderTextColor="#C4C4CC"
-         />
-         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-           <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#7C7C8A" />
-         </TouchableOpacity>
-       </View>
-     </View>
+            {/* Transformamos o antigo KeyboardAvoidingView em uma View normal */}
+            <View style={styles.content}>
+              <View style={styles.formCard}>
+                
+                {/* Campo Nova Senha */}
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>NOVA SENHA</Text>
+                  <View style={styles.passwordWrapper}>
+                    <TextInput
+                      style={styles.input}
+                      secureTextEntry={!showPassword}
+                      value={password}
+                      onChangeText={setPassword}
+                      placeholder="********"
+                      placeholderTextColor="#C4C4CC"
+                    />
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                      <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#7C7C8A" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
 
-     {/* Campo Confirmar Senha */}
-     <View style={styles.inputGroup}>
-       <Text style={styles.inputLabel}>CONFIRMAR NOVA SENHA</Text>
-       <TextInput
-         style={styles.input}
-         secureTextEntry={!showPassword}
-         value={confirmPassword}
-         onChangeText={setConfirmPassword}
-         placeholder="********"
-         placeholderTextColor="#C4C4CC"
-       />
-     </View>
+                {/* Campo Confirmar Senha */}
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>CONFIRMAR NOVA SENHA</Text>
+                  <TextInput
+                    style={styles.input}
+                    secureTextEntry={!showPassword}
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    placeholder="********"
+                    placeholderTextColor="#C4C4CC"
+                  />
+                </View>
 
-     {/* Lista de Requisitos */}
-     <View style={styles.requirementsContainer}>
-       <Text style={styles.requirementsTitle}>REQUISITOS DE SEGURANÇA</Text>
-       
-       <RequirementItem label="Mínimo de 8 caracteres" active={hasMinChars} />
-       <RequirementItem label="Contém números" active={hasNumbers} />
-       <RequirementItem label="Contém símbolos (ex: @, #, $)" active={hasSymbols} />
-     </View>
+                {/* Lista de Requisitos */}
+                <View style={styles.requirementsContainer}>
+                  <Text style={styles.requirementsTitle}>REQUISITOS DE SEGURANÇA</Text>
+                  
+                  <RequirementItem label="Mínimo de 8 caracteres" active={hasMinChars} />
+                  <RequirementItem label="Contém números" active={hasNumbers} />
+                  <RequirementItem label="Contém símbolos (ex: @, #, $)" active={hasSymbols} />
+                </View>
 
-     <Button 
-       title="REDEFINIR" 
-       onPress={handleConfirmReset}
-       disabled={!(hasMinChars && hasNumbers && hasSymbols && password === confirmPassword)}
-     />
+                <Button 
+                  title="REDEFINIR" 
+                  onPress={handleConfirmReset}
+                  disabled={!(hasMinChars && hasNumbers && hasSymbols && password === confirmPassword)}
+                />
 
-     <TouchableOpacity 
-       style={styles.backLink} 
-       onPress={() => router.replace('/')}
-     >
-       <Feather name="arrow-left" size={18} color="#7C7C8A" />
-       <Text style={styles.backLinkText}>VOLTAR AO LOGIN</Text>
-     </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.backLink} 
+                  onPress={() => router.replace('/')}
+                >
+                  <Feather name="arrow-left" size={18} color="#7C7C8A" />
+                  <Text style={styles.backLinkText}>VOLTAR AO LOGIN</Text>
+                </TouchableOpacity>
 
-   </View>
- </View>
+              </View>
+            </View>
 
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-
-      {/* ── MODAL SUCESSO ── */}
-      <Modal visible={successModalVisible} transparent animationType="fade">
-        <View style={modalStyles.overlay}>
-          <View style={modalStyles.card}>
- 
- <View style={modalStyles.shadowBox}>
-     <View style={modalStyles.checkCircle}>
-         <Feather name="check" size={24} color="#FFF" />
-     </View>
- </View>
-
- <Text style={modalStyles.title}>PARABÉNS!</Text>
- <Text style={modalStyles.subtitle}>NOVA SENHA SALVA</Text>
-
- <TouchableOpacity 
-   style={modalStyles.button} 
-   onPress={() => {
-     setSuccessModalVisible(false);
-     router.replace('/'); 
-   }}
- >
-   <Text style={modalStyles.buttonText}>VOLTAR AO LOGIN</Text>
-   <Feather name="arrow-right" size={18} color="#FFF" />
- </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
     </SafeAreaView>
-  )};
+  );
+}
 
 // Sub-componente para os requisitos
 function RequirementItem({ label, active }: { label: string, active: boolean }) {
@@ -201,7 +174,7 @@ function RequirementItem({ label, active }: { label: string, active: boolean }) 
   );
 }
 
-// ── ESTILOS DA TELA PRINCIPAL (Os que deixamos bonitos) ──
+// ── ESTILOS DA TELA PRINCIPAL ──
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -321,72 +294,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: theme.colors.textSecondary,
     marginLeft: 8,
-  },
-});
-
-// ── ESTILOS DO POP-UP (Para não dar mais o erro das linhas vermelhas) ──
-const modalStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 30,
-  },
-  card: {
-    backgroundColor: '#FFF',
-    borderRadius: 20,
-    width: '100%',
-    padding: 30,
-    alignItems: 'center',
-  },
-  shadowBox: {
-    width: 80,
-    height: 80,
-    backgroundColor: '#FFF',
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  checkCircle: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
-    backgroundColor: '#4CAF50',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontFamily: theme.fonts.headingBold,
-    fontSize: 24,
-    color: '#000',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontFamily: theme.fonts.bodyRegular,
-    fontSize: 14,
-    color: '#7C7C8A',
-    marginBottom: 30,
-  },
-  button: {
-    backgroundColor: theme.colors.primary,
-    width: '100%',
-    flexDirection: 'row',
-    height: 55,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: '#FFF',
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 15,
-    marginRight: 10,
   },
 });

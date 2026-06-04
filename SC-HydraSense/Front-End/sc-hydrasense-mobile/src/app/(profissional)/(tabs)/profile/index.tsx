@@ -11,6 +11,7 @@ import { useRouter } from 'expo-router';
 import { Divider } from '@/src/components/Divider';
 import { useUser } from '../../../../contexts/UserContext';
 import Constants from "expo-constants";
+import { useAlert } from '@/src/contexts/alertContext';
 
 const CLUBES = [
     "Corinthians", "Palmeiras", "Santos", "São Paulo", "América-SP", 
@@ -18,6 +19,7 @@ const CLUBES = [
 ];
 
 export default function ProfileProfissional() {
+    const alert = useAlert();
     const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
 
@@ -77,7 +79,7 @@ export default function ProfileProfissional() {
             });
 
             if (!response.ok) {
-                Alert.alert('Erro', 'Não foi possível atualizar o perfil');
+                alert.error('Erro', 'Não foi possível atualizar o perfil');
                 return;
             }
 
@@ -85,12 +87,12 @@ export default function ProfileProfissional() {
             const updatedUser = JSON.parse(responseText);
 
             setUser(updatedUser);
-            Alert.alert('Sucesso', 'Perfil atualizado!');
+            alert.success('Sucesso', 'Perfil atualizado!');
             setIsEditing(false);
 
         } catch (error) {
             console.log(error);
-            Alert.alert('Erro', 'Erro de conexão com servidor');
+            alert.error('Erro', 'Erro de conexão com servidor');
         }
     };
 

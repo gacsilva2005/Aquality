@@ -10,8 +10,10 @@ import Checkbox from 'expo-checkbox';
 import { theme } from '../../global/themas';
 import { InputCadastro } from '../../components/InputCadastro';
 import { styles } from './styles';
+import { useAlert } from '@/src/contexts/alertContext';
  
 export default function Cadastro() {
+  const alert = useAlert();
   const router = useRouter();
 
   const [nome, setNome] = useState('');
@@ -128,14 +130,14 @@ export default function Cadastro() {
               await SecureStore.setItemAsync('biometriaAtiva', 'true');
               await SecureStore.setItemAsync('biometric_email', email.trim());
               await SecureStore.setItemAsync('biometric_password', senha.trim());
-              Alert.alert('Sucesso!', 'Conta criada e biometria habilitada com sucesso. Um código foi enviado ao seu e-mail.');
+              alert.success('Sucesso!', 'Conta criada e biometria habilitada com sucesso. Um código foi enviado ao seu e-mail.');
               router.back();
               return;
             } else {
-              Alert.alert('Aviso', 'Biometria não confirmada. Você poderá tentar habilitar depois.');
+              alert.warning('Aviso', 'Biometria não confirmada. Você poderá tentar habilitar depois.');
             }
           } else {
-            Alert.alert('Aviso', 'Seu dispositivo não suporta ou não tem biometria cadastrada.');
+            alert.warning('Aviso', 'Seu dispositivo não suporta ou não tem biometria cadastrada.');
           }
         } else {
           // Se ele não marcou, garantimos que qualquer biometria anterior deste aparelho seja apagada
@@ -144,19 +146,19 @@ export default function Cadastro() {
           await SecureStore.deleteItemAsync('biometric_password');
         }
 
-        Alert.alert('Sucesso!', 'Conta criada com sucesso. Um código foi enviado ao seu e-mail.');
+        alert.success('Sucesso!', 'Conta criada com sucesso. Um código foi enviado ao seu e-mail.');
         router.back();
       } else {
         try {
           const errorData = await response.json();
-          Alert.alert('Erro no Cadastro', errorData.message || 'Não foi possível criar a conta.');
+          alert.error('Erro no Cadastro', errorData.message || 'Não foi possível criar a conta.');
         } catch (e) {
-          Alert.alert('Erro no Cadastro', 'Verifique os dados ou se o código de equipe está correto.');
+          alert.error('Erro no Cadastro', 'Verifique os dados ou se o código de equipe está correto.');
         }
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique sua rede.');
+      alert.error('Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique sua rede.');
     }
   };
 

@@ -9,6 +9,7 @@ import { theme } from '@/src/global/themas';
 import { useUser } from '../../../../contexts/UserContext';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
+import { useAlert } from '@/src/contexts/alertContext';
 
 interface HydrationRecord {
   id: string;
@@ -18,6 +19,7 @@ interface HydrationRecord {
 }
 
 // Cálculos do Círculo de Progresso
+const alert = useAlert();
 const { width } = Dimensions.get('window');
 const CIRCLE_SIZE = width * 0.55;
 const STROKE_WIDTH = 12;
@@ -103,16 +105,16 @@ export default function Hydration() {
       if (response.ok) {
         fetchHydrationHistory();
       } else {
-        Alert.alert('Erro', 'Não foi possível salvar o registro de água.');
+        alert.error('Erro', 'Não foi possível salvar o registro de água.');
       }
     } catch (error) {
       console.error('Erro ao salvar água:', error);
-      Alert.alert('Erro de Conexão', 'Não foi possível comunicar com o servidor.');
+      alert.error('Erro de Conexão', 'Não foi possível comunicar com o servidor.');
     }
   };
 
   const handleRemoveWater = (id: string, amountToRemove: number) => {
-    Alert.alert(
+    alert.error(
       "Remover Registro",
       "Tem certeza que deseja apagar este registro?",
       [
@@ -133,11 +135,11 @@ export default function Hydration() {
               if (response.ok) {
                 fetchHydrationHistory();
               } else {
-                Alert.alert('Erro', 'Não foi possível remover o registro.');
+                alert.error('Erro', 'Não foi possível remover o registro.');
               }
             } catch (error) {
               console.error('Erro ao deletar registro:', error);
-              Alert.alert('Erro de Conexão', 'Não foi possível deletar.');
+              alert.error('Erro de Conexão', 'Não foi possível deletar.');
             }
           }
         }
@@ -170,7 +172,7 @@ export default function Hydration() {
     
     // Validação básica
     if (isNaN(newAmount) || newAmount <= 0) {
-      Alert.alert("Valor Inválido", "Por favor, insira um valor maior que zero.");
+      alert.error("Valor Inválido", "Por favor, insira um valor maior que zero.");
       return;
     }
 
@@ -198,11 +200,11 @@ export default function Hydration() {
         if (response.ok) {
           fetchHydrationHistory();
         } else {
-          Alert.alert('Erro', 'Não foi possível atualizar o registro.');
+          alert.error('Erro', 'Não foi possível atualizar o registro.');
         }
       } catch (error) {
         console.error('Erro ao atualizar registro:', error);
-        Alert.alert('Erro de Conexão', 'Não foi possível atualizar.');
+        alert.error('Erro de Conexão', 'Não foi possível atualizar.');
       }
 
       setEditingRecord(null);
