@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { Feather, FontAwesome5 } from '@expo/vector-icons';
+import { Feather, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Screen } from '../../../../components/Screen';
 import { Header } from '../../../../components/Header';
 import { ModalTreino } from '../../../../components/ModalTreino';
@@ -162,6 +162,25 @@ export default function Dashboard() {
           <Text style={styles.titleLine}>STATUS DO ATLETA</Text>
         </View>
 
+        {/* ── AÇÃO PRINCIPAL: INICIAR SESSÃO ── */}
+        <View style={styles.callToActionContainer}>
+          <View style={styles.callToActionHeader}>
+            <MaterialCommunityIcons name="lightning-bolt" size={20} color={theme.colors.primary} />
+            <Text style={styles.callToActionTitle}>PRONTO PARA TREINAR</Text>
+          </View>
+          <Text style={styles.callToActionSubtitle}>
+            Tudo pronto para o próximo treino. Inicie sua sessão e ative o monitoramento.
+          </Text>
+          <TouchableOpacity
+            style={[styles.startSessionButton, { marginHorizontal: 0, marginBottom: 0 }]}
+            onPress={() => setIsModalVisible(true)}
+            activeOpacity={0.8}
+          >
+            <FontAwesome5 name="play" size={14} color={theme.colors.textWhite} />
+            <Text style={styles.startSessionText}>INICIAR SESSÃO</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* ── CARD: ESTRATÉGIA DO DIA ── */}
         <View style={styles.strategyCard}>
           <View style={styles.cardHeaderRow}>
@@ -264,15 +283,7 @@ export default function Dashboard() {
           </View>
         </View>
 
-        {/* ── BOTÃO INICIAR SESSÃO ── */}
-        <TouchableOpacity
-          style={styles.startSessionButton}
-          onPress={() => setIsModalVisible(true)}
-          activeOpacity={0.8}
-        >
-          <FontAwesome5 name="play" size={14} color={theme.colors.textWhite} />
-          <Text style={styles.startSessionText}>INICIAR SESSÃO</Text>
-        </TouchableOpacity>
+        {/* Botão de iniciar sessão foi movido para o topo */}
 
       </View>
 

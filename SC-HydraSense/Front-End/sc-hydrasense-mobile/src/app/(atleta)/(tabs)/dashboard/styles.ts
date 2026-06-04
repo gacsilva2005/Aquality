@@ -15,6 +15,39 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 16,
   },
+  
+  // CALL TO ACTION (INICIAR SESSÃO NO TOPO)
+  callToActionContainer: {
+    backgroundColor: theme.colors.surface,
+    marginHorizontal: theme.spacing.md,
+    marginBottom: 24,
+    padding: 20,
+    borderRadius: theme.borderRadius.md,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  callToActionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    gap: 8,
+  },
+  callToActionTitle: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 12,
+    color: theme.colors.primary,
+    letterSpacing: 1,
+  },
+  callToActionSubtitle: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    marginBottom: 20,
+    lineHeight: 20,
+  },
   pageSubtitle: {
     fontFamily: theme.fonts.bodyBold,         
     fontSize: 12,
