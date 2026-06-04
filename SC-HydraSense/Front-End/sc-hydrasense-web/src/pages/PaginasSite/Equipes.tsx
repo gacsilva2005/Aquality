@@ -104,23 +104,23 @@ export function Equipes() {
             {/* === CARTÕES DE RESUMO GERAL === */}
             <section className="equipes-kpi-container">
                 <div className="equipes-kpi-card borda-critica">
-                    <p className="equipes-kpi-titulo">ADERÊNCIA DA EQUIPE</p>
+                    <p className="equipes-kpi-titulo">EQUIPES CADASTRADAS</p>
+                    <h2 className="equipes-kpi-valor">{equipes.length}</h2>
+                </div>
+
+                <div className="equipes-kpi-card borda-critica">
+                    <p className="equipes-kpi-titulo">ATLETAS ATIVOS</p>
+                    <h2 className="equipes-kpi-valor">{atletas.length}</h2>
+                </div>
+
+                <div className="equipes-kpi-card borda-critica">
+                    <p className="equipes-kpi-titulo">ADERÊNCIA DO CLUBE</p>
                     <h2 className="equipes-kpi-valor">
                         94<span>%</span>
                     </h2>
                 </div>
 
                 <div className="equipes-kpi-card borda-critica">
-                    <p className="equipes-kpi-titulo">ALERTAS CRÍTICOS</p>
-                    <h2 className="equipes-kpi-valor">03</h2>
-                </div>
-
-                <div className="equipes-kpi-card">
-                    <p className="equipes-kpi-titulo">ATLETAS ATIVOS</p>
-                    <h2 className="equipes-kpi-valor">42</h2>
-                </div>
-
-                <div className="equipes-kpi-card">
                     <p className="equipes-kpi-titulo">TAXA DE SUOR MÉDIA</p>
                     <h2 className="equipes-kpi-valor">
                         1.2<span className="unidade">L/h</span>
@@ -194,57 +194,45 @@ export function Equipes() {
                 <aside className="equipes-sidebar">
                     <div className="equipes-sidebar-header">
                         <h3 className="equipes-sidebar-titulo">
-                            ATLETAS SELECIONADOS
+                            ATLETAS DO CLUBE
                         </h3>
                         <span className="equipes-sidebar-tag">
-                            FUT-MASC-A
+                            VISÃO GERAL
                         </span>
                     </div>
 
                     <div className="equipes-sidebar-lista">
+                        {atletas.length > 0 ? (
+                            atletas.slice(0, 10).map((atleta) => {
+                                // Separa o primeiro e último nome para o formato "Sobrenome, Nome"
+                                const partesNome = atleta.nome.split(' ');
+                                const nomeFormatado = partesNome.length > 1 
+                                    ? `${partesNome[partesNome.length - 1]}, ${partesNome[0]}`
+                                    : atleta.nome;
 
-                        <div className="atleta-item">
-                            <div className="atleta-item-avatar">
-                                <img src={teamLogo} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
-                            </div>
-                            <div className="atleta-item-info">
-                                <p className="atleta-item-nome">Silva, Carlos</p>
-                                <p className="atleta-item-posicao">ATACANTE</p>
-                            </div>
-                            <div className="atleta-item-status">
-                                <span className="badge-status ideal">IDEAL</span>
-                                <span className="dot-status ideal"></span>
-                            </div>
-                        </div>
-
-                        <div className="atleta-item">
-                            <div className="atleta-item-avatar">
-                                <img src={teamLogo} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
-                            </div>
-                            <div className="atleta-item-info">
-                                <p className="atleta-item-nome">Santos, ...</p>
-                                <p className="atleta-item-posicao">MEIO-CAMPO</p>
-                            </div>
-                            <div className="atleta-item-status">
-                                <span className="badge-status alerta">ALERTA</span>
-                                <span className="dot-status alerta"></span>
-                            </div>
-                        </div>
-
-                        <div className="atleta-item critico">
-                            <div className="atleta-item-avatar">
-                                <img src={teamLogo} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
-                            </div>
-                            <div className="atleta-item-info">
-                                <p className="atleta-item-nome">Oliveira, ...</p>
-                                <p className="atleta-item-posicao">ZAGUEIRO</p>
-                            </div>
-                            <div className="atleta-item-status">
-                                <span className="badge-status critico">CRÍTICO</span>
-                                <span className="dot-status critico"></span>
-                            </div>
-                        </div>
-
+                                return (
+                                    <div key={atleta.id} className="atleta-item">
+                                        <div className="atleta-item-avatar">
+                                            <img src={teamLogo} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
+                                        </div>
+                                        <div className="atleta-item-info">
+                                            <p className="atleta-item-nome" style={{ textTransform: 'capitalize' }}>
+                                                {nomeFormatado.toLowerCase()}
+                                            </p>
+                                            <p className="atleta-item-posicao">{atleta.modalidadePrincipal || 'ATLETA'}</p>
+                                        </div>
+                                        <div className="atleta-item-status">
+                                            <span className="badge-status ideal">IDEAL</span>
+                                            <span className="dot-status ideal"></span>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <p style={{ fontSize: '14px', color: '#666', padding: '16px', textAlign: 'center' }}>
+                                Nenhum atleta cadastrado.
+                            </p>
+                        )}
                     </div>
                 </aside>
             </div>
