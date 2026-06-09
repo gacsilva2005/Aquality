@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Animated } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -10,20 +10,29 @@ import { Button } from '@/src/components/Button';
 import { useAlert } from '@/src/contexts/alertContext';
 
 export default function PesagemPosTreino() {
-    const alert = useAlert(); //
+    const alert = useAlert();
     const [pesoInput, setPesoInput] = useState('');
     const [sintomasSelecionados, setSintomasSelecionados] = useState<string[]>([]);
     const [outrosSintomas, setOutrosSintomas] = useState('');
 
     const toggleSintoma = (sintoma: string) => {
-        if (sintomasSelecionados.includes(sintoma)) {
-            setSintomasSelecionados(sintomasSelecionados.filter(s => s !== sintoma));
-        } else {
-            setSintomasSelecionados([...sintomasSelecionados, sintoma]);
-        }
+        setSintomasSelecionados((prev) =>
+            prev.includes(sintoma) ? prev.filter((s) => s !== sintoma) : [...prev, sintoma]
+        );
     };
 
-    const { sessaoId, type, seconds, water, urineVolume, urineMoment, urineColor, thirst } = useLocalSearchParams<{
+    // ── Todos os params recebidos da tela de cor de urina (urineColor) ──────────
+    const {
+        sessaoId,
+        type,
+        seconds,
+        water,
+        urineVolume,
+        urineMoment,
+        urineColor,
+        thirst,
+        descontoKitGramas,
+    } = useLocalSearchParams<{
         sessaoId: string;
         type: string;
         seconds: string;
@@ -32,6 +41,7 @@ export default function PesagemPosTreino() {
         urineMoment?: string;
         urineColor?: string;
         thirst?: string;
+        descontoKitGramas?: string;
     }>();
 
     const handleConfirmarPeso = async () => {
@@ -48,8 +58,6 @@ export default function PesagemPosTreino() {
             return;
         }
 
-
-
         try {
             const hostUri = Constants?.expoConfig?.hostUri;
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
@@ -57,19 +65,21 @@ export default function PesagemPosTreino() {
 
             const response = await fetch(`${API_URL}/sessoes-de-treino/${sessaoId}/finalizar`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    pesoPosTreino: pesoNumerico,
-                    hidratacaoMl: Number(water || 0),
-                    duracaoSegundos: Number(seconds || 0),
-                    volumeUrinario: Number(urineVolume || 0),
-                    corUrina: urineColor ? Number(urineColor) : null,
-                    sede: thirst ? Number(thirst) : null,
-                    sintomas: sintomasSelecionados.length > 0 || outrosSintomas.length > 0 
-                        ? JSON.stringify({ selecionados: sintomasSelecionados, outros: outrosSintomas }) 
-                        : null,
+                    pesoPosTreino:     pesoNumerico,
+                    hidratacaoMl:      Number(water    || 0),
+                    duracaoSegundos:   Number(seconds  || 0),
+                    volumeUrinario:    Number(urineVolume || 0),
+                    corUrina:          urineColor ? Number(urineColor) : null,
+                    sede:              thirst     ? Number(thirst)     : null,
+                    // ── DESCONTO DO KIT ──────────────────────────────────────────
+                    descontoKitGramas: descontoKitGramas ? Number(descontoKitGramas) : 0,
+                    // ── SINTOMAS ─────────────────────────────────────────────────
+                    sintomas:
+                        sintomasSelecionados.length > 0 || outrosSintomas.length > 0
+                            ? JSON.stringify({ selecionados: sintomasSelecionados, outros: outrosSintomas })
+                            : null,
                 }),
             });
 
@@ -90,9 +100,9 @@ export default function PesagemPosTreino() {
                     type,
                     seconds,
                     water,
-                    pesoPosTreino: pesoNumerico.toString(),
-                    taxaSudorese: resumo.taxaSudorese.toString(),
-                    balancoHidrico: resumo.balancoHidrico.toString(),
+                    pesoPosTreino:    pesoNumerico.toString(),
+                    taxaSudorese:     resumo.taxaSudorese.toString(),
+                    balancoHidrico:   resumo.balancoHidrico.toString(),
                     statusHidratacao: resumo.statusHidratacao,
                 },
             });
@@ -108,7 +118,6 @@ export default function PesagemPosTreino() {
             <Screen style={styles.container}>
                 <Stack.Screen options={{ headerShown: false, animation: 'fade' }} />
 
-                {/* Botão de voltar discreto no topo */}
                 <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                     <MaterialCommunityIcons name="arrow-left" size={24} color={theme.colors.textPrimary} />
                 </TouchableOpacity>
@@ -120,6 +129,11 @@ export default function PesagemPosTreino() {
                         <Text style={styles.subtitle}>
                             Insira seu peso final para calcularmos{'\n'}a sua perda de líquidos exata.
                         </Text>
+                        {descontoKitGramas && parseFloat(descontoKitGramas) > 0 && (
+                            <Text style={{ fontSize: 12, color: theme.colors.primary, marginTop: 4 }}>
+                                ⚡ {parseFloat(descontoKitGramas)}g do kit serão descontados automaticamente
+                            </Text>
+                        )}
                     </View>
 
                     {/* --- INPUT GIGANTE CENTRALIZADO --- */}
@@ -132,7 +146,7 @@ export default function PesagemPosTreino() {
                             placeholder="00.0"
                             placeholderTextColor="#CCC"
                             maxLength={5}
-                            autoFocus={true} // Teclado sobe automaticamente
+                            autoFocus
                         />
                         <Text style={styles.unitText}>KG</Text>
                     </View>
@@ -143,11 +157,10 @@ export default function PesagemPosTreino() {
                         <View style={styles.sintomasTagsContainer}>
                             {['Vertigem', 'Enjoo', 'Cãibra'].map((sintoma) => {
                                 const isSelected = sintomasSelecionados.includes(sintoma);
-                                let iconName = 'alert-circle-outline';
-                                if (sintoma === 'Vertigem') iconName = 'head-sync-outline';
-                                if (sintoma === 'Enjoo') iconName = 'emoticon-sick-outline';
-                                if (sintoma === 'Cãibra') iconName = 'lightning-bolt-outline';
-
+                                const iconName =
+                                    sintoma === 'Vertigem' ? 'head-sync-outline' :
+                                        sintoma === 'Enjoo'    ? 'emoticon-sick-outline' :
+                                            'lightning-bolt-outline';
                                 return (
                                     <TouchableOpacity
                                         key={sintoma}
@@ -155,10 +168,10 @@ export default function PesagemPosTreino() {
                                         onPress={() => toggleSintoma(sintoma)}
                                         activeOpacity={0.7}
                                     >
-                                        <MaterialCommunityIcons 
-                                            name={iconName as any} 
-                                            size={16} 
-                                            color={isSelected ? theme.colors.primary : '#333333'} 
+                                        <MaterialCommunityIcons
+                                            name={iconName as any}
+                                            size={16}
+                                            color={isSelected ? theme.colors.primary : '#333333'}
                                         />
                                         <Text style={[styles.sintomaTagText, isSelected && styles.sintomaTagTextSelected]}>
                                             {sintoma}
@@ -167,7 +180,7 @@ export default function PesagemPosTreino() {
                                 );
                             })}
                         </View>
-                        
+
                         <TextInput
                             style={styles.textArea}
                             placeholder="Outros sintomas..."
@@ -179,7 +192,7 @@ export default function PesagemPosTreino() {
                         />
                     </View>
 
-                    {/* --- BOTÃO DE CONFIRMAR --- */}
+                    {/* --- BOTÃO --- */}
                     <View style={styles.footer}>
                         <Button
                             title="PRÓXIMO ➔"
