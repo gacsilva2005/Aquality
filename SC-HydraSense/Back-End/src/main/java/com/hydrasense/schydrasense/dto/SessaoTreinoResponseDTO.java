@@ -14,5 +14,10 @@ public record SessaoTreinoResponseDTO(
         Float taxaSudorese,
         Float balancoHidrico,
         String statusHidratacao,
-        String sintomas
+        String sintomas,
+        Boolean checklistBexiga,
+        Boolean checklistBalancaCorreta,
+        Boolean checklistSuperficiePlana,
+        Boolean checklistVestimentaCorreta,
+        Boolean checklistSemCalcados
 ) {}
