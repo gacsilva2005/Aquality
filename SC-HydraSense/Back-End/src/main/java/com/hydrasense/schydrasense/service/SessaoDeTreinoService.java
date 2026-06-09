@@ -59,7 +59,12 @@ public class SessaoDeTreinoService {
                 sessao.getTaxaSudorese(),
                 sessao.getBalancoHidrico(),
                 statusHidratacao,
-                sintomas
+                sintomas,
+                sessao.getChecklistBexiga(),
+                sessao.getChecklistBalancaCorreta(),
+                sessao.getChecklistSuperficiePlana(),
+                sessao.getChecklistVestimentaCorreta(),
+                sessao.getChecklistSemCalcados()
         );
     }
 
@@ -128,20 +133,20 @@ public class SessaoDeTreinoService {
                 .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
 
         RegistroDoPeso pesagemPos = new RegistroDoPeso();
-        pesagemPos.setPeso(dto.pesoPosTreino());
+        pesagemPos.setPeso(dto.getPesoPosTreino());
 
         pesoRepository.save(pesagemPos);
 
         RegistroDeHidratacao hidratacao = null;
-        if (dto.hidratacaoMl() != null && dto.hidratacaoMl() > 0) {
+        if (dto.getSede() != null && dto.getHidratacaoMl() > 0) {
             hidratacao = new RegistroDeHidratacao();
-            hidratacao.setVolume(dto.hidratacaoMl().floatValue());
+            hidratacao.setVolume(dto.getHidratacaoMl().floatValue());
             hidratacao.setTipoFluido("ÁGUA MINERAL (TREINO)");
             hidratacao.setAtleta(sessao.getAtleta());
             hidratacao.setDataHora(java.time.LocalDateTime.now());
         }
 
-        sessao.finalizar(pesagemPos, hidratacao, dto.duracaoSegundos(), calculadoraFisiologica);
+        sessao.finalizar(pesagemPos, hidratacao, dto.getDuracaoSegundos(), calculadoraFisiologica);
 
         repository.save(sessao);
 
@@ -160,25 +165,34 @@ public class SessaoDeTreinoService {
                 .orElseThrow(() -> new RuntimeException("Sessão não encontrada"));
 
         RegistroDoPeso pesagemPre = new RegistroDoPeso();
-        pesagemPre.setPeso(dto.pesoPreTreino());
+        pesagemPre.setPeso(dto.getPesoPreTreino());
         pesagemPre.setDataHora(java.time.LocalDateTime.now());
 
         pesoRepository.save(pesagemPre);
 
         sessao.setPesagemPre(pesagemPre);
 
-        if (dto.sintomas() != null && !dto.sintomas().isBlank()) {
+        if (dto.getSintomas() != null && !dto.getSintomas().isBlank()) {
             RegistroDeSintoma registroSintoma = new RegistroDeSintoma();
 
-            registroSintoma.setSintomas(dto.sintomas());
+            registroSintoma.setSintomas(dto.getSintomas());
             registroSintoma.setDataHora(java.time.LocalDateTime.now());
 
             registroSintoma.setSessaoDeTreino(sessao);
             sessao.setRegistroDeSintoma(registroSintoma);
         }
 
-        SessaoDeTreino salva = repository.save(sessao);
+        if (dto.getChecklist() != null) {
+            PesagemPreTreinoDTO.ChecklistDTO c = dto.getChecklist();
+            sessao.setChecklistBexiga(           Boolean.TRUE.equals(c.getBexiga()));
+            sessao.setChecklistBalancaCorreta(   Boolean.TRUE.equals(c.getBalancaCorreta()));
+            sessao.setChecklistSuperficiePlana(  Boolean.TRUE.equals(c.getSuperficiePlana()));
+            sessao.setChecklistVestimentaCorreta(Boolean.TRUE.equals(c.getVestimentaCorreta()));
+            sessao.setChecklistSemCalcados(      Boolean.TRUE.equals(c.getSemCalcados()));
+            sessao.setChecklistSemAcessorios(    Boolean.TRUE.equals(c.getSemAcessorios()));
+        }
 
+        SessaoDeTreino salva = repository.save(sessao);
         return mapToResponseDTO(salva);
     }
 }
