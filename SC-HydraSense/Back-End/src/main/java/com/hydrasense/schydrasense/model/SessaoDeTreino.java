@@ -91,6 +91,25 @@ public class SessaoDeTreino {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Atleta atleta;
 
+    // ── Checklist pré sessão
+    @Setter
+    private Boolean checklistBexiga;
+
+    @Setter
+    private Boolean checklistBalancaCorreta;
+
+    @Setter
+    private Boolean checklistSuperficiePlana;
+
+    @Setter
+    private Boolean checklistVestimentaCorreta;
+
+    @Setter
+    private Boolean checklistSemCalcados;
+
+    @Setter
+    private Boolean checklistSemAcessorios;
+
     // Construtor padrão JPA
     public SessaoDeTreino() {}
 
