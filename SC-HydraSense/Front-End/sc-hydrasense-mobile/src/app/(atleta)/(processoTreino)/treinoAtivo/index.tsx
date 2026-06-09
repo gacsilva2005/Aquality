@@ -20,7 +20,7 @@ const getWorkoutIcon = (type: string) => {
 };
 
 export default function TreinoAtivo() {
-    const { type, sessaoId } = useLocalSearchParams<{
+    const { type, sessaoId, descontoKitGramas } = useLocalSearchParams<{
         type: string;
         sessaoId: string;
         descontoKitGramas?: string;
