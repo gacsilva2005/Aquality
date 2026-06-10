@@ -82,6 +82,17 @@ export default function Dashboard() {
       const hostUri = Constants?.expoConfig?.hostUri;
       const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
       const API_URL = `http://${ip}:8080`;
+      const LAT = -23.55;
+      const LON = -46.63;
+
+      const responseClima = await fetch(`${API_URL}/clima/atual?lat=${LAT}&lon=${LON}`);
+      if (responseClima.ok) {
+        const clima = await responseClima.json();
+        setWeatherTemp(clima.temperatura);
+        setWeatherSudorese(clima.aumentoSudoresePercent);
+        setWeatherAgua(clima.aguaRecomendadaLitros);
+        setWeatherDescricao(clima.descricao);
+      }
 
       // 1. Buscar registros de hidratação de hoje
       const responseHidr = await fetch(`${API_URL}/hidratacao/atleta/${user.id}`);
