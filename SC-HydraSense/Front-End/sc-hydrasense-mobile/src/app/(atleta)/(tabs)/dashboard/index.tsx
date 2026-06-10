@@ -145,10 +145,12 @@ export default function Dashboard() {
         const LAT = -23.55;
         const LON = -46.63;
         const clima = await safeFetch(`${API_URL}/clima/atual?lat=${LAT}&lon=${LON}`);
-        setWeatherTemp(clima.temperatura);
-        setWeatherSudorese(clima.aumentoSudoresePercent);
-        setWeatherAgua(clima.aguaRecomendadaLitros);
-        setWeatherDescricao(clima.descricao);
+        setWeatherData({
+          temp: clima.temperatura,
+          sudorese: clima.aumentoSudoresePercent,
+          agua: clima.aguaRecomendadaLitros,
+          descricao: clima.descricao,
+        });
       } catch (e) {
         console.warn('Clima:', e);
       }
