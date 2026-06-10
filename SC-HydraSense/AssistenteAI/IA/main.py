@@ -136,8 +136,42 @@ async def transcribe(file: UploadFile = File(...)):
         tmp.write(audio_bytes)
         tmp_path = tmp.name
 
+    # 1. Tenta usar o Gemini para transcrição primeiro (conexão mais estável neste ambiente)
+    gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if gemini_key:
+        try:
+            from google import genai
+            from google.genai import types
+
+            logger.info("Tentando transcrever com Gemini (gemini-2.0-flash-lite)...")
+            client = genai.Client(api_key=gemini_key.strip('"').strip("'"))
+            with open(tmp_path, "rb") as f:
+                raw_audio = f.read()
+
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=[
+                    "Transcreva o áudio a seguir exatamente como foi falado, em português. Não adicione comentários, introduções ou notas. Apenas o texto falado. Se o áudio estiver sem fala ou silencioso, retorne uma string vazia.",
+                    types.Part.from_bytes(
+                        data=raw_audio,
+                        mime_type=file.content_type or "audio/m4a"
+                    )
+                ]
+            )
+            transcript = (response.text or "").strip()
+            logger.info("Transcrição via Gemini concluída com sucesso.")
+            return {"transcript": transcript}
+        except Exception as gemini_err:
+            logger.warning("Falha ao transcrever com Gemini, tentando fallback para Groq Whisper: %s", gemini_err)
+
+    # 2. Fallback para Groq Whisper
+    groq_key = os.getenv("GROQ_API_KEY")
+    if not groq_key:
+        raise HTTPException(status_code=500, detail="Sem chave de API configurada para transcrição (Gemini/Groq)")
+
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        logger.info("Tentando transcrever com Groq Whisper...")
+        async with httpx.AsyncClient(timeout=60.0) as client:
             with open(tmp_path, "rb") as f:
                 resp = await client.post(
                     "https://api.groq.com/openai/v1/audio/transcriptions",
@@ -147,10 +181,19 @@ async def transcribe(file: UploadFile = File(...)):
                 )
 
         if resp.status_code != 200:
+            logger.error(f"Erro na Groq API ({resp.status_code}): {resp.text}")
             raise HTTPException(status_code=resp.status_code, detail=resp.text)
 
         data = resp.json()
         return {"transcript": data.get("text", "")}
+    except httpx.ConnectError as e:
+        logger.error("Falha de conexão com api.groq.com — verifique DNS/rede do container: %s", e)
+        raise HTTPException(status_code=503, detail="Sem conexão com o serviço de transcrição (Groq). Verifique a rede.")
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise
+        logger.exception("Erro interno ao transcrever áudio")
+        raise HTTPException(status_code=500, detail="Falha interna na transcrição")
     finally:
         os.unlink(tmp_path)
 
