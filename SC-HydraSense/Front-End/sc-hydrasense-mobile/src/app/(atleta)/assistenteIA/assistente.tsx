@@ -9,10 +9,10 @@ import {
   Keyboard,
   Platform,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { Feather, FontAwesome5 } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import * as Speech from 'expo-speech';
 import { styles } from './assistente_styles';
 import { theme } from '../../../global/themas';
 import { useRouter } from 'expo-router';
@@ -139,17 +139,16 @@ export default function AssistenteIA() {
   const [isProcessing, setIsProcessing] = useState(false);
   const recordingRef = useRef<Audio.Recording | null>(null);
 
-  // ENVIAR MENSAGEM DE TEXTO
-  async function handleSend() {
-    const text = input.trim();
-    if (!text || loading) return;
+  // ENVIAR MENSAGEM DE TEXTO CENTRALIZADA
+  async function handleSendWithText(textToSend: string) {
+    if (!textToSend || loading) return;
 
     Keyboard.dismiss();
 
     const userMsg: Message = {
       id:      Date.now().toString(),
       role:    'user',
-      content: text,
+      content: textToSend,
     };
 
     setMessages(prev => [...prev, userMsg]);
@@ -165,7 +164,7 @@ export default function AssistenteIA() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           session_id: user?.id ? String(user.id) : 'user-default',
-          message: text,
+          message: textToSend,
         }),
       });
 
@@ -174,12 +173,19 @@ export default function AssistenteIA() {
       }
 
       const data = await response.json();
-      setMessages(prev => [...prev, {
+      
+      const newMsg: Message = {
         id:      String(Date.now() + 1),
         role:    'assistant',
         content: data.content,
         sources: data.sources || [],
-      }]);
+      };
+      
+      setMessages(prev => [...prev, newMsg]);
+
+      // TTS: Falar a resposta automaticamente
+      Speech.speak(stripBold(data.content), { language: 'pt-BR' });
+
     } catch {
       setMessages(prev => [...prev, {
         id:      (Date.now() + 1).toString(),
@@ -192,18 +198,20 @@ export default function AssistenteIA() {
     }
   }
 
+  async function handleSend() {
+    handleSendWithText(input.trim());
+  }
 
   // INICIAR GRAVAÇÃO
   async function startRecording() {
     try {
-      // Pede permissão de microfone
+      Speech.stop(); // Para a fala se estiver falando
       const { granted } = await Audio.requestPermissionsAsync();
       if (!granted) {
         alert.warning('Permissão negada', 'Permita o acesso ao microfone nas configurações do dispositivo.');
         return;
       }
 
-      // Configura o modo de áudio
       await Audio.setAudioModeAsync({
         allowsRecordingIOS:   true,
         playsInSilentModeIOS: true,
@@ -220,7 +228,16 @@ export default function AssistenteIA() {
     }
   }
 
-  // PARAR GRAVAÇÃO E PROCESSAR
+  // CANCELAR GRAVAÇÃO (Botão da Esquerda)
+  async function cancelRecording() {
+    if (!recordingRef.current) return;
+    setIsRecording(false);
+    await recordingRef.current.stopAndUnloadAsync();
+    recordingRef.current = null;
+    await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
+  }
+
+  // PARAR GRAVAÇÃO E TRANSCREVER (Botão da Direita)
   async function stopRecording() {
     if (!recordingRef.current) return;
 
@@ -232,7 +249,6 @@ export default function AssistenteIA() {
       const uri = recordingRef.current.getURI();
       recordingRef.current = null;
 
-      // Volta modo de áudio normal
       await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
 
       if (!uri) return;
@@ -255,6 +271,8 @@ export default function AssistenteIA() {
       const data = await response.json();
       if (data.transcript) {
         setInput(data.transcript);
+        // O fluxo seamless: assim que transcreveu, já envia!
+        handleSendWithText(data.transcript);
       } else {
         alert.warning('Aviso', 'Não foi possível transcrever o áudio. Tente novamente.');
       }
@@ -265,21 +283,10 @@ export default function AssistenteIA() {
     }
   }
 
-  // TOGGLE DO MICROFONE
-  function handleMicPress() {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
-    }
+  // PARAR FALA MANUALMENTE
+  function stopSpeaking() {
+    Speech.stop();
   }
-
-  // COR E ÍCONE DO BOTÃO DE MIC
-  const micColor = isRecording
-    ? theme.colors.primary       
-    : theme.colors.textSecondary; 
-
-  const micIcon = isProcessing ? 'loader' : isRecording ? 'mic-off' : 'mic';
 
   return (
     <KeyboardAvoidingView
@@ -305,7 +312,6 @@ export default function AssistenteIA() {
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"
       >
-        {/* Logo central */}
         <View style={styles.logoContainer}>
           <View style={styles.logoIconWrapper}>
             <FontAwesome5 name="tint" size={32} color={theme.colors.primary} />
@@ -314,7 +320,6 @@ export default function AssistenteIA() {
           <Text style={styles.logoTitle}>CO</Text>
         </View>
 
-        {/* Mensagens */}
         {messages.map(msg => (
           <View key={msg.id}>
 
@@ -333,6 +338,18 @@ export default function AssistenteIA() {
                     <FontAwesome5 name="robot" size={12} color={theme.colors.primary} />
                   </View>
                   <Text style={styles.analysisLabel}>ANÁLISE CLÍNICA IA</Text>
+
+                  {/* Botões TTS */}
+                  <View style={{ flex: 1 }} />
+                  <TouchableOpacity 
+                    onPress={() => Speech.speak(stripBold(msg.content), { language: 'pt-BR' })} 
+                    style={{ marginRight: 12 }}
+                  >
+                    <Feather name="play-circle" size={16} color={theme.colors.primary} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={stopSpeaking}>
+                    <Feather name="stop-circle" size={16} color={theme.colors.critical} />
+                  </TouchableOpacity>
                 </View>
 
                 <View style={styles.assistantContent}>
@@ -358,7 +375,6 @@ export default function AssistenteIA() {
           </View>
         ))}
 
-        {/* Indicador de digitando */}
         {loading && (
           <View style={styles.assistantWrapper}>
             <View style={styles.analysisHeader}>
@@ -380,7 +396,7 @@ export default function AssistenteIA() {
       {isRecording && (
         <View style={styles.recordingBanner}>
           <View style={styles.recordingDot} />
-          <Text style={styles.recordingText}>Gravando... toque no microfone para parar</Text>
+          <Text style={styles.recordingText}>Gravando... clique no check para enviar ou lixeira para cancelar</Text>
         </View>
       )}
 
@@ -394,13 +410,20 @@ export default function AssistenteIA() {
       {/* ── INPUT FIXO ── */}
       <View style={styles.inputContainer}>
 
-        {/* Botão microfone — vermelho quando gravando */}
+        {/* Botão microfone (Esquerda) — Lixeira quando gravando */}
         <TouchableOpacity
-          style={[styles.micButton, isRecording && styles.micButtonActive]}
-          onPress={handleMicPress}
+          style={[
+            styles.micButton, 
+            isRecording && { backgroundColor: theme.colors.criticalLight, borderColor: theme.colors.critical }
+          ]}
+          onPress={isRecording ? cancelRecording : startRecording}
           disabled={isProcessing}
         >
-          <Feather name={micIcon} size={20} color={micColor} />
+          <Feather 
+            name={isProcessing ? 'loader' : isRecording ? 'trash-2' : 'mic'} 
+            size={20} 
+            color={isRecording ? theme.colors.critical : theme.colors.textSecondary} 
+          />
         </TouchableOpacity>
 
         <TextInput
@@ -414,12 +437,21 @@ export default function AssistenteIA() {
           editable={!isRecording && !isProcessing}
         />
 
+        {/* Botão enviar (Direita) — Check quando gravando */}
         <TouchableOpacity
-          style={[styles.sendButton, (!input.trim() || loading || isRecording) && styles.sendButtonDisabled]}
-          onPress={handleSend}
-          disabled={!input.trim() || loading || isRecording}
+          style={[
+            styles.sendButton, 
+            (!input.trim() && !isRecording || loading || isProcessing) && styles.sendButtonDisabled,
+            isRecording && { backgroundColor: theme.colors.success }
+          ]}
+          onPress={isRecording ? stopRecording : handleSend}
+          disabled={(!input.trim() && !isRecording) || loading || isProcessing}
         >
-          <Feather name="arrow-up" size={18} color={theme.colors.textWhite} />
+          <Feather 
+            name={isRecording ? "check" : "arrow-up"} 
+            size={18} 
+            color={theme.colors.textWhite} 
+          />
         </TouchableOpacity>
 
       </View>
