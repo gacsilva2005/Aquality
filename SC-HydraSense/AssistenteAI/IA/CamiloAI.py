@@ -97,7 +97,7 @@ def criar_agente(session_id: Optional[str] = None, athlete_context: Optional[str
         description = _PROMPT_BASE
 
     return Agent(
-        model=Gemini(id="gemini-flash-latest", api_key=api_key),
+        model=Gemini(id="gemini-2.5-flash", api_key=api_key),
         knowledge=base_conhecimento,
         search_knowledge=True,
         db=histórico,

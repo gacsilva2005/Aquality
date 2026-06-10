@@ -51,6 +51,9 @@ services:
       - "8000:8000"
     depends_on:
       - backend
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     volumes:
       - ./AssistenteAI/PDFs:/app/../PDFs
       - ia_chroma_data:/app/chroma_data
