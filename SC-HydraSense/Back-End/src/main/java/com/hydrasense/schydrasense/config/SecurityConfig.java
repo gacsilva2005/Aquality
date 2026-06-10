@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Mantém o CORS do    seu amigo
                 .authorizeHttpRequests(auth -> auth
                         // Une as rotas de ambos
-                        .requestMatchers("/", "/auth/**", "/profissionais/**", "/Atleta/**", "/login/**", "/error", "/sessoes-de-treino/**", "/hidratacao/**", "/sessoes/**", "/Equipe/**").permitAll()
+                        .requestMatchers("/", "/auth/**", "/profissionais/**", "/Atleta/**", "/login/**", "/error", "/sessoes-de-treino/**", "/hidratacao/**", "/sessoes/**", "/Equipe/**", "/clima/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth
