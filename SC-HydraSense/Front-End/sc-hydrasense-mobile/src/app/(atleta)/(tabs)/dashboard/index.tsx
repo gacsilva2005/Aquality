@@ -30,6 +30,10 @@ export default function Dashboard() {
   const [waterBalance, setWaterBalance] = useState(0.0);
   const [recoveryPercent, setRecoveryPercent] = useState(100);
   const [lastWorkoutDate, setLastWorkoutDate] = useState('');
+  const [weatherTemp, setWeatherTemp]           = useState<number | null>(null);
+  const [weatherSudorese, setWeatherSudorese]   = useState<number>(0);
+  const [weatherAgua, setWeatherAgua]           = useState<number>(0);
+  const [weatherDescricao, setWeatherDescricao] = useState<string>('');
 
   // Modal de seleção de treino
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -79,59 +83,74 @@ export default function Dashboard() {
       const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
       const API_URL = `http://${ip}:8080`;
 
-      // 1. Buscar registros de hidratação de hoje
-      const responseHidr = await fetch(`${API_URL}/hidratacao/atleta/${user.id}`);
-      if (responseHidr.ok) {
-        const data = await responseHidr.json();
+      const safeFetch = async (url: string) => {
+        const res = await fetch(url);
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`[${res.status}] ${url} → ${text.slice(0, 200)}`);
+        }
+        return res.json();
+      };
+
+      // Hidratação
+      try {
+        const data = await safeFetch(`${API_URL}/hidratacao/atleta/${user.id}`);
         const todayStr = new Date().toDateString();
-        const todayRecords = data.filter((item: any) => {
-          if (!item.dataHora) return false;
-          return new Date(item.dataHora).toDateString() === todayStr;
-        });
+        const todayRecords = data.filter((item: any) =>
+          item.dataHora && new Date(item.dataHora).toDateString() === todayStr
+        );
         const totalToday = todayRecords.reduce((sum: number, item: any) => sum + item.volume, 0);
         setConsumed(totalToday);
+      } catch (e) {
+        console.warn('Hidratação:', e);
       }
 
-      // 2. Buscar sessões de treino do atleta
-      const responseSessoes = await fetch(`${API_URL}/sessoes-de-treino/atleta/${user.id}`);
-      if (responseSessoes.ok) {
-        const data = await responseSessoes.json();
-        const finishedSessions = data.filter((s: any) => s.dataHoraFim !== null && s.taxaSudorese !== null);
-        
-        if (finishedSessions.length > 0) {
-          finishedSessions.sort((a: any, b: any) => new Date(b.dataHoraFim).getTime() - new Date(a.dataHoraFim).getTime());
-          const latest = finishedSessions[0];
+      // Sessões de treino
+      try {
+        const data = await safeFetch(`${API_URL}/sessoes-de-treino/atleta/${user.id}`);
+        const finished = data
+          .filter((s: any) => s.dataHoraFim !== null && s.taxaSudorese !== null)
+          .sort((a: any, b: any) =>
+            new Date(b.dataHoraFim).getTime() - new Date(a.dataHoraFim).getTime()
+          );
 
+        if (finished.length > 0) {
+          const latest = finished[0];
           setSweatRate(latest.taxaSudorese);
           setWaterBalance(latest.balancoHidrico);
 
-          if (latest.dataHoraFim) {
-            const d = new Date(latest.dataHoraFim);
-            const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
-            const dia = d.getDate().toString().padStart(2, '0');
-            const mes = meses[d.getMonth()];
-            const horas = d.getHours().toString().padStart(2, '0');
-            const minutos = d.getMinutes().toString().padStart(2, '0');
-            setLastWorkoutDate(`${dia} DE ${mes}, ${horas}:${minutos}`);
-          }
+          const d = new Date(latest.dataHoraFim);
+          const meses = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+          setLastWorkoutDate(
+            `${d.getDate().toString().padStart(2,'0')} DE ${meses[d.getMonth()]}, ` +
+            `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`
+          );
 
           const pesoPre = latest.pesoPre || 70.0;
           const perdaPeso = pesoPre - (latest.pesoPos || pesoPre);
-          const percentualPerda = pesoPre > 0 ? (perdaPeso / pesoPre) * 100.0 : 0.0;
-
-          const level = Math.max(50, Math.min(100, Math.round(100 - percentualPerda)));
-          setHydrationLevel(level);
-
-          const recovery = Math.max(30, Math.min(100, Math.round(100 + (latest.balancoHidrico / pesoPre) * 100)));
-          setRecoveryPercent(recovery);
+          const percentualPerda = pesoPre > 0 ? (perdaPeso / pesoPre) * 100 : 0;
+          setHydrationLevel(Math.max(50, Math.min(100, Math.round(100 - percentualPerda))));
+          setRecoveryPercent(Math.max(30, Math.min(100, Math.round(100 + (latest.balancoHidrico / pesoPre) * 100))));
         } else {
-          setHydrationLevel(100);
-          setSweatRate(0.0);
-          setWaterBalance(0.0);
-          setRecoveryPercent(100);
           setLastWorkoutDate('SEM REGISTRO');
         }
+      } catch (e) {
+        console.warn('Sessões:', e);
       }
+
+      // Clima
+      try {
+        const LAT = -23.55;
+        const LON = -46.63;
+        const clima = await safeFetch(`${API_URL}/clima/atual?lat=${LAT}&lon=${LON}`);
+        setWeatherTemp(clima.temperatura);
+        setWeatherSudorese(clima.aumentoSudoresePercent);
+        setWeatherAgua(clima.aguaRecomendadaLitros);
+        setWeatherDescricao(clima.descricao);
+      } catch (e) {
+        console.warn('Clima:', e);
+      }
+
     } catch (error) {
       console.error('Erro ao buscar dados do dashboard:', error);
     }
@@ -186,17 +205,34 @@ export default function Dashboard() {
           <View style={styles.cardHeaderRow}>
             <View style={styles.redDot} />
             <Text style={styles.cardLabel}>ESTRATÉGIA DO DIA</Text>
-            <FontAwesome5 name="robot" size={40} color={theme.colors.textSecondary} style={styles.bgIcon} />
+            <FontAwesome5
+              name="robot"
+              size={40}
+              color={theme.colors.textSecondary}
+              style={styles.bgIcon}
+            />
           </View>
 
-          <Text style={styles.strategyText}>
-            Clima a <Text style={styles.textHighlightRed}>32°C</Text>. Sua taxa de
-            sudorese sobe <Text style={styles.textHighlightRed}>15%</Text> nesse
-            calor. Prepare <Text style={styles.textHighlightRed}>1.5L</Text> de água.
-          </Text>
+          {weatherTemp !== null ? (
+            <Text style={styles.strategyText}>
+              Clima a{' '}
+              <Text style={styles.textHighlightRed}>{Math.round(weatherTemp)}°C</Text>
+              {weatherDescricao ? ` (${weatherDescricao})` : ''}.
+              {weatherSudorese > 0
+                ? ` Sua taxa de sudorese sobe `
+                : ' Condições normais de temperatura. '}
+              {weatherSudorese > 0 && (
+                <Text style={styles.textHighlightRed}>{weatherSudorese}%</Text>
+              )}
+              {weatherSudorese > 0 ? ' nesse calor. Prepare ' : 'Prepare '}
+              <Text style={styles.textHighlightRed}>{weatherAgua.toFixed(1)}L</Text>
+              {' de água extra.'}
+            </Text>
+          ) : (
+            <Text style={styles.strategyText}>Carregando dados climáticos...</Text>
+          )}
 
           <View style={styles.strategyActionRow}>
-            {/* ── NAVEGAÇÃO PARA O ASSISTENTE IA ── */}
             <TouchableOpacity
               style={styles.btnProtocol}
               onPress={() => router.push('/assistenteIA/assistente' as any)}
@@ -205,21 +241,6 @@ export default function Dashboard() {
               <Text style={styles.btnProtocolText}>RECOMENDAÇÃO BASEADA EM IA</Text>
             </TouchableOpacity>
           </View>
-        </View>
-
-        {/* ── CARD: NÍVEL DE HIDRATAÇÃO ── */}
-        <View style={styles.infoCard}>
-          <Text style={styles.cardLabel}>NÍVEL DE HIDRATAÇÃO</Text>
-          <View style={styles.hydrationValueRow}>
-            <Text style={styles.hydrationValue}>{hydrationLevel}</Text>
-            <Text style={styles.hydrationUnit}>%</Text>
-          </View>
-          <View style={styles.progressBarContainer}>
-            <View style={[styles.progressBarFill, { width: `${hydrationLevel}%` }]} />
-          </View>
-          <Text style={styles.cardSubText}>
-            Otimizado para treino de alta intensidade em 2h.
-          </Text>
         </View>
 
         {/* ── CARD: ÚLTIMO TREINO (métricas + recovery overlay) ── */}
