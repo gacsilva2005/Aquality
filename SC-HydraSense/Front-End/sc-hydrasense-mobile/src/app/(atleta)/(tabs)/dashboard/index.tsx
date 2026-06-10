@@ -217,20 +217,19 @@ export default function Dashboard() {
             />
           </View>
 
-          {weatherTemp !== null ? (
+          {weatherData.temp !== null ? (
             <Text style={styles.strategyText}>
               Clima a{' '}
-              <Text style={styles.textHighlightRed}>{Math.round(weatherTemp)}°C</Text>
-              {weatherDescricao ? ` (${weatherDescricao})` : ''}.
-              {weatherSudorese > 0
-                ? ` Sua taxa de sudorese sobe `
-                : ' Condições normais de temperatura. '}
-              {weatherSudorese > 0 && (
-                <Text style={styles.textHighlightRed}>{weatherSudorese}%</Text>
-              )}
-              {weatherSudorese > 0 ? ' nesse calor. Prepare ' : 'Prepare '}
-              <Text style={styles.textHighlightRed}>{weatherAgua.toFixed(1)}L</Text>
-              {' de água extra.'}
+              <Text style={styles.textHighlightRed}>{Math.round(weatherData.temp)}°C</Text>
+              {weatherData.descricao ? ` (${weatherData.descricao})` : ''}.
+              {weatherData.sudorese > 0 && (
+                <> Sua taxa de sudorese sobe{' '}
+                  <Text style={styles.textHighlightRed}>{weatherData.sudorese}%</Text>
+                  {' '}nesse calor.
+                </>
+              )} Prepare{' '}
+              <Text style={styles.textHighlightRed}>{weatherData.agua.toFixed(1)}L</Text>
+              {' '}de água extra.
             </Text>
           ) : (
             <Text style={styles.strategyText}>Carregando dados climáticos...</Text>
