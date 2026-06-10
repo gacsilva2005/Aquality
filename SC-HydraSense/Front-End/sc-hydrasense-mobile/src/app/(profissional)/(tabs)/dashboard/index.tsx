@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, SafeAreaView, Modal } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Importando as bibliotecas

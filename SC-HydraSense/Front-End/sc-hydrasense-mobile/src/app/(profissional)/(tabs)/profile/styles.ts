@@ -172,6 +172,42 @@ export const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
+
+  // --- ESTILOS DO GÊNERO ---
+  genderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    gap: 12,
+  },
+  genderButton: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingVertical: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#E0E0E0',
+  },
+  genderButtonSelected: {
+    borderColor: theme.colors.primary,
+    backgroundColor: '#FFFFFF',
+  },
+  genderButtonLocked: {
+    backgroundColor: '#F0F0F0',
+    borderColor: 'transparent',
+  },
+  genderText: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 14,
+    color: '#888888',
+  },
+  genderTextSelected: {
+    color: theme.colors.textPrimary,
+  },
+
   // --- ESTILOS DOS CARDS DE PERFIL ---
   perfilContainer: {
     flexDirection: 'row',

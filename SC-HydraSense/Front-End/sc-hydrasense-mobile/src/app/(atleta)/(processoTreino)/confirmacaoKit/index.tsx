@@ -185,8 +185,8 @@ export default function ConfirmacaoKit() {
                                 <View style={styles.modalidadeValueRow}>
                                     <MaterialCommunityIcons
                                         name={
-                                            type === 'natação' ? 'swim' :
-                                                type === 'corrida' ? 'run' : 'bike'
+                                            type === 'cardio' ? 'heart-pulse' :
+                                                type === 'musculação' ? 'dumbbell' : 'timer'
                                         }
                                         size={16}
                                         color={theme.colors.textPrimary}
@@ -255,13 +255,13 @@ export default function ConfirmacaoKit() {
                     <View style={styles.emptyCard}>
                         <View style={styles.emptyIconBox}>
                             <MaterialCommunityIcons
-                                name={type === 'natação' ? 'swim' : type === 'corrida' ? 'run' : 'bike'}
+                                name={type === 'cardio' ? 'heart-pulse' : type === 'musculação' ? 'dumbbell' : 'timer'}
                                 size={40}
                                 color="#555"
                             />
                         </View>
                         <Text style={styles.emptyTitle}>
-                            NENHUM KIT PARA {type ? type.toString().toUpperCase() : 'BIKE'}
+                            NENHUM KIT PARA {type ? type.toString().toUpperCase() : 'TREINO'}
                         </Text>
                         <Text style={styles.emptyDescription}>
                             Você ainda não tem kits de equipamento cadastrados para esta modalidade.

@@ -53,10 +53,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  optionCardFull: {
-    width: '100%', // Natação ocupa a linha inteira
-    paddingVertical: 20,
-  },
   optionCardActive: {
     borderColor: theme.colors.primary,
     borderWidth: 2,
@@ -70,10 +66,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8, // Espaço entre o ícone e o texto
-  },
-  contentWrapperRow: {
-    flexDirection: 'row', // Para a Natação ficar com o ícone do lado
-    gap: 12,
   },
   optionText: {
     fontFamily: theme.fonts.headingBold,

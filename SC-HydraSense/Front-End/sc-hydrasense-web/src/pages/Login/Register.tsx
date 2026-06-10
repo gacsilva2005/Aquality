@@ -41,7 +41,8 @@ export function Register() {
         clube: {
             id: 0
         },
-        perfil: perfilAtivo
+        perfil: perfilAtivo,
+        sexo: ''
     });
 
     const clubesFiltrados = CLUBES_DISPONIVEIS.filter(clube =>
@@ -126,18 +127,38 @@ export function Register() {
         </section>
 
         <form className="formulario-corpo" onSubmit={handleSubmit}>
-          <div className="campo-entrada">
-            <label>NOME COMPLETO</label>
-            <div className="container-input-linha">
-              <User size={18} color="#6C757D" />
-              <input
-                type="text"
-                name="nome"
-                placeholder="Nome Completo"
-                value={formData.nome}
-                onChange={handleChange}
-                required
-              />
+          <div className="linha-dupla">
+            <div className="campo-entrada">
+              <label>NOME COMPLETO</label>
+              <div className="container-input-linha">
+                <User size={18} color="#6C757D" />
+                <input
+                  type="text"
+                  name="nome"
+                  placeholder="Nome Completo"
+                  value={formData.nome}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="campo-entrada">
+              <label>SEXO BIOLÓGICO</label>
+              <div className="container-input-linha">
+                <User size={18} color="#6C757D" />
+                <select
+                  required
+                  name="sexo"
+                  className="select-registro"
+                  value={formData.sexo}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>Selecione</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Feminino">Feminino</option>
+                </select>
+              </div>
             </div>
           </div>
 

@@ -16,7 +16,7 @@ import { useFocusEffect } from 'expo-router';
 import Constants from 'expo-constants';
 
 // TIPOS
-type FilterType = 'TODOS' | 'CORRIDA' | 'CICLISMO' | 'FUTEBOL' | 'MUSCULAÇÃO' | 'NATAÇÃO';
+type FilterType = 'TODOS' | 'CARDIO' | 'MUSCULAÇÃO';
 
 type StatusType = 'OPTIMAL' | 'WARNING' | 'CRITICAL';
 
@@ -24,7 +24,7 @@ interface Session {
   id: string;
   day: string;
   month: string;
-  type: 'CORRIDA' | 'CICLISMO' | 'FUTEBOL' | 'MUSCULAÇÃO' | 'NATAÇÃO';
+  type: 'CARDIO' | 'MUSCULAÇÃO';
   sweatRate: number; 
   status: StatusType;
 }
@@ -47,13 +47,10 @@ function getTrend(data: number[]): string {
 
 // DADOS MOCK (utilizados como fallback inicial caso não haja treinos)
 const MOCK_SESSIONS: Session[] = [
-  { id: '1', day: '12', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.1, status: 'OPTIMAL'  },
-  { id: '2', day: '10', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.4, status: 'WARNING'  },
-  { id: '3', day: '08', month: 'JAN', type: 'CORRIDA',  sweatRate: 1.9, status: 'CRITICAL' },
-  { id: '4', day: '05', month: 'JAN', type: 'CICLISMO', sweatRate: 0.8, status: 'OPTIMAL'  },
-  { id: '5', day: '02', month: 'JAN', type: 'FUTEBOL',  sweatRate: 1.5, status: 'WARNING'  },
-  { id: '6', day: '28', month: 'DEZ', type: 'NATAÇÃO',  sweatRate: 0.5, status: 'OPTIMAL'  },
-  { id: '7', day: '25', month: 'DEZ', type: 'MUSCULAÇÃO', sweatRate: 0.8, status: 'OPTIMAL'  },
+  { id: '1', day: '12', month: 'JAN', type: 'CARDIO',  sweatRate: 1.1, status: 'OPTIMAL'  },
+  { id: '2', day: '10', month: 'JAN', type: 'CARDIO',  sweatRate: 1.4, status: 'WARNING'  },
+  { id: '3', day: '08', month: 'JAN', type: 'CARDIO',  sweatRate: 1.9, status: 'CRITICAL' },
+  { id: '4', day: '05', month: 'JAN', type: 'MUSCULAÇÃO', sweatRate: 0.8, status: 'OPTIMAL'  },
 ];
 
 function getAvgRate(sessions: Session[]): string {
@@ -90,9 +87,9 @@ export default function Performance() {
           const day = d.getDate().toString().padStart(2, '0');
           const month = meses[d.getMonth()];
 
-          let typeStr = s.modalidade ? s.modalidade.toUpperCase() : 'CORRIDA';
-          if (typeStr !== 'CORRIDA' && typeStr !== 'CICLISMO' && typeStr !== 'FUTEBOL' && typeStr !== 'MUSCULAÇÃO' && typeStr !== 'NATAÇÃO') {
-            typeStr = 'CORRIDA'; // Fallback
+          let typeStr = s.modalidade ? s.modalidade.toUpperCase() : 'CARDIO';
+          if (typeStr !== 'CARDIO' && typeStr !== 'MUSCULAÇÃO') {
+            typeStr = 'CARDIO'; // Fallback
           }
 
           const pesoPre = s.pesoPre || 70.0;
@@ -230,7 +227,7 @@ export default function Performance() {
             showsHorizontalScrollIndicator={false} 
             contentContainerStyle={styles.filterRow}
           >
-            {(['TODOS', 'CORRIDA', 'CICLISMO', 'FUTEBOL', 'MUSCULAÇÃO', 'NATAÇÃO'] as FilterType[]).map(f => (
+            {(['TODOS', 'CARDIO', 'MUSCULAÇÃO'] as FilterType[]).map(f => (
               <TouchableOpacity
                 key={f}
                 style={[styles.filterBtn, filter === f && styles.filterBtnActive]}

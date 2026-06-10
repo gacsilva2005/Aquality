@@ -64,6 +64,7 @@ public class AtletaService {
         atleta.setPesoAtual(request.getPesoAtual());
         atleta.setModalidade(request.getModalidade());
         atleta.setAltura(request.getAltura());
+        atleta.setSexo(request.getSexo());
 
         atleta.setClube(clube);
 
@@ -140,6 +141,7 @@ public class AtletaService {
                     atleta.setDataNascimento(atletaAtualizado.getDataNascimento());
                     atleta.setModalidadePrincipal(atletaAtualizado.getModalidadePrincipal());
                     atleta.setPesoAtual(atletaAtualizado.getPesoAtual());
+                    atleta.setSexo(atletaAtualizado.getSexo());
                     return repository.save(atleta);
                 })
                 .orElseThrow(() -> new RuntimeException("Atleta não encontrado"));

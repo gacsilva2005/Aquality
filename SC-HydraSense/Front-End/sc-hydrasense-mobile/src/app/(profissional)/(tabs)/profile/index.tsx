@@ -37,6 +37,7 @@ export default function ProfileProfissional() {
     const [especialidade, setEspecialidade] = useState(user?.especialidade || '');
     const [clube, setClube] = useState(user?.clube?.nome || '');
     const [modalClubesVisivel, setModalClubesVisivel] = useState(false);
+    const [gender, setGender] = useState<'M' | 'F' | null>(user?.sexo === 'Feminino' ? 'F' : 'M');
 
     // Função para selecionar o perfil e limpar o erro
     const handleSelectPerfil = (tipo: string) => {
@@ -74,6 +75,7 @@ export default function ProfileProfissional() {
                     email: email,
                     registro: registro,
                     especialidade: especialidade,
+                    sexo: gender === 'M' ? 'Masculino' : 'Feminino',
                     clube: clube ? { nome: clube.trim() } : null
                 }),
             });
@@ -195,6 +197,39 @@ export default function ProfileProfissional() {
                     autoCapitalize="characters"
                     style={isEditing ? styles.inputUnlocked : styles.inputLocked}
                 />
+
+                <Text style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitleProfissional}>SEXO BIOLÓGICO</Text>
+                </Text>
+                <View style={[styles.genderContainer, !isEditing && { opacity: 0.7 }]}>
+                    <TouchableOpacity
+                        disabled={!isEditing}
+                        style={[
+                            styles.genderButton,
+                            gender === 'M' && styles.genderButtonSelected,
+                            !isEditing && styles.genderButtonLocked
+                        ]}
+                        onPress={() => setGender('M')}
+                    >
+                        <Text style={[styles.genderText, gender === 'M' && styles.genderTextSelected]}>
+                            MASCULINO
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        disabled={!isEditing}
+                        style={[
+                            styles.genderButton,
+                            gender === 'F' && styles.genderButtonSelected,
+                            !isEditing && styles.genderButtonLocked
+                        ]}
+                        onPress={() => setGender('F')}
+                    >
+                        <Text style={[styles.genderText, gender === 'F' && styles.genderTextSelected]}>
+                            FEMININO
+                        </Text>
+                    </TouchableOpacity>
+                </View>
 
                 {/* --- CAIXAS DE SELEÇÃO DE PERFIL --- */}
 

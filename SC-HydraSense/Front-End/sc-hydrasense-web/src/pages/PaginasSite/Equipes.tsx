@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useUser } from '../../context/UserContext';
 import teamLogo from '../../assets/icone_petala.png';
 
@@ -16,14 +16,7 @@ export function Equipes() {
 
     const { user } = useUser();
 
-    useEffect(() => {
-      if (user?.clube?.id) {
-        carregarEquipes();
-        carregarAtletas();
-      }
-    }, [user]);
-
-    const carregarAtletas = async () => {
+    const carregarAtletas = useCallback(async () => {
       try {
         const clubeId = user?.clube?.id;
         const response = await fetch(`http://localhost:8080/Atleta/clube/${clubeId}`);
@@ -32,9 +25,9 @@ export function Equipes() {
       } catch (error) {
         console.error('Erro ao carregar atletas:', error);
       }
-    };
+    }, [user?.clube?.id]);
 
-    const carregarEquipes = async () => {
+    const carregarEquipes = useCallback(async () => {
       try {
         const clubeId = user?.clube?.id;
 
@@ -47,7 +40,14 @@ export function Equipes() {
       } catch (error) {
         console.error('Erro ao carregar equipes:', error);
       }
-    };
+    }, [user?.clube?.id]);
+
+    useEffect(() => {
+      if (user?.clube?.id) {
+        carregarEquipes();
+        carregarAtletas();
+      }
+    }, [user?.clube?.id, carregarEquipes, carregarAtletas]);
 
     const handleCriarEquipe = async () => {
         if (!nomeEquipe || !esporteRef || !limiteAtletas) return;

@@ -40,6 +40,9 @@ public class Atleta {
     @Column
     private Float altura;
 
+    @Column(length = 20)
+    private String sexo;
+
     private String senha;
 
     @ManyToOne

@@ -22,6 +22,7 @@ export default function CadastroProfissional() {
 
     const [nome, setNome] = useState('');
     const [idade, setIdade] = useState('');
+    const [sexo, setSexo] = useState('');
     const [time, setTime] = useState('');
     const [codigo, setCodigo] = useState('');
     const [email, setEmail] = useState('');
@@ -39,6 +40,7 @@ export default function CadastroProfissional() {
             novosErros.perfil = 'Por favor, selecione o seu perfil profissional.';
         }
         if (!nome.trim()) novosErros.nome = 'Preencha o nome completo.';
+        if (!sexo.trim()) novosErros.sexo = 'Informe o sexo.';
         if (!email.trim() || !email.includes('@') || !email.includes('.')) novosErros.email = 'Informe um e-mail válido.';
         if (!senha.trim() || senha.length < 6) novosErros.senha = 'A senha deve ter no mínimo 6 caracteres.';
         if (!idade.trim() || parseInt(idade) <= 0) novosErros.idade = 'Informe uma idade válida.';
@@ -68,6 +70,7 @@ export default function CadastroProfissional() {
 
             const profissionalPayload = {
                 nome: nome.trim(),
+                sexo: sexo.trim(),
                 email: email.trim(),
                 senha: senha.trim(),
                 dataNascimento: dataNascimentoStr,
@@ -224,6 +227,55 @@ export default function CadastroProfissional() {
                     keyboardType="numeric"
                     errorMessage={erros.idade}
                 />
+
+                {/* --- CAMPO SEXO BIOLÓGICO (Checkboxes) --- */}
+                <View style={styles.genderContainer}>
+                  <Text style={styles.genderLabel}>SEXO BIOLÓGICO</Text>
+
+                  <View style={styles.checkboxRow}>
+                    <TouchableOpacity
+                      style={styles.checkboxItem}
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        setSexo('Masculino');
+                        setErros((prev) => ({ ...prev, sexo: '' }));
+                      }}
+                    >
+                      <Checkbox
+                        value={sexo === 'Masculino'}
+                        onValueChange={() => {
+                          setSexo('Masculino');
+                          setErros((prev) => ({ ...prev, sexo: '' }));
+                        }}
+                        color={sexo === 'Masculino' ? theme.colors.primary : undefined}
+                        style={styles.checkbox}
+                      />
+                      <Text style={styles.checkboxText}>Masculino</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.checkboxItem}
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        setSexo('Feminino');
+                        setErros((prev) => ({ ...prev, sexo: '' }));
+                      }}
+                    >
+                      <Checkbox
+                        value={sexo === 'Feminino'}
+                        onValueChange={() => {
+                          setSexo('Feminino');
+                          setErros((prev) => ({ ...prev, sexo: '' }));
+                        }}
+                        color={sexo === 'Feminino' ? theme.colors.primary : undefined}
+                        style={styles.checkbox}
+                      />
+                      <Text style={styles.checkboxText}>Feminino</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {erros.sexo ? <Text style={styles.errorText}>{erros.sexo}</Text> : null}
+                </View>
 
                 <InputCadastro
                     label="REGISTRO DE PROFISSIONAL (Ex: CRN, CRM, etc)"
