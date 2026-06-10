@@ -49,8 +49,6 @@ services:
       - BACKEND_API_URL=http://hydrasense-backend:8080
     ports:
       - "8000:8000"
-    depends_on:
-      - backend
     dns:
       - 8.8.8.8
       - 8.8.4.4
