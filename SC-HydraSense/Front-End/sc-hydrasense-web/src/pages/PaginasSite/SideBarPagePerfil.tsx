@@ -17,13 +17,20 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
     const [email, setEmail] = useState('');
     const [telefone, setTelefone] = useState('');
     const [cargo, setCargo] = useState('');
+    const [sexo, setSexo] = useState('');
 
     useEffect(() => {
         if (user) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setNome(user.nome || '');
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setEmail(user.email || '');
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTelefone(user.telefone || '');
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCargo(user.cargo || '');
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setSexo(user.sexo || '');
         }
     }, [user]);
 
@@ -153,6 +160,36 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
                             <div className="perfil-display-row">
                                 <p className="perfil-campo-valor">{telefone}</p>
                                 <button className="perfil-edit-btn" onClick={() => setEditando('telefone')} title="Editar Telefone">
+                                    <Pencil size={14} />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Sexo Biológico */}
+                    <div className="perfil-campo">
+                        <p className="perfil-campo-label">
+                            <User size={12} /> Sexo Biológico
+                        </p>
+                        {editando === 'sexo' ? (
+                            <div className="perfil-edit-row">
+                                <select 
+                                    className="perfil-edit-input"
+                                    value={sexo} 
+                                    onChange={(e) => setSexo(e.target.value)}
+                                >
+                                    <option value="" disabled>Selecione</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Feminino">Feminino</option>
+                                </select>
+                                <button className="perfil-edit-confirm" onClick={confirmarEdicao} title="Confirmar">
+                                    <Check size={14} />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="perfil-display-row">
+                                <p className="perfil-campo-valor">{sexo || 'Não informado'}</p>
+                                <button className="perfil-edit-btn" onClick={() => setEditando('sexo')} title="Editar Sexo">
                                     <Pencil size={14} />
                                 </button>
                             </div>

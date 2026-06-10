@@ -62,6 +62,37 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.bodyBold,
   },
 
+  // --- ESTILOS DO GÊNERO ---
+  genderContainer: {
+    marginBottom: 25,
+  },
+  genderLabel: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 12,
+    color: '#666666',
+    marginBottom: 15,
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    gap: 24,
+  },
+  checkboxItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    marginRight: 10,
+    borderRadius: 4,
+    borderColor: '#CCC',
+  },
+  checkboxText: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 16,
+    color: '#333333',
+  },
+
   // --- ESTILOS DOS CARDS DE PERFIL ---
   perfilContainer: {
     flexDirection: 'row',

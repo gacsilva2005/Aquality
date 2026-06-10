@@ -13,7 +13,7 @@ export interface Kit {
     isDefault: boolean;
 }
 
-const MODALIDADES = ['BIKE', 'CORRIDA', 'NATAÇÃO', 'MUSCULAÇÃO', 'CICLISMO'];
+const MODALIDADES = ['CARDIO', 'MUSCULAÇÃO'];
 
 interface KitCardProps {
     kit: Kit;

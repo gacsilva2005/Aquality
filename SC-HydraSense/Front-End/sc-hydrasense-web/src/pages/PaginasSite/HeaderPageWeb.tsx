@@ -2,7 +2,7 @@ import { User, Menu } from 'lucide-react';
 import logo from '../../assets/icone_petala.png';
 
 interface HeaderPageWebProps {
-    usuario?: any;
+    usuario?: unknown;
     onPerfilClick: () => void;
     onMenuClick?: () => void;
 }

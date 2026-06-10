@@ -11,14 +11,10 @@ interface ModalTreinoProps {
   onStart: (treinoSelecionado: string) => void;
 }
 
-// Opções de treino (você pode ajustar depois)
+// Opções de treino
 const TREINOS = [
-  { id: '1', nome: 'Corrida', icone: 'run' },
-  { id: '2', nome: 'Ciclismo', icone: 'bike' },
-  { id: '3', nome: 'Musculação', icone: 'dumbbell' },
-  { id: '4', nome: 'Futebol', icone: 'soccer' },
-  { id: '5', nome: 'Natação', icone: 'swim' },
-
+  { id: '1', nome: 'Cardio', icone: 'heart-pulse' },
+  { id: '2', nome: 'Musculação', icone: 'dumbbell' },
 ];
 
 export function ModalTreino({ visible, onClose, onStart }: ModalTreinoProps) {
@@ -56,15 +52,11 @@ export function ModalTreino({ visible, onClose, onStart }: ModalTreinoProps) {
           <View style={styles.listContainer}>
             {TREINOS.map((treino) => {
               const isActive = selected === treino.nome;
-              // Identifica se é a Natação para deixar o card ocupando 100% da largura
-              const isFullWidth = treino.nome === 'Natação'; 
-
               return (
                 <TouchableOpacity
                   key={treino.id}
                   style={[
                     styles.optionCard,
-                    isFullWidth && styles.optionCardFull,
                     isActive && styles.optionCardActive
                   ]}
                   onPress={() => setSelected(treino.nome)}
@@ -74,7 +66,7 @@ export function ModalTreino({ visible, onClose, onStart }: ModalTreinoProps) {
                   {isActive && <View style={styles.activeDot} />}
 
                   {/* WRAPPER PARA ALINHAR ÍCONE E TEXTO */}
-                  <View style={[styles.contentWrapper, isFullWidth && styles.contentWrapperRow]}>
+                  <View style={styles.contentWrapper}>
                     <MaterialCommunityIcons 
                       name={treino.icone as any} 
                       size={36} // Ícone maior como no design

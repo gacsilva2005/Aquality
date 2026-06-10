@@ -57,7 +57,9 @@ export default function Profile() {
             ? calcularIdade(user.dataNascimento)
             : ''
     );
-    const [gender, setGender] = useState<'M' | 'F' | null>('M');
+    const [gender, setGender] = useState<'M' | 'F' | null>(
+        user?.sexo === 'Feminino' ? 'F' : 'M'
+    );
     const [time, setTime] = useState(
         user?.modalidade || ''
     );
@@ -96,6 +98,7 @@ export default function Profile() {
                     nome: user?.nome,
                     pesoAtual: Number(weight),
                     altura: Number(height),
+                    sexo: gender === 'M' ? 'Masculino' : 'Feminino',
                 }),
             });
 

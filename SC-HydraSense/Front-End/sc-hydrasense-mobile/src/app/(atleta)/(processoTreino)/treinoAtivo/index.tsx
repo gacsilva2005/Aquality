@@ -10,10 +10,7 @@ import { Screen } from '../../../../components/Screen';
 
 const getWorkoutIcon = (type: string) => {
     switch (type?.toLowerCase()) {
-        case 'corrida': return 'run';
-        case 'ciclismo': return 'bike';
-        case 'natação': return 'swim';
-        case 'futebol': return 'soccer';
+        case 'cardio': return 'heart-pulse';
         case 'musculação': return 'dumbbell';
         default:           return 'timer';
     }
