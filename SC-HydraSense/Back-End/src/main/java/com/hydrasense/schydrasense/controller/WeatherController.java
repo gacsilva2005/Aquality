@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/clima")
-@CrossOrigin(origins = "*")
 public class WeatherController {
 
     private final WeatherService weatherService;
