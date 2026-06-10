@@ -64,6 +64,7 @@ public class ProfissionalService {
             p.setEmail(dados.getEmail());
             p.setRegistro(dados.getRegistro());
             p.setEspecialidade(dados.getEspecialidade());
+            p.setSexo(dados.getSexo());
             if (dados.getClube() != null && dados.getClube().getNome() != null) {
                 clubeRepository.findByNome(dados.getClube().getNome())
                                .ifPresent(p::setClube);

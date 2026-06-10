@@ -19,6 +19,8 @@ public class AtletaRequestDTO {
 
     private Float altura;
 
+    private String sexo;
+
     private String modalidade;
 
     private LocalDate dataNascimento;
