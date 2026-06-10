@@ -20,13 +20,8 @@ public class WeatherService {
     @Value("${openweather.api.url}")
     private String apiUrl;
 
-    private String getApiKey() {
-        try {
-            return Files.readString(Path.of(secretPath)).trim();
-        } catch (IOException e) {
-            throw new RuntimeException("Não foi possível ler o Docker Secret: " + secretPath, e);
-        }
-    }
+    @Value("${openweather.api.key}")
+    private String apiKey;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -34,7 +29,7 @@ public class WeatherService {
         String url = UriComponentsBuilder.fromHttpUrl(apiUrl)
                 .queryParam("lat", lat)
                 .queryParam("lon", lon)
-                .queryParam("appid", getApiKey())
+                .queryParam("appid", apiKey)
                 .queryParam("units", "metric")
                 .queryParam("lang", "pt_br")
                 .toUriString();
