@@ -30,10 +30,12 @@ export default function Dashboard() {
   const [waterBalance, setWaterBalance] = useState(0.0);
   const [recoveryPercent, setRecoveryPercent] = useState(100);
   const [lastWorkoutDate, setLastWorkoutDate] = useState('');
-  const [weatherTemp, setWeatherTemp]           = useState<number | null>(null);
-  const [weatherSudorese, setWeatherSudorese]   = useState<number>(0);
-  const [weatherAgua, setWeatherAgua]           = useState<number>(0);
-  const [weatherDescricao, setWeatherDescricao] = useState<string>('');
+  const [weatherData, setWeatherData] = useState<{
+    temp: number | null;
+    sudorese: number;
+    agua: number;
+    descricao: string;
+  }>({ temp: null, sudorese: 0, agua: 0, descricao: '' });
 
   // Modal de seleção de treino
   const [isModalVisible, setIsModalVisible] = useState(false);
