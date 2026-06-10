@@ -30,10 +30,12 @@ export default function Dashboard() {
   const [waterBalance, setWaterBalance] = useState(0.0);
   const [recoveryPercent, setRecoveryPercent] = useState(100);
   const [lastWorkoutDate, setLastWorkoutDate] = useState('');
-  const [weatherTemp, setWeatherTemp]           = useState<number | null>(null);
-  const [weatherSudorese, setWeatherSudorese]   = useState<number>(0);
-  const [weatherAgua, setWeatherAgua]           = useState<number>(0);
-  const [weatherDescricao, setWeatherDescricao] = useState<string>('');
+  const [weatherData, setWeatherData] = useState<{
+    temp: number | null;
+    sudorese: number;
+    agua: number;
+    descricao: string;
+  }>({ temp: null, sudorese: 0, agua: 0, descricao: '' });
 
   // Modal de seleção de treino
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -143,10 +145,12 @@ export default function Dashboard() {
         const LAT = -23.55;
         const LON = -46.63;
         const clima = await safeFetch(`${API_URL}/clima/atual?lat=${LAT}&lon=${LON}`);
-        setWeatherTemp(clima.temperatura);
-        setWeatherSudorese(clima.aumentoSudoresePercent);
-        setWeatherAgua(clima.aguaRecomendadaLitros);
-        setWeatherDescricao(clima.descricao);
+        setWeatherData({
+          temp: clima.temperatura,
+          sudorese: clima.aumentoSudoresePercent,
+          agua: clima.aguaRecomendadaLitros,
+          descricao: clima.descricao,
+        });
       } catch (e) {
         console.warn('Clima:', e);
       }
@@ -213,20 +217,19 @@ export default function Dashboard() {
             />
           </View>
 
-          {weatherTemp !== null ? (
+          {weatherData.temp !== null ? (
             <Text style={styles.strategyText}>
               Clima a{' '}
-              <Text style={styles.textHighlightRed}>{Math.round(weatherTemp)}°C</Text>
-              {weatherDescricao ? ` (${weatherDescricao})` : ''}.
-              {weatherSudorese > 0
-                ? ` Sua taxa de sudorese sobe `
-                : ' Condições normais de temperatura. '}
-              {weatherSudorese > 0 && (
-                <Text style={styles.textHighlightRed}>{weatherSudorese}%</Text>
-              )}
-              {weatherSudorese > 0 ? ' nesse calor. Prepare ' : 'Prepare '}
-              <Text style={styles.textHighlightRed}>{weatherAgua.toFixed(1)}L</Text>
-              {' de água extra.'}
+              <Text style={styles.textHighlightRed}>{Math.round(weatherData.temp)}°C</Text>
+              {weatherData.descricao ? ` (${weatherData.descricao})` : ''}.
+              {weatherData.sudorese > 0 && (
+                <> Sua taxa de sudorese sobe{' '}
+                  <Text style={styles.textHighlightRed}>{weatherData.sudorese}%</Text>
+                  {' '}nesse calor.
+                </>
+              )} Prepare{' '}
+              <Text style={styles.textHighlightRed}>{weatherData.agua.toFixed(1)}L</Text>
+              {' '}de água extra.
             </Text>
           ) : (
             <Text style={styles.strategyText}>Carregando dados climáticos...</Text>
