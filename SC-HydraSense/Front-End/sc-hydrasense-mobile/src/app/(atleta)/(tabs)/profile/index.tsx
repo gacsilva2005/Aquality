@@ -15,6 +15,9 @@ import Constants from "expo-constants";
 import { Button } from '@/src/components/Button';
 import { useAlert } from '@/src/contexts/alertContext'; 
 
+import * as FileSystem from 'expo-file-system';
+import * as SecureStore from 'expo-secure-store';
+
 export default function Profile() {
     const alert = useAlert();
     const router = useRouter();
@@ -88,6 +91,21 @@ export default function Profile() {
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
             const API_URL = `http://${ip}:8080`;
 
+            console.log('--- LOG DE SALVAR (ATLETA) ---');
+            console.log('profileImage atual:', profileImage);
+            let base64Image = profileImage;
+            if (profileImage && !profileImage.startsWith('data:')) {
+                try {
+                    const base64 = await FileSystem.readAsStringAsync(profileImage, {
+                        encoding: 'base64',
+                    });
+                    base64Image = `data:image/png;base64,${base64}`;
+                    console.log('Conversão Base64 executada com sucesso! Tamanho:', base64Image.length);
+                } catch (err) {
+                    console.log('Erro ao converter imagem para Base64:', err);
+                }
+            }
+
             const response = await fetch(`${API_URL}/Atleta/${user.id}`, {
                 method: 'PUT',
                 headers: {
@@ -99,6 +117,7 @@ export default function Profile() {
                     pesoAtual: Number(weight),
                     altura: Number(height),
                     sexo: gender === 'M' ? 'Masculino' : 'Feminino',
+                    fotoPerfil: base64Image
                 }),
             });
 
@@ -114,9 +133,12 @@ export default function Profile() {
 
             const updatedUser = JSON.parse(responseText);
 
-            setUser(updatedUser);
+            // Evitar erro de 2KB no SecureStore limpando fotoPerfil do objeto persistido no dispositivo
+            const userToSave = { ...updatedUser, fotoPerfil: null };
+            await SecureStore.setItemAsync('usuarioLogado', JSON.stringify(userToSave));
+            await setUser(updatedUser);
 
-            alert.success('Sucesso', 'Perfil atualizado com sucesso!');
+            alert.success('Sucesso', 'Perfil updated com sucesso!');
             setIsEditing(false);
 
         } catch (error) {

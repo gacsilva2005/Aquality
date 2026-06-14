@@ -54,6 +54,10 @@ public class Atleta {
 
     private Boolean ativado = false;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String fotoPerfil;
+
     //Relação 1:M com Profissional
     @ManyToOne
     @JoinColumn(name = "profissional_id")

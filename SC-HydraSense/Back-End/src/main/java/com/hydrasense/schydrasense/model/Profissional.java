@@ -43,6 +43,10 @@ public class Profissional {
     @Column(length = 300)
     private String resumo;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String fotoPerfil;
+
     @OneToMany(mappedBy = "profissional", cascade = CascadeType.ALL)
     private List<Atleta> atletas = new ArrayList<>();
 
