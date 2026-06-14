@@ -15,7 +15,7 @@ import Constants from "expo-constants";
 import { Button } from '@/src/components/Button';
 import { useAlert } from '@/src/contexts/alertContext'; 
 
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as SecureStore from 'expo-secure-store';
 
 export default function Profile() {
