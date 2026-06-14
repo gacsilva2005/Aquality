@@ -13,6 +13,11 @@ interface User {
     telefone?: string;
     cargo?: string;
     clube?: Clube;
+    sexo?: string;
+    resumo?: string;
+    fotoPerfil?: string;
+    registro?: string;
+    especialidade?: string;
 }
 
 interface UserContextType {

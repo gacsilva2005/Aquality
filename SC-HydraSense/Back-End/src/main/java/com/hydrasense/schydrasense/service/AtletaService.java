@@ -142,6 +142,7 @@ public class AtletaService {
                     atleta.setModalidadePrincipal(atletaAtualizado.getModalidadePrincipal());
                     atleta.setPesoAtual(atletaAtualizado.getPesoAtual());
                     atleta.setSexo(atletaAtualizado.getSexo());
+                    atleta.setFotoPerfil(atletaAtualizado.getFotoPerfil());
                     return repository.save(atleta);
                 })
                 .orElseThrow(() -> new RuntimeException("Atleta não encontrado"));

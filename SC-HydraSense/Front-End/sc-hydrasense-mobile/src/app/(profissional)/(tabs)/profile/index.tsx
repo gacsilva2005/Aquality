@@ -13,6 +13,9 @@ import { useUser } from '../../../../contexts/UserContext';
 import Constants from "expo-constants";
 import { useAlert } from '@/src/contexts/alertContext';
 
+import * as FileSystem from 'expo-file-system/legacy';
+import * as SecureStore from 'expo-secure-store';
+
 const CLUBES = [
     "Corinthians", "Palmeiras", "Santos", "São Paulo", "América-SP", 
     "Guarani", "Ponte Preta", "Ituano", "Juventus", "Portuguesa"
@@ -64,6 +67,21 @@ export default function ProfileProfissional() {
             const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
             const API_URL = `http://${ip}:8080`;
 
+            console.log('--- LOG DE SALVAR (PROFISSIONAL) ---');
+            console.log('profileImage atual:', profileImage);
+            let base64Image = profileImage;
+            if (profileImage && !profileImage.startsWith('data:')) {
+                try {
+                    const base64 = await FileSystem.readAsStringAsync(profileImage, {
+                        encoding: 'base64',
+                    });
+                    base64Image = `data:image/png;base64,${base64}`;
+                    console.log('Conversão Base64 executada com sucesso! Tamanho:', base64Image.length);
+                } catch (err) {
+                    console.log('Erro ao converter imagem para Base64:', err);
+                }
+            }
+
             const response = await fetch(`${API_URL}/profissionais/${user?.id}`, {
                 method: 'PUT',
                 headers: {
@@ -76,7 +94,8 @@ export default function ProfileProfissional() {
                     registro: registro,
                     especialidade: especialidade,
                     sexo: gender === 'M' ? 'Masculino' : 'Feminino',
-                    clube: clube ? { nome: clube.trim() } : null
+                    clube: clube ? { nome: clube.trim() } : null,
+                    fotoPerfil: base64Image
                 }),
             });
 
@@ -88,7 +107,11 @@ export default function ProfileProfissional() {
             const responseText = await response.text();
             const updatedUser = JSON.parse(responseText);
 
-            setUser(updatedUser);
+            // Evitar erro de 2KB no SecureStore limpando fotoPerfil do objeto persistido no dispositivo
+            const userToSave = { ...updatedUser, fotoPerfil: null };
+            await SecureStore.setItemAsync('usuarioLogado', JSON.stringify(userToSave));
+            await setUser(updatedUser);
+            
             alert.success('Sucesso', 'Perfil atualizado!');
             setIsEditing(false);
 

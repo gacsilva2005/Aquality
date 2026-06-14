@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, User, Mail, Phone, Users, Save, Pencil, Check } from 'lucide-react';
 
 import  { useUser } from '../../context/UserContext';
+import { useToast } from '../../context/ToastContext';
 
 interface SideBarPagePerfilProps {
     aberto: boolean;
@@ -10,14 +11,20 @@ interface SideBarPagePerfilProps {
 
 export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) {
 
-    const { user } = useUser();
+    const { user, setUser } = useUser();
+    const { success, error } = useToast();
     console.log(JSON.stringify(user, null, 2));
+    
     // Estado dos campos editáveis
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [telefone, setTelefone] = useState('');
     const [cargo, setCargo] = useState('');
     const [sexo, setSexo] = useState('');
+    const [fotoPerfil, setFotoPerfil] = useState('');
+    const [carregando, setCarregando] = useState(false);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (user) {
@@ -31,6 +38,8 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
             setCargo(user.cargo || '');
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setSexo(user.sexo || '');
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setFotoPerfil(user.fotoPerfil || '');
         }
     }, [user]);
 
@@ -41,6 +50,67 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') confirmarEdicao();
+    };
+
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                if (typeof reader.result === 'string') {
+                    setFotoPerfil(reader.result);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSalvar = async () => {
+        if (!user || !user.id) {
+            error("Erro", "Usuário não autenticado.");
+            return;
+        }
+
+        setCarregando(true);
+        try {
+            const response = await fetch(`http://localhost:8080/profissionais/${user.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ...user,
+                    nome,
+                    email,
+                    telefone,
+                    sexo,
+                    cargo,
+                    especialidade: cargo,
+                    fotoPerfil
+                })
+            });
+
+            if (!response.ok) {
+                const msg = await response.text();
+                error("Erro ao Salvar", msg || "Não foi possível atualizar o perfil.");
+                setCarregando(false);
+                return;
+            }
+
+            const usuarioAtualizado = await response.json();
+            setUser(usuarioAtualizado);
+            success("Sucesso", "Parâmetros de perfil salvos com sucesso.");
+            
+        } catch (err) {
+            console.error(err);
+            error("Erro de Conexão", "Não foi possível conectar ao servidor.");
+        } finally {
+            setCarregando(false);
+        }
     };
 
     return (
@@ -65,12 +135,23 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
                 {/* Card do Usuário */}
                 <div className="perfil-usuario-card">
                     <div className="perfil-avatar-wrapper">
-                        <div className="perfil-avatar">
-                            <User size={28} />
+                        <div className="perfil-avatar" style={{ overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {fotoPerfil ? (
+                                <img src={fotoPerfil} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                                <User size={28} />
+                            )}
                         </div>
-                        <button className="perfil-avatar-edit" title="Alterar Foto">
+                        <button className="perfil-avatar-edit" title="Alterar Foto" onClick={handleAvatarClick}>
                             <Pencil size={10} />
                         </button>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                        />
                     </div>
                     <div className="perfil-usuario-info">
                         {editando === 'nome' ? (
@@ -217,8 +298,8 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
 
                 {/* Botões de Ação */}
                 <div className="perfil-acoes">
-                    <button className="btn-primary">
-                        <Save size={16} /> Salvar Parâmetros
+                    <button className="btn-primary" onClick={handleSalvar} disabled={carregando}>
+                        {carregando ? 'Salvando...' : <><Save size={16} /> Salvar Parâmetros</>}
                     </button>
                 </div>
 
