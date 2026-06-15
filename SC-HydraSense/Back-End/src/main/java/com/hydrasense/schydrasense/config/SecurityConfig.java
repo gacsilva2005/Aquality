@@ -20,18 +20,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults()) // Mantém o CORS do    seu amigo
+                .cors(Customizer.withDefaults()) // Mantém o CORS do seu amigo
                 .authorizeHttpRequests(auth -> auth
-                        // Une as rotas de ambos
-                        .requestMatchers("/", "/auth/**", "/profissionais/**", "/Atleta/**", "/login/**", "/error", "/sessoes-de-treino/**", "/hidratacao/**", "/sessoes/**", "/Equipe/**", "/clima/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                        // Permite TODAS as requisições temporariamente (Bypass Faculdade)
+                        .anyRequest().permitAll()
+                );
+                // COMENTADO TEMPORARIAMENTE A PEDIDO DO USUÁRIO
+                /*
                 .oauth2Login(oauth -> oauth
                         .userInfoEndpoint(user -> user
                                 .userService(customOAuth2UserService)
                         )
                         .defaultSuccessUrl("http://localhost:5173/PageWeb", true)
                 );
+                */
 
         return http.build();
     }
