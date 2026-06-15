@@ -86,7 +86,7 @@ export function TeamCard({ team, onPress }: TeamCardProps) {
 
                 {/* Taxa Média de Suor */}
                 <View style={styles.metricBlock}>
-                    <Text style={styles.metricLabel} numberOfLines={1} adjustsFontSizeToFit>SUOR MÉDIO</Text>
+                    <Text style={styles.metricLabel} numberOfLines={1} adjustsFontSizeToFit>SUDORESE MÉDIA</Text>
                     <View style={styles.metricValueRow}>
                         <Text style={[styles.metricBigNumber, { color: '#C62828' }]} adjustsFontSizeToFit numberOfLines={1}>
                             {team.sweatRate}

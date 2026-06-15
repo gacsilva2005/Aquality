@@ -183,7 +183,7 @@ export function Equipes() {
                                     </div>
 
                                     <div className="equipe-stat-item">
-                                        <p>SUOR MÉDIO</p>
+                                        <p>TAXA DE SUDORESE MÉDIA</p>
                                         <p>{(equipe.sweatRate || 0).toFixed(1)}L/h</p>
                                     </div>
                                 </div>
