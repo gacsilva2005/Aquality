@@ -139,9 +139,17 @@ export default function LoginScreen() {
     }
   };
 
- const handleLogin = () => {
+  const handleLogin = () => {
   performLogin(email, password);
 };
+
+  // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
+  // Tire as duas barras (//) da linha abaixo para pular direto para a tela desejada:
+  //
+     return <Redirect href="/(atleta)/(tabs)/profile" />;
+  //
+  // Para voltar pro Atleta, seria: href="/(atleta)/(tabs)/dashboard"
+  //    return <Redirect href="/(atleta)/(tabs)/profile" />;
 
   return (
     <Screen 
@@ -220,18 +228,6 @@ export default function LoginScreen() {
 
         {/* Divisor */}
         <Divider text="OU CONECTE VIA" />
-
-        {/* Botões Sociais */}
-        <View style={styles.socialRow}>
-          <TouchableOpacity style={styles.socialButton}>
-            <FontAwesome5 name="google" size={18} color="#DB4437" />
-            <Text style={styles.socialButtonText}>Google</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton}>
-            <FontAwesome5 name="apple" size={18} color="#000" />
-            <Text style={styles.socialButtonText}>Apple</Text>
-          </TouchableOpacity>
-        </View>
 
         {/* Rodapé */}
         <View style={styles.footerRow}>

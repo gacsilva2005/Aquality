@@ -124,7 +124,7 @@ export default function MeusKitsScreen() {
                     <Button 
                         title="ADICIONAR NOVO KIT" 
                         iconLeft={<Feather name="plus" size={20} color="#FFF" />}
-                        onPress={() => alert.error("Novo Kit", "Abrir modal de criação")}
+                        onPress={() => router.push('./kits/novo')}
                         style={{ marginBottom: 0 }}
                     />
                 </View>
