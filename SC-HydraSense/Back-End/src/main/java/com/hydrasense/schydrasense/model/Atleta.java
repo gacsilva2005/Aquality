@@ -31,9 +31,6 @@ public class Atleta {
     @Column(length = 100)
     private String modalidade;
 
-    @Column(nullable = false, length = 50)
-    private String modalidadePrincipal;
-
     @Column(nullable = false)
     private Double pesoAtual;
 
@@ -86,14 +83,12 @@ public class Atleta {
                   LocalDate dataNascimento,
                   String email,
                   String modalidade,
-                  String modalidadePrincipal,
                   Double pesoAtual,
                   Float altura) {
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.email = email;
         this.modalidade = modalidade;
-        this.modalidadePrincipal = modalidadePrincipal;
         this.pesoAtual = pesoAtual;
         this.altura = altura;
     }

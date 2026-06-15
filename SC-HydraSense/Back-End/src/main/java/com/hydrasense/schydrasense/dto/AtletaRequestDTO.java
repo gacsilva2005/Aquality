@@ -25,7 +25,5 @@ public class AtletaRequestDTO {
 
     private LocalDate dataNascimento;
 
-    private String modalidadePrincipal;
-
     private Double pesoAtual;
 }

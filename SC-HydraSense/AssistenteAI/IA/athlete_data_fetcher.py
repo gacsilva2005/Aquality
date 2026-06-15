@@ -126,7 +126,6 @@ def build_athlete_context(atleta_id: int) -> str:
             f"- Idade: {idade_str}\n"
             f"- Peso atual: {perfil.get('pesoAtual', 'N/A')} kg\n"
             f"- Altura: {perfil.get('altura', 'N/A')} m\n"
-            f"- Modalidade principal: {perfil.get('modalidadePrincipal', 'N/A')}\n"
             f"- Modalidade: {perfil.get('modalidade', 'N/A')}\n"
             f"- Clube: {perfil.get('clube', {}).get('nome', 'N/A') if perfil.get('clube') else 'N/A'}"
         )

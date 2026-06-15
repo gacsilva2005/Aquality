@@ -58,7 +58,6 @@ public class DataSeeder implements CommandLineRunner {
             devAtleta.setEmail("dev");
             devAtleta.setSenha("dev");
             devAtleta.setDataNascimento(LocalDate.of(2000, 1, 1));
-            devAtleta.setModalidadePrincipal("Corrida");
             devAtleta.setPesoAtual(75.0);
             devAtleta.setAltura(1.75f);
             devAtleta.setClube(clubeDev);
