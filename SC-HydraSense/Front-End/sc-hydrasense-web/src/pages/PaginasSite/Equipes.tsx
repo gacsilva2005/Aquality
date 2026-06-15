@@ -210,6 +210,18 @@ export function Equipes() {
                                     ? `${partesNome[partesNome.length - 1]}, ${partesNome[0]}`
                                     : atleta.nome;
 
+                                let modalidadesStr = 'ATLETA';
+                                if (atleta.modalidade && atleta.modalidade !== '[]') {
+                                    try {
+                                        const parsed = JSON.parse(atleta.modalidade);
+                                        if (Array.isArray(parsed) && parsed.length > 0) {
+                                            modalidadesStr = parsed.join(', ');
+                                        }
+                                    } catch (e) {
+                                        modalidadesStr = atleta.modalidade;
+                                    }
+                                }
+
                                 return (
                                     <div key={atleta.id} className="atleta-item">
                                         <div className="atleta-item-avatar">
@@ -219,7 +231,7 @@ export function Equipes() {
                                             <p className="atleta-item-nome" style={{ textTransform: 'capitalize' }}>
                                                 {nomeFormatado.toLowerCase()}
                                             </p>
-                                            <p className="atleta-item-posicao">{atleta.modalidadePrincipal || 'ATLETA'}</p>
+                                            <p className="atleta-item-posicao">{modalidadesStr}</p>
                                         </div>
                                         <div className="atleta-item-status">
                                             <span className="badge-status ideal">IDEAL</span>

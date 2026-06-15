@@ -9,7 +9,7 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
-import { ModalTipoCadastro } from '../components/modalTipoCadastro'; 
+import { ModalTipoCadastro } from '../components/modalTipoCadastro';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Screen } from '../components/Screen';
@@ -23,12 +23,12 @@ import { router, useFocusEffect, Redirect } from 'expo-router';
 import Constants from 'expo-constants';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
-import { useAlert } from '../contexts/alertContext'; 
+import { useAlert } from '../contexts/alertContext';
 
 export default function LoginScreen() {
   const { setUser } = useUser();
-  const alert = useAlert(); 
-  
+  const alert = useAlert();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -140,26 +140,26 @@ export default function LoginScreen() {
   };
 
   const handleLogin = () => {
-  performLogin(email, password);
-};
+    performLogin(email, password);
+  };
 
   // 🚀 ATALHO DE DESENVOLVIMENTO (TESTES)
   // Tire as duas barras (//) da linha abaixo para pular direto para a tela desejada:
   //
-     return <Redirect href="/(atleta)/(tabs)/profile" />;
+  //return <Redirect href="/(atleta)/(tabs)/profile" />;
   //
   // Para voltar pro Atleta, seria: href="/(atleta)/(tabs)/dashboard"
   //    return <Redirect href="/(atleta)/(tabs)/profile" />;
 
   return (
-    <Screen 
+    <Screen
       bgImage={require('../assets/images/logo.png')}
       backgroundColor="#4A0E17"
       // Aqui controlamos a posição e tamanho sem esticar!
-      imageStyle={{ 
-        height: 500,          
-        transform: [{ translateY: -20 }], 
-      }} 
+      imageStyle={{
+        height: 500,
+        transform: [{ translateY: -20 }],
+      }}
     >
       {/* === CABEÇALHO ESCURO === */}
       <View style={styles.headerSection}>

@@ -60,9 +60,8 @@ public class AtletaService {
         atleta.setEmail(request.getEmail());
         atleta.setSenha(request.getSenha());
         atleta.setDataNascimento(request.getDataNascimento());
-        atleta.setModalidadePrincipal(request.getModalidadePrincipal());
         atleta.setPesoAtual(request.getPesoAtual());
-        atleta.setModalidade(request.getModalidade());
+        atleta.setModalidade("[]");
         atleta.setAltura(request.getAltura());
         atleta.setSexo(request.getSexo());
 
@@ -139,7 +138,6 @@ public class AtletaService {
                 .map(atleta -> {
                     atleta.setNome(atletaAtualizado.getNome());
                     atleta.setDataNascimento(atletaAtualizado.getDataNascimento());
-                    atleta.setModalidadePrincipal(atletaAtualizado.getModalidadePrincipal());
                     atleta.setPesoAtual(atletaAtualizado.getPesoAtual());
                     atleta.setSexo(atletaAtualizado.getSexo());
                     atleta.setFotoPerfil(atletaAtualizado.getFotoPerfil());

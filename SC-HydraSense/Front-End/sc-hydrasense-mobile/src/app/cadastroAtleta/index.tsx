@@ -21,7 +21,6 @@ export default function Cadastro() {
   const [sexo, setSexo] = useState('');
   const [peso, setPeso] = useState('');
   const [altura, setAltura] = useState('');
-  const [time, setTime] = useState('');
   const [codigo, setCodigo] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -68,10 +67,6 @@ export default function Cadastro() {
       novosErros.altura = 'A altura não pode ser zero.';
     }
 
-    if (!time.trim()) {
-      novosErros.time = 'Informe a qual time pertence.';
-    }
-
     if (!codigo.trim()) {
       novosErros.codigo = 'Informe o código da equipe.';
     }
@@ -101,9 +96,7 @@ export default function Cadastro() {
         dataNascimento: dataNascimentoStr,
         pesoAtual: parseFloat(peso),
         altura: parseFloat(altura),
-        modalidade: time.trim(),
-        codigoEquipe: codigo.trim(),
-        modalidadePrincipal: "Geral" // Padrão caso não haja o campo
+        codigoEquipe: codigo.trim()
       };
 
       const response = await fetch(`${API_URL}/Atleta`, {
@@ -297,15 +290,6 @@ export default function Cadastro() {
         </View>
 
         <Text style={styles.sectionTitle}>VÍNCULO COM A EQUIPE</Text>
-
-        <InputCadastro
-          label="TIME (CATEGORIA)"
-          value={time}
-          onChangeText={(text) => handleChange('time', text, setTime)}
-          placeholder="Ex: Futebol Sub-20"
-          autoCapitalize="words"
-          errorMessage={erros.time}
-        />
 
         <InputCadastro
           label="CÓDIGO DA EQUIPE"
