@@ -177,12 +177,14 @@ export function Equipes() {
 
                                     <div className="equipe-stat-item">
                                         <p>ADERÊNCIA</p>
-                                        <p className="critico">90%</p>
+                                        <p className={Math.round((equipe.adherence || 0) * 100) < 50 ? "critico" : ""}>
+                                            {Math.round((equipe.adherence || 0) * 100)}%
+                                        </p>
                                     </div>
 
                                     <div className="equipe-stat-item">
-                                        <p>SUOR MÉDIO</p>
-                                        <p>1.5L/h</p>
+                                        <p>TAXA DE SUDORESE MÉDIA</p>
+                                        <p>{(equipe.sweatRate || 0).toFixed(1)}L/h</p>
                                     </div>
                                 </div>
                             </div>

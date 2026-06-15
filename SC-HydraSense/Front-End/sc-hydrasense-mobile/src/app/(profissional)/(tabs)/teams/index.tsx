@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { Screen } from '../../../../components/Screen';
 import { Button } from '../../../../components/Button'; // Seu botão que agora aceita ícones!
-import { TeamCard, Team } from '../../../../components/TeamCard'; // Nosso novo card
+import { TeamCard, Team, TeamStatus } from '../../../../components/TeamCard'; // Nosso novo card
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { Header } from '@/src/components/Header';
@@ -49,17 +49,32 @@ export default function TeamsScreen() {
             if (response.ok) {
                 const data = await response.json();
                 
-                const equipesFormatadas: Team[] = data.map((equipe: any) => ({
-                    id: String(equipe.id),
-                    name: equipe.nome,
-                    category: equipe.categoria ? equipe.categoria.toUpperCase() : 'CATEGORIA PRINCIPAL',
-                    clube: equipe.clube?.nome || 'NÃO DEFINIDO',
-                    status: 'IDEAL',
-                    activeAthletes: equipe.atletas ? equipe.atletas.length : 0,
-                    totalAthletes: equipe.limiteAtletas || (equipe.atletas ? equipe.atletas.length : 0),
-                    adherence: '90',
-                    sweatRate: '1.5'
-                }));
+                const equipesFormatadas: Team[] = data.map((equipe: any) => {
+                    const adherenceVal = Math.round((equipe.adherence || 0.0) * 100);
+                    
+                    let status: TeamStatus = 'IDEAL';
+                    if (adherenceVal < 50) {
+                        status = 'ALERTA';
+                    } else if (adherenceVal < 80) {
+                        status = 'MONITORAR';
+                    }
+
+                    const sweatRateVal = equipe.sweatRate > 0 
+                        ? equipe.sweatRate.toFixed(1) 
+                        : '0.0';
+
+                    return {
+                        id: String(equipe.id),
+                        name: equipe.nome,
+                        category: equipe.categoria ? equipe.categoria.toUpperCase() : 'CATEGORIA PRINCIPAL',
+                        clube: equipe.clube?.nome || 'NÃO DEFINIDO',
+                        status: status,
+                        activeAthletes: equipe.activeAthletes || 0,
+                        totalAthletes: equipe.limiteAtletas || (equipe.activeAthletes || 0),
+                        adherence: String(adherenceVal),
+                        sweatRate: sweatRateVal
+                    };
+                });
 
                 setTeams(equipesFormatadas);
             }
