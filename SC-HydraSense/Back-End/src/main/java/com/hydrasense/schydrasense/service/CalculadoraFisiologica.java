@@ -27,21 +27,35 @@ public class CalculadoraFisiologica {
         return pesoPos - pesoPre;
     }
 
+    public Float calcularPercentualVariacaoMassa(Float pesoPre, Float pesoPos) {
+        if (pesoPre == null || pesoPos == null || pesoPre <= 0) {
+            return 0.0f;
+        }
+        // Variação = ((Peso Pós - Peso Pré) / Peso Pré) * 100
+        return ((pesoPos - pesoPre) / pesoPre) * 100.0f;
+    }
+
     public String classificarStatusHidratacao(Float pesoPre, Float pesoPos) {
         if (pesoPre == null || pesoPos == null || pesoPre <= 0) {
             return "OPTIMAL";
         }
-        float perdaPeso = pesoPre - pesoPos;
-        if (perdaPeso <= 0) {
-            return "OPTIMAL";
-        }
-        float percentualPerda = (perdaPeso / pesoPre) * 100.0f;
+        
+        float percentualVariacao = calcularPercentualVariacaoMassa(pesoPre, pesoPos);
 
-        if (percentualPerda < 1.0f) {
+        if (percentualVariacao > 1.0f) {
+            // Ganho de peso superior a 1% -> Risco crítico de superingestão (Hiponatremia)
+            return "OVER_HYDRATION_CRITICAL";
+        } else if (percentualVariacao > 0.0f) {
+            // Qualquer ganho de peso -> Atenção para superingestão
+            return "OVER_HYDRATION_WARNING";
+        } else if (percentualVariacao >= -1.0f) {
+            // Perda de 0 a 1% -> Ideal
             return "OPTIMAL";
-        } else if (percentualPerda <= 2.0f) {
+        } else if (percentualVariacao >= -2.0f) {
+            // Perda de 1 a 2% -> Atenção
             return "WARNING";
         } else {
+            // Perda > 2% -> Crítico
             return "CRITICAL";
         }
     }
