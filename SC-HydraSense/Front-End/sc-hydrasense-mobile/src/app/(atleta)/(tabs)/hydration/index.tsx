@@ -115,7 +115,7 @@ export default function Hydration() {
   };
 
   const handleRemoveWater = (id: string, amountToRemove: number) => {
-    alert.error(
+    Alert.alert(
       "Remover Registro",
       "Tem certeza que deseja apagar este registro?",
       [

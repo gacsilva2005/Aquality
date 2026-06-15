@@ -1,6 +1,7 @@
 package com.hydrasense.schydrasense.controller;
 
 import com.hydrasense.schydrasense.dto.EquipeRequestDTO;
+import com.hydrasense.schydrasense.dto.EquipeResponseDTO;
 import com.hydrasense.schydrasense.model.Equipe;
 import com.hydrasense.schydrasense.service.EquipeService;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +44,8 @@ public class EquipeController {
     }
 
     @GetMapping("/clube/{clubeId}")
-    public ResponseEntity<List<Equipe>> listarPorClube(@PathVariable Long clubeId) {
-        return ResponseEntity.ok(equipeService.listarPorClube(clubeId));
+    public ResponseEntity<List<EquipeResponseDTO>> listarPorClube(@PathVariable Long clubeId) {
+        return ResponseEntity.ok(equipeService.listarResumosPorClube(clubeId));
     }
 
     @GetMapping("/{id}")
@@ -61,7 +62,7 @@ public class EquipeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Equipe>> listarTodas() {
-        return ResponseEntity.ok(equipeService.listarTodas());
+    public ResponseEntity<List<EquipeResponseDTO>> listarTodas() {
+        return ResponseEntity.ok(equipeService.listarTodosResumos());
     }
 }

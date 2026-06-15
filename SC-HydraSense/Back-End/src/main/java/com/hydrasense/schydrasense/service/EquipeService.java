@@ -1,15 +1,21 @@
 package com.hydrasense.schydrasense.service;
 
+import com.hydrasense.schydrasense.dto.EquipeResponseDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.Clube;
 import com.hydrasense.schydrasense.model.Equipe;
+import com.hydrasense.schydrasense.model.SessaoDeTreino;
 import com.hydrasense.schydrasense.repository.AtletaRepository;
 import com.hydrasense.schydrasense.repository.ClubeRepository;
 import com.hydrasense.schydrasense.repository.EquipeRepository;
+import com.hydrasense.schydrasense.repository.RegistroDeHidratacaoRepository;
+import com.hydrasense.schydrasense.repository.SessaoDeTreinoRepository;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +28,21 @@ public class EquipeService {
     private final EquipeRepository equipeRepository;
     private final ClubeRepository clubeRepository;
     private final AtletaRepository atletaRepository;
+    private final RegistroDeHidratacaoRepository registroDeHidratacaoRepository;
+    private final SessaoDeTreinoRepository sessaoDeTreinoRepository;
 
-    public EquipeService(EquipeRepository equipeRepository, ClubeRepository clubeRepository, AtletaRepository atletaRepository) {
+    public EquipeService(
+            EquipeRepository equipeRepository,
+            ClubeRepository clubeRepository,
+            AtletaRepository atletaRepository,
+            RegistroDeHidratacaoRepository registroDeHidratacaoRepository,
+            SessaoDeTreinoRepository sessaoDeTreinoRepository
+    ) {
         this.equipeRepository = equipeRepository;
         this.clubeRepository = clubeRepository;
         this.atletaRepository = atletaRepository;
+        this.registroDeHidratacaoRepository = registroDeHidratacaoRepository;
+        this.sessaoDeTreinoRepository = sessaoDeTreinoRepository;
     }
 
     public Equipe criarEquipe(String nome, String categoria, Integer limiteAtletas, Long clubeId, List<Long> atletasIds) {
@@ -92,6 +108,59 @@ public class EquipeService {
 
     public List<Equipe> listarPorClube(Long clubeId) {
         return equipeRepository.findByClubeId(clubeId);
+    }
+
+    public List<EquipeResponseDTO> listarResumosPorClube(Long clubeId) {
+        List<Equipe> equipes = equipeRepository.findByClubeId(clubeId);
+        return equipes.stream()
+                .map(this::obterResumoEquipe)
+                .collect(Collectors.toList());
+    }
+
+    public List<EquipeResponseDTO> listarTodosResumos() {
+        List<Equipe> equipes = equipeRepository.findAll();
+        return equipes.stream()
+                .map(this::obterResumoEquipe)
+                .collect(Collectors.toList());
+    }
+
+    public EquipeResponseDTO obterResumoEquipe(Equipe equipe) {
+        List<Atleta> atletas = equipe.getAtletas();
+        int N = atletas.size();
+
+        double totalTodayVolume = 0.0;
+        double totalSweatRate = 0.0;
+        int athletesWithSweatRate = 0;
+
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.plusDays(1).atStartOfDay();
+
+        for (Atleta atleta : atletas) {
+            Double athleteTodayVolume = registroDeHidratacaoRepository.sumVolumeByAtletaIdAndDateRange(atleta.getId(), startOfDay, endOfDay);
+            if (athleteTodayVolume != null) {
+                totalTodayVolume += athleteTodayVolume;
+            }
+
+            Optional<SessaoDeTreino> latestSessionOpt = sessaoDeTreinoRepository.findFirstByAtletaIdAndDataHoraFimIsNotNullAndTaxaSudoreseIsNotNullOrderByDataHoraFimDesc(atleta.getId());
+            if (latestSessionOpt.isPresent()) {
+                totalSweatRate += latestSessionOpt.get().getTaxaSudorese();
+                athletesWithSweatRate++;
+            }
+        }
+
+        double adherence = 0.0;
+        if (N > 0) {
+            adherence = totalTodayVolume / (3000.0 * N);
+            adherence = Math.max(0.0, Math.min(1.0, adherence));
+        }
+
+        double avgSweatRate = 0.0;
+        if (athletesWithSweatRate > 0) {
+            avgSweatRate = totalSweatRate / athletesWithSweatRate;
+        }
+
+        return new EquipeResponseDTO(equipe, adherence, avgSweatRate);
     }
 
     public Optional<Equipe> buscarPorId(Long id) {
