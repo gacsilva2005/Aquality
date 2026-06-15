@@ -13,7 +13,7 @@ import { Divider } from '@/src/components/Divider';
 import { useUser } from '../../../../contexts/UserContext';
 import Constants from "expo-constants";
 import { Button } from '@/src/components/Button';
-import { useAlert } from '@/src/contexts/alertContext'; 
+import { useAlert } from '@/src/contexts/alertContext';
 
 import * as FileSystem from 'expo-file-system/legacy';
 import * as SecureStore from 'expo-secure-store';
@@ -63,9 +63,17 @@ export default function Profile() {
     const [gender, setGender] = useState<'M' | 'F' | null>(
         user?.sexo === 'Feminino' ? 'F' : 'M'
     );
-    const [time, setTime] = useState(
-        user?.modalidade || ''
-    );
+    let modalidadesStr = 'Sem modalidade';
+    if (user?.modalidade && user.modalidade !== '[]') {
+        try {
+            const parsed = JSON.parse(user.modalidade);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                modalidadesStr = parsed.join(', ');
+            }
+        } catch (e) {
+            modalidadesStr = user.modalidade;
+        }
+    }
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -302,7 +310,7 @@ export default function Profile() {
 
                     <View style={styles.infoCard}>
                         <Text style={styles.infoLabel}>TIME (CATEGORIA)</Text>
-                        <Text style={styles.infoValue}>{time}</Text>
+                        <Text style={styles.infoValue}>{modalidadesStr}</Text>
                     </View>
                 </View>
 

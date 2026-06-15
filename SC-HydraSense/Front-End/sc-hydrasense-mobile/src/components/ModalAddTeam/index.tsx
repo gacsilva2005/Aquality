@@ -14,7 +14,7 @@ interface ModalAddTeamProps {
     onTeamAdded?: () => void;
 }
 
-const ESPORTES = ['Cardio', 'Musculação'];
+const ESPORTES = ['Futebol', 'Natação', 'Corrida', 'Musculação', 'Ciclismo'];
 
 export function ModalAddTeam({ visible, onClose, onTeamAdded }: ModalAddTeamProps) {
     const [teamName, setTeamName] = useState('');
