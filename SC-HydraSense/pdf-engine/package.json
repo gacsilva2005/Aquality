@@ -1,0 +1,14 @@
+{
+  "name": "pdf-engine",
+  "version": "1.0.0",
+  "description": "Microserviço headless para geração de PDFs do SC-HydraSense",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "puppeteer": "^22.8.0"
+  }
+}

@@ -4,6 +4,31 @@ import { useNavigate } from 'react-router-dom';
 export function RelatorioEquipe() {
     const navigate = useNavigate();
 
+    const handleExportarPdf = async () => {
+        try {
+            // ID 1 mockado para a prova de conceito ponta a ponta
+            const sessaoId = 1;
+            const response = await fetch(`http://localhost:8080/api/relatorios/sessao/${sessaoId}/pdf`);
+            
+            if (!response.ok) {
+                throw new Error("Erro ao gerar PDF");
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relatorio-hydroperform-${sessaoId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error("Erro no download:", error);
+            alert("Erro ao exportar o relatório PDF. Verifique se o backend está rodando.");
+        }
+    };
+
     return (
         <div className="relatorio-container">
             {/* Breadcrumb e Cabeçalho */}
@@ -22,7 +47,7 @@ export function RelatorioEquipe() {
                             FUTEBOL MASCULINO A
                         </h1>
                     </div>
-                    <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', padding: '12px 24px' }}>
+                    <button onClick={handleExportarPdf} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', padding: '12px 24px' }}>
                         <Download size={18} /> EXPORTAR RELATÓRIO
                     </button>
                 </div>

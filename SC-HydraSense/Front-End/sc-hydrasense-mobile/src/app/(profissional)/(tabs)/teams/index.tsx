@@ -9,6 +9,7 @@ import { Header } from '@/src/components/Header';
 import { ModalAddTeam } from '@/src/components/ModalAddTeam';
 import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
+import { useRouter } from 'expo-router';
 
 const mockTeams: Team[] = [
     { id: '1', name: 'FUTEBOL MASCULINO A', category: 'CATEGORIA PRINCIPAL', clube: 'HYDRASENSE F.C.', status: 'ALERTA', activeAthletes: 24, totalAthletes: 28, adherence: '96', sweatRate: '1.8' },
@@ -17,6 +18,7 @@ const mockTeams: Team[] = [
 ];
 
 export default function TeamsScreen() {
+    const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [teams, setTeams] = useState<Team[]>(mockTeams);
@@ -124,7 +126,7 @@ export default function TeamsScreen() {
                         <TeamCard 
                             key={team.id} 
                             team={team} 
-                            onPress={() => console.log('Navegar para a equipe', team.id)} 
+                            onPress={() => router.push('/dashboard')} 
                         />
                     ))}
 

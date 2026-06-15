@@ -38,6 +38,13 @@ services:
     depends_on:
       - backend
 
+  pdf-engine:
+    build:
+      context: ./pdf-engine
+    container_name: hydrasense-pdf-engine
+    ports:
+      - "3000:3000"
+
   assistente-ia:
     profiles: ["ai"]
     build:
