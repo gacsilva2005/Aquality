@@ -1,72 +1,192 @@
-import React, {useEffect, useState} from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Screen } from '../../../components/Screen';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { theme } from '@/src/global/themas';
-import { styles } from './styles'; // Vamos criar esse arquivo no próximo passo
-import { LinearGradient } from 'expo-linear-gradient';
+import { styles } from './styles';
+import { LineChart } from 'react-native-chart-kit';
 import { RecordCard, RecordItem } from '../../../components/recordCard';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 
 export default function AthleteDetails() {
     const router = useRouter();
-
     const { id } = useLocalSearchParams();
-    const [atletas, setAtletas] = useState([]);
 
-    useEffect(() => {
-        buscarAtletasDoClube();
-    }, []);
+    const [athleteData, setAthleteData] = useState<any>(null);
+    const [sessions, setSessions] = useState<any[]>([]);
+    const [hydrationVal, setHydrationVal] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(true);
 
-    const buscarAtletasDoClube = async () => {
-        try {
-            const usuarioSalvo = await AsyncStorage.getItem('usuarioLogado');
+    const calcularIdade = (dataNascimento: string) => {
+        if (!dataNascimento) return '--';
+        const hoje = new Date();
+        const nascimento = new Date(dataNascimento);
 
-            if (!usuarioSalvo) {
-                console.log('Nenhum usuário logado');
-                return;
-            }
+        let idade = hoje.getFullYear() - nascimento.getFullYear();
+        const mes = hoje.getMonth() - nascimento.getMonth();
 
-            const usuario = JSON.parse(usuarioSalvo);
-            const clubeId = usuario?.clube?.id;
+        if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+            idade--;
+        }
 
-            if (!clubeId) {
-                console.log('Usuário sem clube');
-                return;
-            }
+        return `${idade} ANOS`;
+    };
 
-            const response = await fetch(`http://SEU_IP:8080/Atleta/clube/${clubeId}`);
+    const capitalize = (str: string) => {
+        return str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : '';
+    };
 
-            if (!response.ok) {
-                throw new Error('Erro ao buscar atletas do clube');
-            }
+    const formatSessionTime = (dateStr: string) => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
 
-            const data = await response.json();
-            setAtletas(data);
+        const timeStr = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-        } catch (error) {
-            console.log(error);
+        if (date.toDateString() === today.toDateString()) {
+            return `HOJE, ${timeStr}`;
+        } else if (date.toDateString() === yesterday.toDateString()) {
+            return `ONTEM, ${timeStr}`;
+        } else {
+            const day = date.getDate().toString().padStart(2, '0');
+            const months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+            const month = months[date.getMonth()];
+            return `${day}/${month}, ${timeStr}`;
         }
     };
 
-    // No futuro, você fará um fetch() na API usando esse 'id' para pegar os dados reais.
-    // Por enquanto, vamos usar dados estáticos baseados no seu design:
-    const athlete = {
-        name: 'Gabriel Silva',
-        sport: 'Karate',
-        number: '10',
-        age: '30 ANOS',
-        hydration: '92%',
-        photo: require('../../../assets/images/karate.jpeg') // Troque pela foto real
+    const getIcon = (mod: string) => {
+        const lower = (mod || '').toLowerCase();
+        if (lower.includes('musculação') || lower.includes('academia') || lower.includes('força') || lower.includes('peso')) {
+            return 'dumbbell';
+        }
+        return 'run';
     };
 
-    // --- MOCK DOS REGISTROS RECENTES ---
-    const recentRecords: RecordItem[] = [
-        { id: '1', title: 'Treino Tático', subtitle: 'Carga Alta • 90 min', time: 'HOJE, 09:30', icon: 'run', isAlert: false },
-        { id: '2', title: 'Alerta HRV', subtitle: 'Recuperação Incompleta (42ms)', time: 'ONTEM, 22:00', icon: 'heart-pulse', isAlert: true },
-        { id: '3', title: 'Força & Potência', subtitle: 'Carga Média • 45 min', time: 'ONTEM, 14:00', icon: 'dumbbell', isAlert: false },
-    ];
+    useEffect(() => {
+        const fetchAllData = async () => {
+            try {
+                const hostUri = Constants?.expoConfig?.hostUri;
+                const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+                const API_URL = `http://${ip}:8080`;
+
+                // 1. Fetch athlete details
+                const athleteRes = await fetch(`${API_URL}/Atleta/${id}`);
+                if (athleteRes.ok) {
+                    const data = await athleteRes.json();
+                    setAthleteData(data);
+                }
+
+                // 2. Fetch sessions
+                const sessionsRes = await fetch(`${API_URL}/sessoes-de-treino/atleta/${id}`);
+                if (sessionsRes.ok) {
+                    const data = await sessionsRes.json();
+                    setSessions(data);
+                }
+
+                // 3. Fetch hydration
+                const hydrationRes = await fetch(`${API_URL}/hidratacao/atleta/${id}`);
+                if (hydrationRes.ok) {
+                    const data = await hydrationRes.json();
+                    const todayStr = new Date().toDateString();
+                    const totalToday = data
+                        .filter((item: any) => item.dataHora && new Date(item.dataHora).toDateString() === todayStr)
+                        .reduce((sum: number, item: any) => sum + item.volume, 0);
+                    setHydrationVal(totalToday);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados do atleta:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchAllData();
+        }
+    }, [id]);
+
+    if (loading) {
+        return (
+            <Screen backgroundColor="#F7F7F7" scrollable={false}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                    <Text style={{ marginTop: 10, color: '#666' }}>Carregando dados do atleta...</Text>
+                </View>
+            </Screen>
+        );
+    }
+
+    // Processar modalidades
+    let modalitiesStr = 'Sem modalidade';
+    if (athleteData?.modalidade) {
+        try {
+            const parsed = JSON.parse(athleteData.modalidade);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                modalitiesStr = parsed.join(', ');
+            } else {
+                modalitiesStr = athleteData.modalidade;
+            }
+        } catch (e) {
+            modalitiesStr = athleteData.modalidade;
+        }
+    }
+
+    // Foto de perfil
+    const photoSource = athleteData?.fotoPerfil
+        ? (athleteData.fotoPerfil.startsWith('data:image')
+            ? { uri: athleteData.fotoPerfil }
+            : { uri: `data:image/jpeg;base64,${athleteData.fotoPerfil}` })
+        : require('../../../assets/images/karate.jpeg');
+
+    // Gráfico de Sudorese
+    const finishedSessions = sessions.filter((s: any) => s.dataHoraFim !== null && s.taxaSudorese !== null);
+    const sortedFinished = [...finishedSessions].sort((a: any, b: any) => new Date(a.dataHoraFim).getTime() - new Date(b.dataHoraFim).getTime());
+    const chartData = sortedFinished.map((s: any) => s.taxaSudorese);
+
+    const latestSweatRate = sortedFinished.length > 0 ? sortedFinished[sortedFinished.length - 1].taxaSudorese : null;
+
+    // Mapeamento dos registros recentes
+    const recentRecords: RecordItem[] = [...sessions]
+        .filter((s: any) => s.dataHoraFim !== null)
+        .sort((a: any, b: any) => new Date(b.dataHoraFim).getTime() - new Date(a.dataHoraFim).getTime())
+        .slice(0, 5)
+        .map((session: any) => {
+            const start = new Date(session.dataHoraInicio);
+            const end = new Date(session.dataHoraFim);
+            const duracaoMin = Math.round((end.getTime() - start.getTime()) / 60000);
+            const durationText = `${duracaoMin} min`;
+
+            const sweatText = session.taxaSudorese ? ` • Sudorese: ${session.taxaSudorese.toFixed(1)} L/H` : '';
+            const subtitle = `Duração: ${durationText}${sweatText}`;
+
+            const title = capitalize(session.modalidade || 'Treino');
+            const time = formatSessionTime(session.dataHoraFim || session.dataHoraInicio);
+            const icon = getIcon(session.modalidade);
+
+            const pesoPre = session.pesagemPre ? session.pesagemPre.peso : (session.pesoPre || 0);
+            const pesoPos = session.pesagemPos ? session.pesagemPos.peso : (session.pesoPos || 0);
+            let isAlert = false;
+            if (pesoPre > 0 && pesoPos > 0) {
+                const perdaPeso = pesoPre - pesoPos;
+                const percentualPerda = (perdaPeso / pesoPre) * 100;
+                if (percentualPerda > 2.0) {
+                    isAlert = true;
+                }
+            }
+
+            return {
+                id: String(session.id),
+                title,
+                subtitle,
+                time,
+                icon,
+                isAlert
+            };
+        });
 
     return (
         <Screen backgroundColor="#F7F7F7" scrollable={true}>
@@ -82,75 +202,96 @@ export default function AthleteDetails() {
 
                 {/* --- HEADER DO ATLETA --- */}
                 <View style={styles.header}>
-                    <Image source={athlete.photo} style={styles.photo} />
+                    <Image source={photoSource} style={styles.photo} />
 
                     <View style={styles.headerInfo}>
-                        <Text style={styles.name}>{athlete.name}</Text>
+                        <Text style={styles.name}>{athleteData?.nome || 'Atleta'}</Text>
                         <Text style={styles.subInfo}>
-                            {athlete.sport} • #{athlete.number} • {athlete.age}
+                            {modalitiesStr} • #{id} • {athleteData?.dataNascimento ? calcularIdade(athleteData.dataNascimento) : '--'}
                         </Text>
 
                         <View style={styles.hydrationContainer}>
-                            <Text style={styles.hydrationLabel}>HIDRATAÇÃO</Text>
-                            <Text style={styles.hydrationValue}>{athlete.hydration}</Text>
+                            <Text style={styles.hydrationLabel}>HIDRATAÇÃO HOJE</Text>
+                            <Text style={styles.hydrationValue}>{hydrationVal} ml</Text>
                         </View>
                     </View>
 
                     {/* Número gigante de fundo (Marca d'água) */}
-                    <Text style={styles.watermarkNumber}>#{athlete.number}</Text>
+                    <Text style={styles.watermarkNumber}>#{id}</Text>
                 </View>
 
-                {/* --- GRÁFICO (Placeholder) --- */}
+                {/* --- GRÁFICO (Taxa de Sudorese) --- */}
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeader}>
                         <View>
                             <Text style={styles.sectionTitle}>TAXA DE SUDORESE</Text>
-                            <Text style={styles.sectionSubtitle}>Sessão Atual vs Baseline</Text>
+                            <Text style={styles.sectionSubtitle}>Histórico de Sessões</Text>
                         </View>
                     </View>
 
                     <View style={styles.rateContainer}>
-                        <Text style={styles.rateValue}>1.8</Text>
-                        <Text style={styles.rateUnit}>L/hr</Text>
-                        <Feather name="arrow-up" size={16} color="#C62828" style={{ marginLeft: 5 }} />
+                        <Text style={styles.rateValue}>{latestSweatRate !== null ? latestSweatRate.toFixed(1) : '--'}</Text>
+                        <Text style={styles.rateUnit}>{latestSweatRate !== null ? 'L/h' : ''}</Text>
                     </View>
 
-                    {/* Aqui entrará a biblioteca de gráfico no futuro (ex: react-native-chart-kit) */}
-                    <View style={styles.graphPlaceholder}>
-                        <Text style={{ color: '#999' }}>Gráfico entrará aqui</Text>
-                    </View>
-                </View>
-
-                {/* --- PROTOCOLO DE RECUPERAÇÃO --- */}
-                <View style={[styles.sectionCard, styles.protocolCard]}>
-                    <LinearGradient
-                        colors={['transparent', 'rgba(204, 9, 41, 0.72)']}
-                        style={styles.rightGlow}
-                        pointerEvents="none"
-                    />
-                    <View style={styles.protocolHeader}>
-                        <MaterialCommunityIcons name="water" size={16} color="#C62828" />
-                        <Text style={styles.protocolTitle}>PROTOCOLO DE RECUPERAÇÃO</Text>
-                    </View>
-
-                    <View style={styles.protocolContent}>
-                        <View>
-                            <Text style={styles.protocolAction}>Ingerir 1.5L</Text>
-                            <Text style={styles.protocolDetail}>Solução Isotônica - Próximas 2hrs</Text>
+                    {chartData.length > 0 ? (
+                        <View style={{ marginVertical: 8 }}>
+                            <LineChart
+                                data={{
+                                    labels: [],
+                                    datasets: [{ data: chartData.length > 1 ? chartData : [...chartData, ...chartData] }],
+                                }}
+                                width={Dimensions.get('window').width - 64}
+                                height={160}
+                                withDots={true}
+                                withInnerLines={false}
+                                withOuterLines={false}
+                                withVerticalLabels={false}
+                                withHorizontalLabels={false}
+                                chartConfig={{
+                                    backgroundGradientFrom: '#FFFFFF',
+                                    backgroundGradientTo: '#FFFFFF',
+                                    color: (opacity = 1) => `rgba(217, 4, 41, ${opacity})`,
+                                    strokeWidth: 2,
+                                    fillShadowGradientFrom: '#D90429',
+                                    fillShadowGradientTo: '#FFFFFF',
+                                    fillShadowGradientFromOpacity: 0.25,
+                                    fillShadowGradientToOpacity: 0.0,
+                                    propsForDots: {
+                                        r: '4',
+                                        strokeWidth: '2',
+                                        stroke: '#D90429',
+                                        fill: '#FFFFFF',
+                                    },
+                                }}
+                                bezier
+                                style={{ borderRadius: 16 }}
+                            />
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 8, marginTop: 4 }}>
+                                <Text style={{ fontSize: 10, color: '#999' }}>PRIMEIRA SESSÃO</Text>
+                                <Text style={{ fontSize: 10, color: '#999' }}>ÚLTIMA SESSÃO</Text>
+                            </View>
                         </View>
-                        <TouchableOpacity style={styles.checkButton}>
-                            <Feather name="check" size={20} color="#FFF" />
-                        </TouchableOpacity>
-                    </View>
+                    ) : (
+                        <View style={styles.graphPlaceholder}>
+                            <Text style={{ color: '#999' }}>Sem dados de sudorese para exibir</Text>
+                        </View>
+                    )}
                 </View>
 
                 {/* --- REGISTROS RECENTES --- */}
                 <View style={styles.recordsSection}>
                     <Text style={styles.recordsSectionTitle}>REGISTROS RECENTES</Text>
 
-                    {recentRecords.map((record) => (
-                        <RecordCard key={record.id} record={record} />
-                    ))}
+                    {recentRecords.length > 0 ? (
+                        recentRecords.map((record) => (
+                            <RecordCard key={record.id} record={record} />
+                        ))
+                    ) : (
+                        <View style={{ padding: 20, alignItems: 'center', backgroundColor: '#FFF', borderRadius: 8 }}>
+                            <Text style={{ color: '#999' }}>Nenhum treino registrado recente.</Text>
+                        </View>
+                    )}
                 </View>
 
             </View>
