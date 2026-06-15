@@ -90,7 +90,11 @@ export default function Athletes() {
                         sudorese: sudoreseVal,
                         hidro: hidroVal,
                         status: 'ÓTIMO',
-                        photo: require('../../../../assets/images/karate.jpeg')
+                        photo: atleta.fotoPerfil
+                            ? (atleta.fotoPerfil.startsWith('data:image')
+                                ? { uri: atleta.fotoPerfil }
+                                : { uri: `data:image/jpeg;base64,${atleta.fotoPerfil}` })
+                            : require('../../../../assets/images/karate.jpeg')
                     };
                 })
             );
