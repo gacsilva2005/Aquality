@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório HydroPerform - <%= data.atleta.nome %></title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --hydro-bg-main: #F8F9FA;
+            --hydro-bg-card: #FFFFFF;
+            --hydro-bg-header: #121212;
+            --hydro-text-primary: #212529;
+            --hydro-text-muted: #6C757D;
+            --hydro-border: rgba(73, 80, 87, 0.2);
+            --hydro-action: #D90429;
+            --hydro-critical: #641220;
+            --hydro-success: #2B9348;
+            --hydro-attention: #FFD60A;
+
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        @page { size: A4 portrait; margin: 0; }
+
+        body {
+            background-color: var(--hydro-bg-main);
+            font-family: var(--font-body);
+            color: var(--hydro-text-primary);
+            margin: 0; padding: 0;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-container {
+            width: 210mm; min-height: 297mm;
+            margin: 0 auto;
+            background-color: var(--hydro-bg-main);
+            position: relative;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            background-color: var(--hydro-bg-header); color: white;
+            padding: 24px 32px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .header-logo {
+            font-family: var(--font-display); font-weight: 700; font-size: 24px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .header-info {
+            font-family: var(--font-body); font-size: 12px;
+            color: rgba(255, 255, 255, 0.8); text-align: right;
+        }
+        .container { padding: 32px; }
+
+        .hero-section {
+            background-color: var(--hydro-bg-card);
+            border: 1px solid var(--hydro-border); border-radius: 12px;
+            padding: 24px; display: flex; gap: 24px; margin-bottom: 24px;
+            align-items: center;
+        }
+        .hero-block-a {
+            flex: 1; display: flex; align-items: center; gap: 16px;
+            border-right: 1px solid var(--hydro-border); padding-right: 24px;
+        }
+        .hero-value {
+            font-family: var(--font-display); font-size: 48px; font-weight: 700;
+        }
+        .badge-status {
+            padding: 6px 12px; border-radius: 20px;
+            font-family: var(--font-body); font-weight: 600; font-size: 14px;
+            display: flex; align-items: center; gap: 6px; color: white;
+        }
+        .status-optimal { background-color: var(--hydro-success); }
+        .status-attention { background-color: var(--hydro-attention); color: var(--hydro-text-primary); }
+        .status-critical { background-color: var(--hydro-critical); }
+        .status-super { background-color: #0077B6; } /* Azul para superingestão */
+
+        .hero-block-b { flex: 2; }
+        .hero-label {
+            font-size: 12px; color: var(--hydro-text-muted); text-transform: uppercase;
+            font-weight: 600; margin-bottom: 8px;
+        }
+        .hero-recommendation { font-size: 16px; font-weight: 500; line-height: 1.5; }
+
+        .telemetry-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;
+        }
+        .telemetry-card {
+            background-color: var(--hydro-bg-card);
+            border: 1px solid var(--hydro-border); border-radius: 12px; padding: 20px;
+        }
+        .card-title {
+            font-family: var(--font-display); font-weight: 700; font-size: 16px;
+            margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid var(--hydro-border); padding-bottom: 8px;
+        }
+        .data-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0; border-bottom: 1px dashed var(--hydro-border);
+        }
+        .data-row:last-child { border-bottom: none; }
+        .data-label { font-size: 11px; color: var(--hydro-text-muted); display: flex; align-items: center; gap: 6px; }
+        .data-value { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
+
+        .dashboard-panel {
+            background-color: var(--hydro-bg-card);
+            border: 1px solid var(--hydro-border); border-radius: 12px;
+            padding: 24px; margin-bottom: 24px;
+            display: grid; grid-template-columns: 1fr 2fr; gap: 32px; align-items: center;
+        }
+        .sweat-rate-box { text-align: center; border-right: 1px solid var(--hydro-border); padding-right: 32px; }
+        .sweat-rate-value { font-family: var(--font-display); font-size: 42px; font-weight: 700; color: var(--hydro-action); }
+
+        .progress-container { width: 100%; }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+        .progress-bar-bg { height: 12px; background-color: #E9ECEF; border-radius: 6px; overflow: hidden; position: relative; }
+        .progress-fill-loss { position: absolute; height: 100%; background-color: var(--hydro-text-muted); width: 100%; opacity: 0.3; }
+        
+        .longitudinal-section {
+            background-color: var(--hydro-bg-card);
+            border: 1px solid var(--hydro-border); border-radius: 12px;
+            padding: 24px; display: flex; gap: 24px;
+        }
+        .chart-container { flex: 3; height: 200px; }
+        .stats-container { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .stat-box { background-color: var(--hydro-bg-main); border: 1px solid var(--hydro-border); border-radius: 8px; padding: 12px; text-align: center; }
+        .stat-label { font-size: 11px; color: var(--hydro-text-muted); text-transform: uppercase; }
+        .stat-value { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+
+        .footer {
+            position: absolute; bottom: 24px; left: 32px; right: 32px;
+            border-top: 1px solid var(--hydro-border); padding-top: 12px;
+            font-size: 9px; color: var(--hydro-text-muted); display: flex; justify-content: space-between;
+        }
+        .profile-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    <header class="header">
+        <div class="header-logo">
+            <i data-lucide="droplet" color="white" size="28"></i> HydroPerform
+        </div>
+        <div class="header-info" style="display: flex; gap: 12px; align-items: center;">
+            <div style="text-align: right;">
+                Data: <%= data.dataGeracao %><br>
+                Atleta: <%= data.atleta.nome %> (<%= data.atleta.identificacao %>)<br>
+                Modalidade: <%= data.atleta.modalidade %>
+            </div>
+            <% if (data.atleta.fotoBase64) { %>
+                <img src="<%= data.atleta.fotoBase64 %>" class="profile-img" alt="Foto">
+            <% } %>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Lógica de Status -->
+        <% 
+            let statusClass = "status-optimal";
+            let statusIcon = "check-circle";
+            let statusText = "Ótimo";
+            let recommendation = "Hidratação mantida em níveis adequados. Continue com a estratégia atual.";
+            let status = data.motorSudorese.statusHidratacao;
+
+            if (data.motorSudorese.isRiscoSuperingestao) {
+                statusClass = "status-super"; statusIcon = "info"; statusText = "Superingestão";
+                recommendation = "O atleta ganhou peso durante a sessão. Risco de hiponatremia associada ao exercício. Reduza a ingestão de líquidos nas próximas sessões de mesma intensidade.";
+            } else if (data.motorSudorese.isDesidratacaoSevera || status === 'CRITICAL') {
+                statusClass = "status-critical"; statusIcon = "alert-octagon"; statusText = "Severo";
+                recommendation = "Desidratação crítica (>2%). Risco fisiológico elevado e perda de performance comprovada. Iniciar reposição hídrica imediata com soro oral e eletrólitos.";
+            } else if (status === 'WARNING') {
+                statusClass = "status-attention"; statusIcon = "alert-triangle"; statusText = "Atenção";
+                recommendation = "Desidratação leve a moderada. O atleta deve repor 150% do volume perdido nas próximas 2-4 horas. Atenção aos eletrólitos.";
+            }
+        %>
+
+        <div class="hero-section">
+            <div class="hero-block-a">
+                <div>
+                    <div class="hero-label">Variação de Massa</div>
+                    <div class="hero-value"><%= data.motorSudorese.variacaoPercentualMassa %>%</div>
+                </div>
+                <div class="badge-status <%= statusClass %>">
+                    <i data-lucide="<%= statusIcon %>" size="16"></i> <%= statusText %>
+                </div>
+            </div>
+            <div class="hero-block-b">
+                <div class="hero-label">Veredito e Recomendação Clínica</div>
+                <div class="hero-recommendation"><%= recommendation %></div>
+            </div>
+        </div>
+
+        <div class="telemetry-grid">
+            <div class="telemetry-card">
+                <div class="card-title">
+                    <i data-lucide="clipboard-list" size="18" color="var(--hydro-text-muted)"></i> Pré-Sessão
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Peso Inicial</div>
+                    <div class="data-value"><%= data.preSessao.pesoInicial %> kg</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label"><i data-lucide="sun" size="14"></i> Clima</div>
+                    <div class="data-value"><%= data.preSessao.temperatura %>°C / <%= data.preSessao.umidade %>%</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label"><i data-lucide="test-tube" size="14"></i> Urina (Basal)</div>
+                    <div class="data-value">Escala <%= data.preSessao.corUrinaBasal %></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label"><i data-lucide="shirt" size="14"></i> Check-in</div>
+                    <div class="data-value" style="color: var(--hydro-success)">OK</div>
+                </div>
+            </div>
+
+            <div class="telemetry-card">
+                <div class="card-title">
+                    <i data-lucide="flag" size="18" color="var(--hydro-text-muted)"></i> Pós-Sessão
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Peso Final</div>
+                    <div class="data-value"><%= data.posSessao.pesoFinal %> kg</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label"><i data-lucide="scale" size="14"></i> Variação Abs.</div>
+                    <div class="data-value"><%= data.posSessao.variacaoAbsoluta %> kg</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label"><i data-lucide="heart-pulse" size="14"></i> Sintomas</div>
+                    <div class="data-value"><%= data.posSessao.sintomas %></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label"><i data-lucide="thumbs-up" size="14"></i> Tolerância</div>
+                    <div class="data-value">Boa</div>
+                </div>
+            </div>
+
+            <div class="telemetry-card">
+                <div class="card-title">
+                    <i data-lucide="activity" size="18" color="var(--hydro-text-muted)"></i> Checklists
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Vestimenta Leve</div>
+                    <div class="data-value"><%= data.preSessao.checklistVestimenta ? 'Sim' : 'Não' %></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Bexiga Vazia</div>
+                    <div class="data-value"><%= data.preSessao.checklistBexigaVazia ? 'Sim' : 'Não' %></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Balança Calibrada</div>
+                    <div class="data-value"><%= data.preSessao.checklistBalancaCorreta ? 'Sim' : 'Não' %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-panel">
+            <div class="sweat-rate-box">
+                <div class="hero-label">Taxa de Sudorese Estimada</div>
+                <div class="sweat-rate-value"><%= data.motorSudorese.taxaSudoreseEstimada %> <span style="font-size: 20px; color: var(--hydro-text-muted)">L/h</span></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-labels">
+                    <span style="color: var(--hydro-text-muted)">Perda Total de Massa</span>
+                    <span style="color: var(--hydro-action)"><%= data.posSessao.variacaoAbsoluta %> kg</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill-loss"></div>
+                    <!-- Exemplo visual estático -->
+                    <div class="deficit-marker" style="width: 100%; left: 0;"></div>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="font-family: var(--font-display); font-size: 18px; margin-bottom: 12px; margin-top: 0;">Evolução Histórica (Estático p/ PDF)</h2>
+        <div class="longitudinal-section">
+            <div class="chart-container">
+                <canvas id="longitudinalChart"></canvas>
+            </div>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-label">Último Registo</div>
+                    <div class="stat-value"><%= data.motorSudorese.taxaSudoreseEstimada %> L/h</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div>Gerado automaticamente por HydroPerform | Validação Clínica: São Camilo</div>
+        <div>Sessão ID: #<%= data.sessaoId %></div>
+    </footer>
+</div>
+
+<script>
+    lucide.createIcons();
+    const ctx = document.getElementById('longitudinalChart').getContext('2d');
+    let gradient = ctx.createLinearGradient(0, 0, 0, 200);
+    gradient.addColorStop(0, 'rgba(217, 4, 41, 0.2)');
+    gradient.addColorStop(1, 'rgba(217, 4, 41, 0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mês Passado', 'Semana Passada', 'Atual'],
+            datasets: [{
+                label: 'Taxa de Sudorese (L/h)',
+                data: [1.1, 1.2, <%= data.motorSudorese.taxaSudoreseEstimada %>],
+                borderColor: '#D90429', backgroundColor: gradient,
+                borderWidth: 3, pointBackgroundColor: '#FFFFFF',
+                pointBorderColor: '#D90429', pointBorderWidth: 2, pointRadius: 4,
+                fill: true, tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, border: { display: false } },
+                x: { grid: { display: false }, border: { display: false } }
+            },
+            animation: false
+        }
+    });
+</script>
+</body>
+</html>
