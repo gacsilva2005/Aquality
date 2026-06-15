@@ -186,15 +186,6 @@ export function Home() {
               <span>OU CONECTE VIA</span>
             </div>
 
-            <div className="social-login">
-                <button type="button" className="btn-social" onClick={handleGoogleLogin}>
-                    <Globe size={18} /> GOOGLE
-                </button>
-              <button type="button" className="btn-social">
-                <Apple size={18} /> APPLE
-              </button>
-            </div>
-
             <p className="signup-prompt">
               Novo no AQuality?
               <span onClick={() => navigate('/registro')} style={{ cursor: 'pointer' }}> Solicitar acesso ao Painel</span>
