@@ -17,7 +17,12 @@ import { theme } from '@/src/global/themas';
 import { styles } from './styles';
 
 export default function ChecklistPadronizacao() {
-    const { type, sessaoId, descontoKitGramas } = useLocalSearchParams();
+    const { type, sessaoId, descontoKitGramas, kitNome } = useLocalSearchParams<{
+        type: string;
+        sessaoId: string;
+        descontoKitGramas?: string;
+        kitNome?: string;
+    }>();
 
     const [checkboxes, setCheckboxes] = useState({
         bexiga: false,
@@ -93,13 +98,29 @@ export default function ChecklistPadronizacao() {
                 {/* --- KIT SELECIONADO --- */}
                 <View style={styles.section}>
                     <View style={styles.kitCard}>
-                        <MaterialCommunityIcons name="checkbox-marked-circle" size={24} color={theme.colors.primary} />
+                        <MaterialCommunityIcons 
+                            name={parseFloat(descontoKitGramas || '0') > 0 ? "checkbox-marked-circle" : "close-circle-outline"} 
+                            size={24} 
+                            color={parseFloat(descontoKitGramas || '0') > 0 ? theme.colors.primary : "#999"} 
+                        />
                         <View style={styles.kitInfo}>
                             <Text style={styles.kitTitle}>KIT SELECIONADO</Text>
-                            <Text style={styles.kitName}>Kit Corrida Leve — 320g</Text>
+                            <Text style={styles.kitName}>
+                                {parseFloat(descontoKitGramas || '0') > 0
+                                    ? `${kitNome || 'Kit'} — ${descontoKitGramas}g`
+                                    : "Sem equipamento"}
+                            </Text>
                         </View>
-                        <View style={styles.badgeSelecionado}>
-                            <Text style={styles.badgeText}>SELECIONADO</Text>
+                        <View style={[
+                            styles.badgeSelecionado, 
+                            parseFloat(descontoKitGramas || '0') <= 0 && { backgroundColor: '#E0E0E0' }
+                        ]}>
+                            <Text style={[
+                                styles.badgeText, 
+                                parseFloat(descontoKitGramas || '0') <= 0 && { color: '#666' }
+                            ]}>
+                                {parseFloat(descontoKitGramas || '0') > 0 ? "SELECIONADO" : "NENHUM"}
+                            </Text>
                         </View>
                     </View>
                 </View>
