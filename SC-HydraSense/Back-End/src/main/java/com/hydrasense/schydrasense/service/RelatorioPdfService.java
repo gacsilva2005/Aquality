@@ -1,6 +1,11 @@
 package com.hydrasense.schydrasense.service;
 
 import com.hydrasense.schydrasense.dto.RelatorioPdfDTO;
+import com.hydrasense.schydrasense.dto.RelatorioEquipeDTO;
+import com.hydrasense.schydrasense.dto.RelatorioGeralDTO;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import com.hydrasense.schydrasense.model.SessaoDeTreino;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.repository.EstatisticasProjection;
@@ -120,5 +125,42 @@ public class RelatorioPdfService {
                 atletaRecord,
                 dataGeracao
         );
+    }
+
+    public RelatorioGeralDTO gerarPayloadGeral(Long clubeId) {
+        return new RelatorioGeralDTO(
+            System.currentTimeMillis(),
+            LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+            "1.5%",
+            "87%",
+            124,
+            8,
+            List.of(
+                new RelatorioGeralDTO.EquipeRankingRecord("Sub-20", 95),
+                new RelatorioGeralDTO.EquipeRankingRecord("Profissional B", 88),
+                new RelatorioGeralDTO.EquipeRankingRecord("Feminino A", 85)
+            )
+        );
+    }
+
+    public RelatorioEquipeDTO gerarPayloadEquipe(Long equipeId) {
+        // Retornando os dados mockados que seguem o formato do novo DTO de Equipe
+        List<RelatorioEquipeDTO.AtletaResumoRecord> atletas = List.of(
+            new RelatorioEquipeDTO.AtletaResumoRecord("João Silva", "Ideal", 0.5f, 1.1f),
+            new RelatorioEquipeDTO.AtletaResumoRecord("Carlos Souza", "Atenção", -1.2f, 1.5f),
+            new RelatorioEquipeDTO.AtletaResumoRecord("Fernando Reis", "Crítico", -2.5f, 2.1f)
+        );
+
+        return new RelatorioEquipeDTO(
+            System.currentTimeMillis(),
+            "Equipe Principal " + equipeId,
+            LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+            atletas
+        );
+    }
+
+    public Object gerarPayloadSessao(Long sessaoId) {
+        // Delega para o método existente de sessão
+        return gerarPayloadRelatorio(sessaoId);
     }
 }
