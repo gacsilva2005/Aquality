@@ -73,3 +73,7 @@ coverage/
 ### Sistema Operacional ###
 .DS_Store
 Thumbs.db
+
+### Arquivos auxiliares locais ###
+backend_logs.txt
+cheatsheet.md

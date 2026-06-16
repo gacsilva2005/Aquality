@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import tempfile
+import ssl
 from typing import Optional
 
 import httpx
@@ -19,6 +20,15 @@ load_dotenv(find_dotenv())
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Flag para ambiente da Mauá (desabilita verificação SSL)
+DISABLE_SSL_VERIFY = os.getenv("DISABLE_SSL_VERIFY", "false").lower() == "true"
+if DISABLE_SSL_VERIFY:
+    os.environ["CURL_CA_BUNDLE"] = ""
+    os.environ["REQUESTS_CA_BUNDLE"] = ""
+    ssl._create_default_https_context = ssl._create_unverified_context
+    logger.warning("AVISO CRÍTICO: VERIFICAÇÃO SSL DESABILITADA (DISABLE_SSL_VERIFY=true). Risco de MITM.")
+
 
 
 def strip_markdown(text: str) -> str:
@@ -53,6 +63,7 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     session_id: str
+    atleta_id: Optional[int] = None
     message: str
 
 class ChatResponse(BaseModel):
@@ -60,22 +71,23 @@ class ChatResponse(BaseModel):
     sources: list[dict] = []
 
 
-def _resolve_athlete_context(session_id: str) -> Optional[str]:
+def _resolve_athlete_context(atleta_id: Optional[int]) -> Optional[str]:
     """
-    Se session_id for numérico, interpreta como atleta_id e busca dados.
-    Caso contrário, retorna None (modo RAG puro).
+    Busca dados do atleta no backend para contextualização se o ID for fornecido.
     """
+    if not atleta_id:
+        logger.info("atleta_id não fornecido — modo RAG puro")
+        return None
     try:
-        atleta_id = int(session_id)
-        logger.info("session_id '%s' é numérico — buscando dados do atleta %d", session_id, atleta_id)
+        logger.info("Buscando dados do atleta %d", atleta_id)
         context = build_athlete_context(atleta_id)
         if context:
             logger.info("Contexto do atleta %d montado com sucesso (%d chars)", atleta_id, len(context))
         else:
-            logger.info("Nenhum dado encontrado para atleta %d — usando RAG puro", atleta_id)
+            logger.info("Nenhum dado encontrado para atleta %d", atleta_id)
         return context
-    except ValueError:
-        logger.info("session_id '%s' não é numérico — modo RAG puro", session_id)
+    except Exception as e:
+        logger.error("Erro ao resolver contexto do atleta: %s", e)
         return None
 
 
@@ -101,14 +113,44 @@ def _run_agent(session_id: str, message: str, athlete_context: Optional[str] = N
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     try:
-        # Resolve contexto do atleta baseado no session_id
-        athlete_context = await asyncio.to_thread(_resolve_athlete_context, req.session_id)
+        # Resolve contexto do atleta baseado no atleta_id
+        athlete_context = await asyncio.to_thread(_resolve_athlete_context, req.atleta_id)
 
         content = await asyncio.to_thread(_run_agent, req.session_id, req.message, athlete_context)
         return ChatResponse(content=content, sources=[])
     except Exception as e:
         logger.exception("Erro no /chat")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/chat/history/{session_id}")
+async def get_history(session_id: str):
+    """Retorna o histórico de uma conversa."""
+    try:
+        def _fetch_history():
+            agente = criar_agente(session_id=session_id)
+            if hasattr(agente, "read_from_db"):
+                agente.read_from_db()
+            elif hasattr(agente, "load_memory"):
+                agente.load_memory()
+            
+            history = []
+            if getattr(agente, "memory", None) and getattr(agente.memory, "messages", None):
+                for i, msg in enumerate(agente.memory.messages):
+                    # Retorna apenas user/assistant, ignorando system prompts
+                    if msg.role in ['user', 'assistant']:
+                        history.append({
+                            "id": str(i),
+                            "role": msg.role,
+                            "content": strip_markdown(msg.content) if msg.role == 'assistant' else msg.content
+                        })
+            return history
+
+        messages = await asyncio.to_thread(_fetch_history)
+        return {"messages": messages}
+    except Exception as e:
+        logger.exception("Erro ao buscar histórico")
+        raise HTTPException(status_code=500, detail="Erro interno ao buscar histórico")
 
 
 @app.get("/athlete-context/{atleta_id}")
@@ -143,13 +185,13 @@ async def transcribe(file: UploadFile = File(...)):
             from google import genai
             from google.genai import types
 
-            logger.info("Tentando transcrever com Gemini (gemini-2.0-flash-lite)...")
+            logger.info("Tentando transcrever com Gemini (gemini-2.5-flash-lite)...")
             client = genai.Client(api_key=gemini_key.strip('"').strip("'"))
             with open(tmp_path, "rb") as f:
                 raw_audio = f.read()
 
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model="gemini-2.5-flash-lite",
                 contents=[
                     "Transcreva o áudio a seguir exatamente como foi falado, em português. Não adicione comentários, introduções ou notas. Apenas o texto falado. Se o áudio estiver sem fala ou silencioso, retorne uma string vazia.",
                     types.Part.from_bytes(
@@ -171,7 +213,7 @@ async def transcribe(file: UploadFile = File(...)):
 
     try:
         logger.info("Tentando transcrever com Groq Whisper...")
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=60.0, verify=not DISABLE_SSL_VERIFY) as client:
             with open(tmp_path, "rb") as f:
                 resp = await client.post(
                     "https://api.groq.com/openai/v1/audio/transcriptions",

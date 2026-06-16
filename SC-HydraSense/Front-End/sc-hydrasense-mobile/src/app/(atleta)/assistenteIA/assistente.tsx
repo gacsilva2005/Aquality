@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,16 +9,20 @@ import {
   Keyboard,
   Platform,
   ActivityIndicator,
+  Modal,
+  FlatList,
 } from 'react-native';
 import { Feather, FontAwesome5 } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import * as Speech from 'expo-speech';
 import { styles } from './assistente_styles';
 import { theme } from '../../../global/themas';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useUser } from '../../../contexts/UserContext';
 import Constants from 'expo-constants';
 import { useAlert } from '@/src/contexts/alertContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Crypto from 'expo-crypto';
 
 // TIPOS
 type MessageRole = 'user' | 'assistant';
@@ -123,6 +127,12 @@ function stripBold(text: string): string {
   return text.replace(/\*\*/g, '');
 }
 
+interface SessionMeta {
+  id: string;
+  title: string;
+  date: string;
+}
+
 // COMPONENTE PRINCIPAL
 export default function AssistenteIA() {
   const alert = useAlert(); // pop-up
@@ -134,10 +144,84 @@ export default function AssistenteIA() {
   const [input,       setInput]       = useState('');
   const [loading,     setLoading]     = useState(false);
 
+  const [sessionId, setSessionId] = useState<string>(Crypto.randomUUID());
+  const [historyModalVisible, setHistoryModalVisible] = useState(false);
+  const [sessions, setSessions] = useState<SessionMeta[]>([]);
+
   // ── Estados de áudio ──
   const [isRecording,  setIsRecording]  = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const recordingRef = useRef<Audio.Recording | null>(null);
+
+  // ── Controle de Áudio Global ──
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        Speech.stop(); // Interrompe o áudio ao sair da tela
+      };
+    }, [])
+  );
+
+  // ── Gerenciamento de Sessões ──
+  useEffect(() => {
+    loadSessions();
+  }, []);
+
+  async function loadSessions() {
+    try {
+      const stored = await AsyncStorage.getItem('@camilo_sessions');
+      if (stored) setSessions(JSON.parse(stored));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function saveSession(id: string, title: string) {
+    try {
+      const stored = await AsyncStorage.getItem('@camilo_sessions');
+      let currentSessions: SessionMeta[] = stored ? JSON.parse(stored) : [];
+      if (!currentSessions.find(s => s.id === id)) {
+        currentSessions = [{ id, title, date: new Date().toISOString() }, ...currentSessions];
+        await AsyncStorage.setItem('@camilo_sessions', JSON.stringify(currentSessions));
+        setSessions(currentSessions);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function startNewSession() {
+    Speech.stop();
+    setSessionId(Crypto.randomUUID());
+    setMessages(INITIAL_MESSAGES);
+    setHistoryModalVisible(false);
+  }
+
+  async function loadChatHistory(id: string) {
+    Speech.stop();
+    setSessionId(id);
+    setHistoryModalVisible(false);
+    setLoading(true);
+    try {
+      const hostUri = Constants?.expoConfig?.hostUri;
+      const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+      const API_URL = `http://${ip}:8000`;
+      const response = await fetch(`${API_URL}/chat/history/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.messages && data.messages.length > 0) {
+          setMessages(data.messages);
+        } else {
+          setMessages(INITIAL_MESSAGES);
+        }
+      }
+    } catch (e) {
+      alert.error('Erro', 'Não foi possível carregar o histórico.');
+    } finally {
+      setLoading(false);
+      setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
+    }
+  }
 
   // ENVIAR MENSAGEM DE TEXTO CENTRALIZADA
   async function handleSendWithText(textToSend: string) {
@@ -163,13 +247,18 @@ export default function AssistenteIA() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          session_id: user?.id ? String(user.id) : 'user-default',
+          session_id: sessionId,
+          atleta_id: user?.id ? Number(user.id) : null,
           message: textToSend,
         }),
       });
 
       if (!response.ok) {
         throw new Error('Falha na resposta da API');
+      }
+
+      if (messages.length === INITIAL_MESSAGES.length) {
+        saveSession(sessionId, textToSend.substring(0, 30) + (textToSend.length > 30 ? '...' : ''));
       }
 
       const data = await response.json();
@@ -300,7 +389,9 @@ export default function AssistenteIA() {
           <Feather name="arrow-left" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>ASSISTENTE IA</Text>
-        <View style={{ width: 36 }} />
+        <TouchableOpacity onPress={() => setHistoryModalVisible(true)} style={styles.headerBack}>
+          <Feather name="clock" size={22} color={theme.colors.textPrimary} />
+        </TouchableOpacity>
       </View>
 
       {/* ── MENSAGENS ── */}
@@ -455,6 +546,34 @@ export default function AssistenteIA() {
         </TouchableOpacity>
 
       </View>
+
+      {/* ── MODAL DE HISTÓRICO ── */}
+      <Modal visible={historyModalVisible} animationType="slide" transparent={true}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
+          <View style={{ backgroundColor: theme.colors.background, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, maxHeight: '80%' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <Text style={{ fontSize: 18, fontFamily: theme.fonts.bodyBold, color: theme.colors.textPrimary }}>Histórico de Conversas</Text>
+              <TouchableOpacity onPress={() => setHistoryModalVisible(false)}>
+                <Feather name="x" size={24} color={theme.colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={startNewSession} style={{ backgroundColor: theme.colors.primary, padding: 15, borderRadius: 10, alignItems: 'center', marginBottom: 20 }}>
+              <Text style={{ color: '#fff', fontFamily: theme.fonts.bodyBold }}>Nova Conversa</Text>
+            </TouchableOpacity>
+            <FlatList
+              data={sessions}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => loadChatHistory(item.id)} style={{ paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: theme.colors.border }}>
+                  <Text style={{ fontFamily: theme.fonts.bodyBold, color: theme.colors.textPrimary, marginBottom: 4 }}>{item.title}</Text>
+                  <Text style={{ fontFamily: theme.fonts.body, color: theme.colors.textSecondary, fontSize: 12 }}>{new Date(item.date).toLocaleDateString()} {new Date(item.date).toLocaleTimeString()}</Text>
+                </TouchableOpacity>
+              )}
+              ListEmptyComponent={<Text style={{ textAlign: 'center', color: theme.colors.textSecondary, marginTop: 20 }}>Nenhuma conversa salva.</Text>}
+            />
+          </View>
+        </View>
+      </Modal>
 
     </KeyboardAvoidingView>
   );

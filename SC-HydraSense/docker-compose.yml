@@ -70,7 +70,9 @@ services:
     volumes:
       - ./AssistenteAI/PDFs:/app/../PDFs
       - ia_chroma_data:/app/chroma_data
+      - ia_sqlite_data:/app/db
 
 volumes:
   mysql_data:
-  ia_chroma_data:
+  ia_chroma_data:
+  ia_sqlite_data:

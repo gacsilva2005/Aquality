@@ -140,7 +140,7 @@ public class SessaoDeTreinoService {
         pesoRepository.save(pesagemPos);
 
         RegistroDeHidratacao hidratacao = null;
-        if (dto.getSede() != null && dto.getHidratacaoMl() > 0) {
+        if (dto.getHidratacaoMl() != null && dto.getHidratacaoMl() > 0) {
             hidratacao = new RegistroDeHidratacao();
             hidratacao.setVolume(dto.getHidratacaoMl().floatValue());
             hidratacao.setTipoFluido("ÁGUA MINERAL (TREINO)");
@@ -154,7 +154,6 @@ public class SessaoDeTreinoService {
             AvaliacaoBasal avalPos = new AvaliacaoBasal();
             avalPos.setUrina(dto.getCorUrina());
             avalPos.setSede(dto.getSede());
-            avalPos.setSessaoDeTreino(sessao);
             sessao.setAvaliacaoBasalPro(avalPos);
         }
 
@@ -162,7 +161,6 @@ public class SessaoDeTreinoService {
             RegistroDeSintoma sintomasPos = new RegistroDeSintoma();
             sintomasPos.setSintomas(dto.getSintomas());
             sintomasPos.setDataHora(java.time.LocalDateTime.now());
-            sintomasPos.setSessaoDeTreino(sessao);
             sessao.setRegistroDeSintomaPos(sintomasPos);
         }
 
@@ -194,7 +192,6 @@ public class SessaoDeTreinoService {
             AvaliacaoBasal avalPre = new AvaliacaoBasal();
             avalPre.setUrina(dto.getCorUrina());
             avalPre.setSede(dto.getSede());
-            avalPre.setSessaoDeTreino(sessao);
             sessao.setAvaliacaoBasalPre(avalPre);
         }
 
@@ -204,7 +201,6 @@ public class SessaoDeTreinoService {
             registroSintoma.setSintomas(dto.getSintomas());
             registroSintoma.setDataHora(java.time.LocalDateTime.now());
 
-            registroSintoma.setSessaoDeTreino(sessao);
             sessao.setRegistroDeSintomaPre(registroSintoma);
         }
 
