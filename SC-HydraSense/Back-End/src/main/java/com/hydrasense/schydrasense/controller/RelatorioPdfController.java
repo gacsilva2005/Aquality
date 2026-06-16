@@ -1,6 +1,7 @@
 package com.hydrasense.schydrasense.controller;
 
 import com.hydrasense.schydrasense.dto.RelatorioPdfDTO;
+import com.hydrasense.schydrasense.dto.RelatorioEquipeDTO;
 import com.hydrasense.schydrasense.service.RelatorioPdfService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,5 +70,14 @@ public class RelatorioPdfController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
+    }
+
+    @GetMapping("/equipe/{id}/dados")
+    public ResponseEntity<RelatorioEquipeDTO> obterDadosRelatorioEquipe(@PathVariable Long id) {
+        RelatorioEquipeDTO payload = relatorioPdfService.gerarPayloadEquipe(id);
+        if (payload == null || payload.atletas().isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(payload);
     }
 }

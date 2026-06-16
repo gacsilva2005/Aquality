@@ -9,6 +9,7 @@ public record RelatorioEquipeDTO(
         List<AtletaResumoRecord> atletas
 ) {
     public record AtletaResumoRecord(
+            Long id,
             String nome,
             String status,
             Float variacao,
