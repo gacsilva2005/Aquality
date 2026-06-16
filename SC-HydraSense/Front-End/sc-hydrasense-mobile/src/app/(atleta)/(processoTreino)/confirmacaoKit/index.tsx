@@ -17,6 +17,18 @@ interface Kit {
     pesoTotal: number; // em gramas
 }
 
+const getWorkoutIcon = (type: string | string[] | undefined) => {
+    const typeStr = Array.isArray(type) ? type[0] : type;
+    const lower = (typeStr || '').toLowerCase();
+    if (lower.includes('cardio')) return 'heart-pulse';
+    if (lower.includes('musculação') || lower.includes('musculacao')) return 'dumbbell';
+    if (lower.includes('futebol')) return 'soccer';
+    if (lower.includes('natação') || lower.includes('natacao')) return 'swim';
+    if (lower.includes('corrida')) return 'run';
+    if (lower.includes('ciclismo')) return 'bike';
+    return 'timer';
+};
+
 export default function ConfirmacaoKit() {
     const [preference, setPreference] = useState<'session' | 'default'>('session');
     const [kit, setKit] = useState<Kit | null>(null);
@@ -184,10 +196,7 @@ export default function ConfirmacaoKit() {
                                 <Text style={styles.modalidadeLabel}>MODALIDADE</Text>
                                 <View style={styles.modalidadeValueRow}>
                                     <MaterialCommunityIcons
-                                        name={
-                                            type === 'cardio' ? 'heart-pulse' :
-                                                type === 'musculação' ? 'dumbbell' : 'timer'
-                                        }
+                                        name={getWorkoutIcon(type) as any}
                                         size={16}
                                         color={theme.colors.textPrimary}
                                     />
@@ -255,7 +264,7 @@ export default function ConfirmacaoKit() {
                     <View style={styles.emptyCard}>
                         <View style={styles.emptyIconBox}>
                             <MaterialCommunityIcons
-                                name={type === 'cardio' ? 'heart-pulse' : type === 'musculação' ? 'dumbbell' : 'timer'}
+                                name={getWorkoutIcon(type) as any}
                                 size={40}
                                 color="#555"
                             />

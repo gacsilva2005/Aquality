@@ -316,6 +316,28 @@ export default function Dashboard() {
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         onStart={handleStartWorkout}
+        modalidades={
+          (() => {
+            let list: string[] = [];
+            if (user?.modalidade) {
+              try {
+                const parsed = JSON.parse(user.modalidade);
+                if (Array.isArray(parsed)) {
+                  list = parsed;
+                } else if (typeof parsed === 'string') {
+                  list = [parsed];
+                }
+              } catch (e) {
+                if (user.modalidade.includes(',')) {
+                  list = user.modalidade.split(',').map(m => m.trim());
+                } else {
+                  list = [user.modalidade.trim()];
+                }
+              }
+            }
+            return list;
+          })()
+        }
       />
 
     </Screen>

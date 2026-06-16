@@ -9,11 +9,14 @@ import { useUser } from '../../../../contexts/UserContext';
 import { Screen } from '../../../../components/Screen';
 
 const getWorkoutIcon = (type: string) => {
-    switch (type?.toLowerCase()) {
-        case 'cardio': return 'heart-pulse';
-        case 'musculação': return 'dumbbell';
-        default:           return 'timer';
-    }
+    const lower = type?.toLowerCase() || '';
+    if (lower.includes('cardio')) return 'heart-pulse';
+    if (lower.includes('musculação') || lower.includes('musculacao')) return 'dumbbell';
+    if (lower.includes('futebol')) return 'soccer';
+    if (lower.includes('natação') || lower.includes('natacao')) return 'swim';
+    if (lower.includes('corrida')) return 'run';
+    if (lower.includes('ciclismo')) return 'bike';
+    return 'timer';
 };
 
 export default function TreinoAtivo() {

@@ -123,8 +123,13 @@ export default function Cadastro() {
               await SecureStore.setItemAsync('biometriaAtiva', 'true');
               await SecureStore.setItemAsync('biometric_email', email.trim());
               await SecureStore.setItemAsync('biometric_password', senha.trim());
-              alert.success('Sucesso!', 'Conta criada e biometria habilitada com sucesso. Um código foi enviado ao seu e-mail.');
-              router.back();
+              alert.success('Sucesso!', 'Conta criada e biometria habilitada com sucesso. Um código foi enviado ao seu e-mail.', () => {
+                if (router.canGoBack()) {
+                  router.back();
+                } else {
+                  router.replace('/');
+                }
+              });
               return;
             } else {
               alert.warning('Aviso', 'Biometria não confirmada. Você poderá tentar habilitar depois.');
@@ -139,8 +144,13 @@ export default function Cadastro() {
           await SecureStore.deleteItemAsync('biometric_password');
         }
 
-        alert.success('Sucesso!', 'Conta criada com sucesso. Um código foi enviado ao seu e-mail.');
-        router.back();
+        alert.success('Sucesso!', 'Conta criada com sucesso. Um código foi enviado ao seu e-mail.', () => {
+          if (router.canGoBack()) {
+            router.back();
+          } else {
+            router.replace('/');
+          }
+        });
       } else {
         try {
           const errorData = await response.json();
