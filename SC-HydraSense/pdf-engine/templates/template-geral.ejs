@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Aquality - Visão Geral do Clube</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --hydro-bg-main: #F8F9FA;
+            --hydro-bg-card: #FFFFFF;
+            --hydro-bg-header: #121212;
+            --hydro-text-primary: #212529;
+            --hydro-text-muted: #6C757D;
+            --hydro-border: rgba(73, 80, 87, 0.2);
+            --hydro-action: #D90429;
+            --hydro-critical: #641220;
+            --hydro-success: #2B9348;
+            --hydro-attention: #FFD60A;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+        @page { size: A4 landscape; margin: 0; }
+        body { background-color: var(--hydro-bg-main); font-family: var(--font-body); color: var(--hydro-text-primary); margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .page-container { width: 297mm; min-height: 210mm; margin: 0 auto; background-color: var(--hydro-bg-main); position: relative; padding-bottom: 40px; }
+        .header { background-color: var(--hydro-bg-header); color: white; padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; }
+        .header-logo { font-family: var(--font-display); font-weight: 700; font-size: 24px; display: flex; align-items: center; gap: 8px; }
+        .header-info { font-family: var(--font-body); font-size: 12px; color: rgba(255, 255, 255, 0.8); text-align: right; }
+        .container { padding: 32px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .card { background-color: var(--hydro-bg-card); border: 1px solid var(--hydro-border); border-radius: 12px; padding: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .card-title { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--hydro-text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .card-value { font-family: var(--font-display); font-weight: 700; font-size: 48px; line-height: 1.1; }
+        
+        .footer { position: absolute; bottom: 24px; left: 32px; right: 32px; border-top: 1px solid var(--hydro-border); padding-top: 12px; font-size: 9px; color: var(--hydro-text-muted); display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+<div class="page-container">
+    <header class="header">
+        <div class="header-logo">
+            <i data-lucide="droplet" color="white" size="28"></i> Aquality
+        </div>
+        <div class="header-info">
+            Data: <%= data.dataGeracao || new Date().toLocaleDateString('pt-BR') %><br>
+            Relatório Clube: Visão Geral
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 style="font-family: var(--font-display); margin-top: 0; font-size: 20px; color: var(--hydro-bg-header); margin-bottom: 20px;">Métricas Globais do Clube</h2>
+        
+        <%
+        let mediaDesidratacaoVal = data.mediaDesidratacao || '0%';
+        let aderenciaGeralVal = data.aderenciaGeral || '0%';
+        %>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">
+                    <i data-lucide="percent" size="18" color="var(--hydro-success)"></i> Aderência Geral
+                </div>
+                <div class="card-value" style="color: var(--hydro-success)">
+                    <%= aderenciaGeralVal %>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <i data-lucide="users" size="18" color="var(--hydro-text-muted)"></i> Atletas Ativos
+                </div>
+                <div class="card-value">
+                    <%= data.totalAtletasAtivos || '124' %>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <i data-lucide="droplet" size="18" color="var(--hydro-attention)"></i> Média Desidratação
+                </div>
+                <div class="card-value" style="color: var(--hydro-attention)">
+                    <%= mediaDesidratacaoVal %>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <i data-lucide="alert-triangle" size="18" color="var(--hydro-critical)"></i> Atletas Críticos
+                </div>
+                <div class="card-value" style="color: var(--hydro-critical)">
+                    <%= data.atletasCriticos || '8' %>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ranking-card" style="background-color: var(--hydro-bg-card); border: 1px solid var(--hydro-border); border-radius: 12px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+            <div class="ranking-title" style="font-family: var(--font-display); font-weight: 700; font-size: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--hydro-border); padding-bottom: 8px; display: flex; align-items: center; gap: 8px; color: var(--hydro-bg-header);">
+                <i data-lucide="trophy" color="var(--hydro-action)" size="18"></i> Top Equipes com Melhor Performance Hídrica
+            </div>
+            
+            <% 
+            const ranking = data.rankingEquipes || [];
+            %>
+            
+            <div class="ranking-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px;">
+              <% if (ranking.length > 0) { %>
+                  <% ranking.slice(0, 3).forEach((eq, i) => { 
+                      const podBorderColor = i === 0 ? '#FFD60A' : (i === 1 ? '#ADB5BD' : '#CD7F32');
+                      const podLabel = i === 0 ? '1º Ouro' : (i === 1 ? '2º Prata' : '3º Bronze');
+                  %>
+                  <div style="text-align: center; padding: 24px; background: #F8F9FA; border-radius: 12px; border-top: 5px solid <%= podBorderColor %>; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="font-size: 12px; font-weight: 700; color: var(--hydro-text-muted); text-transform: uppercase; margin-bottom: 8px;"><%= podLabel %></div>
+                    <div style="font-size: 36px; font-weight: 700; font-family: var(--font-display); color: var(--hydro-bg-header); line-height: 1.1; margin-bottom: 4px;"><%= i + 1 %>º</div>
+                    <div style="font-weight: 600; font-size: 15px; color: var(--hydro-text-primary); margin-bottom: 4px;"><%= eq.nome %></div>
+                    <div style="color: var(--hydro-success); font-weight: 700; font-family: var(--font-display);"><%= eq.adequacao %>% Adequação</div>
+                  </div>
+                  <% }) %>
+              <% } else { %>
+                  <div style="grid-column: 1 / -1; text-align: center; color: var(--hydro-text-muted); padding: 16px;">
+                      Nenhum ranking de equipes disponível.
+                  </div>
+              <% } %>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div>Gerado automaticamente por Aquality | Validação Clínica: São Camilo</div>
+        <div>ID Relatório: #Geral-<%= data.sessaoId || 'N/A' %></div>
+    </footer>
+</div>
+<script>
+    lucide.createIcons();
+</script>
+</body>
+</html>

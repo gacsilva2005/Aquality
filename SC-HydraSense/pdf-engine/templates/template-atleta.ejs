@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Relatório HydroPerform - <%= data.atleta.nome %></title>
+    <title>Relatório Aquality - <%= data.atleta.nome %></title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,16 +67,20 @@
 
         .hero-section {
             background-color: var(--hydro-bg-card);
-            border: 1px solid var(--hydro-border); border-radius: 12px;
-            padding: 24px; display: flex; gap: 24px; margin-bottom: 24px;
+            border: 1px solid var(--hydro-border);
+            border-left: 8px solid var(--status-color);
+            border-radius: 12px;
+            padding: 32px; display: flex; gap: 24px; margin-bottom: 24px;
             align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         .hero-block-a {
             flex: 1; display: flex; align-items: center; gap: 16px;
             border-right: 1px solid var(--hydro-border); padding-right: 24px;
         }
         .hero-value {
-            font-family: var(--font-display); font-size: 48px; font-weight: 700;
+            font-family: var(--font-display); font-size: 64px; font-weight: 700;
+            color: var(--hydro-bg-header);
         }
         .badge-status {
             padding: 6px 12px; border-radius: 20px;
@@ -86,21 +90,23 @@
         .status-optimal { background-color: var(--hydro-success); }
         .status-attention { background-color: var(--hydro-attention); color: var(--hydro-text-primary); }
         .status-critical { background-color: var(--hydro-critical); }
-        .status-super { background-color: #0077B6; } /* Azul para superingestão */
+        .status-super { background-color: #0077B6; } 
 
         .hero-block-b { flex: 2; }
         .hero-label {
             font-size: 12px; color: var(--hydro-text-muted); text-transform: uppercase;
             font-weight: 600; margin-bottom: 8px;
         }
-        .hero-recommendation { font-size: 16px; font-weight: 500; line-height: 1.5; }
+        .hero-recommendation { 
+            font-size: 18px; font-weight: 600; line-height: 1.6; 
+        }
 
         .telemetry-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;
         }
         .telemetry-card {
             background-color: var(--hydro-bg-card);
-            border: 1px solid var(--hydro-border); border-radius: 12px; padding: 20px;
+            border: 1px solid var(--hydro-border); border-radius: 12px; padding: 24px;
         }
         .card-title {
             font-family: var(--font-display); font-weight: 700; font-size: 16px;
@@ -127,7 +133,7 @@
         .progress-container { width: 100%; }
         .progress-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 8px; }
         .progress-bar-bg { height: 12px; background-color: #E9ECEF; border-radius: 6px; overflow: hidden; position: relative; }
-        .progress-fill-loss { position: absolute; height: 100%; background-color: var(--hydro-text-muted); width: 100%; opacity: 0.3; }
+        .progress-fill-loss { position: absolute; height: 100%; border-radius: 6px; transition: width 0.3s ease; }
         
         .longitudinal-section {
             background-color: var(--hydro-bg-card);
@@ -153,7 +159,7 @@
 <div class="page-container">
     <header class="header">
         <div class="header-logo">
-            <i data-lucide="droplet" color="white" size="28"></i> HydroPerform
+            <i data-lucide="droplet" color="white" size="28"></i> Aquality
         </div>
         <div class="header-info" style="display: flex; gap: 12px; align-items: center;">
             <div style="text-align: right;">
@@ -168,31 +174,39 @@
     </header>
 
     <div class="container">
-        <!-- Lógica de Status -->
+        <!-- Lógica de Status Robustecida -->
         <% 
             let statusClass = "status-optimal";
             let statusIcon = "check-circle";
             let statusText = "Ótimo";
             let recommendation = "Hidratação mantida em níveis adequados. Continue com a estratégia atual.";
-            let status = data.motorSudorese.statusHidratacao;
+            
+            const statusStr = (data.motorSudorese.statusHidratacao || '').toUpperCase();
+            const vMassaNum = parseFloat(data.motorSudorese.variacaoPercentualMassa || '0');
+            
+            const isSuper = data.motorSudorese.isRiscoSuperingestao === true || vMassaNum > 0 || statusStr === 'SUPERINGESTAO';
+            const isCrit = data.motorSudorese.isRiscoDesidratacaoSevera === true || statusStr === 'CRITICAL' || statusStr === 'SEVERO' || vMassaNum <= -2.0;
+            const isWarn = statusStr === 'WARNING' || statusStr === 'ATENCAO' || statusStr === 'ATENÇÃO' || (vMassaNum <= -1.0 && vMassaNum > -2.0);
 
-            if (data.motorSudorese.isRiscoSuperingestao) {
+            if (isSuper) {
                 statusClass = "status-super"; statusIcon = "info"; statusText = "Superingestão";
                 recommendation = "O atleta ganhou peso durante a sessão. Risco de hiponatremia associada ao exercício. Reduza a ingestão de líquidos nas próximas sessões de mesma intensidade.";
-            } else if (data.motorSudorese.isDesidratacaoSevera || status === 'CRITICAL') {
+            } else if (isCrit) {
                 statusClass = "status-critical"; statusIcon = "alert-octagon"; statusText = "Severo";
                 recommendation = "Desidratação crítica (>2%). Risco fisiológico elevado e perda de performance comprovada. Iniciar reposição hídrica imediata com soro oral e eletrólitos.";
-            } else if (status === 'WARNING') {
+            } else if (isWarn) {
                 statusClass = "status-attention"; statusIcon = "alert-triangle"; statusText = "Atenção";
                 recommendation = "Desidratação leve a moderada. O atleta deve repor 150% do volume perdido nas próximas 2-4 horas. Atenção aos eletrólitos.";
             }
+
+            const statusColor = statusClass === 'status-critical' ? '#641220' : (statusClass === 'status-attention' ? '#FFD60A' : (statusClass === 'status-super' ? '#0077B6' : '#2B9348'));
         %>
 
-        <div class="hero-section">
+        <div class="hero-section" style="--status-color: <%= statusColor %>;">
             <div class="hero-block-a">
                 <div>
                     <div class="hero-label">Variação de Massa</div>
-                    <div class="hero-value"><%= data.motorSudorese.variacaoPercentualMassa %>%</div>
+                    <div class="hero-value"><%= Number(data.motorSudorese.variacaoPercentualMassa).toFixed(0) %>%</div>
                 </div>
                 <div class="badge-status <%= statusClass %>">
                     <i data-lucide="<%= statusIcon %>" size="16"></i> <%= statusText %>
@@ -211,7 +225,7 @@
                 </div>
                 <div class="data-row">
                     <div class="data-label">Peso Inicial</div>
-                    <div class="data-value"><%= data.preSessao.pesoInicial %> kg</div>
+                    <div class="data-value"><%= Number(data.preSessao.pesoInicial).toFixed(1) %> kg</div>
                 </div>
                 <div class="data-row">
                     <div class="data-label"><i data-lucide="sun" size="14"></i> Clima</div>
@@ -233,15 +247,15 @@
                 </div>
                 <div class="data-row">
                     <div class="data-label">Peso Final</div>
-                    <div class="data-value"><%= data.posSessao.pesoFinal %> kg</div>
+                    <div class="data-value"><%= Number(data.posSessao.pesoFinal).toFixed(1) %> kg</div>
                 </div>
                 <div class="data-row">
                     <div class="data-label"><i data-lucide="scale" size="14"></i> Variação Abs.</div>
-                    <div class="data-value"><%= data.posSessao.variacaoAbsoluta %> kg</div>
+                    <div class="data-value"><%= Math.abs(Number(data.posSessao.variacaoAbsolutaKg)).toFixed(1) %> kg</div>
                 </div>
                 <div class="data-row">
                     <div class="data-label"><i data-lucide="heart-pulse" size="14"></i> Sintomas</div>
-                    <div class="data-value"><%= data.posSessao.sintomas %></div>
+                    <div class="data-value"><%= data.posSessao.sintomasRelatados || 'Ausente' %></div>
                 </div>
                 <div class="data-row">
                     <div class="data-label"><i data-lucide="thumbs-up" size="14"></i> Tolerância</div>
@@ -271,17 +285,18 @@
         <div class="dashboard-panel">
             <div class="sweat-rate-box">
                 <div class="hero-label">Taxa de Sudorese Estimada</div>
-                <div class="sweat-rate-value"><%= data.motorSudorese.taxaSudoreseEstimada %> <span style="font-size: 20px; color: var(--hydro-text-muted)">L/h</span></div>
+                <div class="sweat-rate-value"><%= Number(data.motorSudorese.taxaSudoreseEstimada).toFixed(2) %> <span style="font-size: 20px; color: var(--hydro-text-muted)">L/h</span></div>
             </div>
             <div class="progress-container">
                 <div class="progress-labels">
                     <span style="color: var(--hydro-text-muted)">Perda Total de Massa</span>
-                    <span style="color: var(--hydro-action)"><%= data.posSessao.variacaoAbsoluta %> kg</span>
+                    <span style="color: var(--hydro-action)"><%= Math.abs(Number(data.posSessao.variacaoAbsolutaKg)).toFixed(1) %> kg</span>
                 </div>
                 <div class="progress-bar-bg">
-                    <div class="progress-fill-loss"></div>
-                    <!-- Exemplo visual estático -->
-                    <div class="deficit-marker" style="width: 100%; left: 0;"></div>
+                    <%
+                       let fillPercent = Math.min(Math.max(Math.abs(vMassaNum) * 33.3, 0), 100).toFixed(0);
+                    %>
+                    <div class="progress-fill-loss" style="width: <%= fillPercent %>%; background-color: <%= statusColor %>; opacity: 1;"></div>
                 </div>
             </div>
         </div>
@@ -294,14 +309,14 @@
             <div class="stats-container">
                 <div class="stat-box">
                     <div class="stat-label">Último Registo</div>
-                    <div class="stat-value"><%= data.motorSudorese.taxaSudoreseEstimada %> L/h</div>
+                    <div class="stat-value"><%= Number(data.motorSudorese.taxaSudoreseEstimada).toFixed(2) %> L/h</div>
                 </div>
             </div>
         </div>
     </div>
 
     <footer class="footer">
-        <div>Gerado automaticamente por HydroPerform | Validação Clínica: São Camilo</div>
+        <div>Gerado automaticamente por Aquality | Validação Clínica: São Camilo</div>
         <div>Sessão ID: #<%= data.sessaoId %></div>
     </footer>
 </div>
@@ -319,10 +334,10 @@
             labels: ['Mês Passado', 'Semana Passada', 'Atual'],
             datasets: [{
                 label: 'Taxa de Sudorese (L/h)',
-                data: [1.1, 1.2, <%= data.motorSudorese.taxaSudoreseEstimada %>],
+                data: [1.1, 1.2, <%= Number(data.motorSudorese.taxaSudoreseEstimada).toFixed(2) %>],
                 borderColor: '#D90429', backgroundColor: gradient,
-                borderWidth: 3, pointBackgroundColor: '#FFFFFF',
-                pointBorderColor: '#D90429', pointBorderWidth: 2, pointRadius: 4,
+                borderWidth: 4, pointBackgroundColor: '#FFFFFF',
+                pointBorderColor: '#D90429', pointBorderWidth: 2, pointRadius: 6,
                 fill: true, tension: 0.4
             }]
         },

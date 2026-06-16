@@ -9,10 +9,23 @@ app.use(express.json({ limit: '50mb' }));
 app.post('/generate', async (req, res) => {
     let browser = null;
     try {
-        const payload = req.body;
+        const { tipo, payload } = req.body;
         
+        let templateFile;
+        switch(tipo) {
+            case 'geral':
+                templateFile = 'template-geral.ejs';
+                break;
+            case 'equipe':
+                templateFile = 'template-equipe.ejs';
+                break;
+            case 'sessao':
+            default:
+                templateFile = 'template-atleta.ejs';
+        }
+
         // Carrega o template EJS injetando os dados do payload
-        const html = await ejs.renderFile(path.join(__dirname, 'template.ejs'), { data: payload });
+        const html = await ejs.renderFile(path.join(__dirname, 'templates', templateFile), { data: payload });
 
         browser = await puppeteer.launch({
             headless: 'new',
