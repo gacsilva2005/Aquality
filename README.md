@@ -6,12 +6,13 @@
 [![React](https://img.shields.io/badge/React-1E1E1E?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-1E1E1E?style=flat-square&logo=typescript&logoColor=3178C6)](https://www.typescriptlang.org/)
 [![Java](https://img.shields.io/badge/Java-1E1E1E?style=flat-square&logo=openjdk&logoColor=ED8B00)](https://www.java.com/)
+[![Python](https://img.shields.io/badge/Python-1E1E1E?style=flat-square&logo=python&logoColor=3776AB)](https://www.python.org/)
 <br>
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-1E1E1E?style=flat-square&logo=spring-boot&logoColor=6DB33F)](https://spring.io/projects/spring-boot)
 [![MySQL](https://img.shields.io/badge/MySQL-1E1E1E?style=flat-square&logo=mysql&logoColor=4479A1)](https://www.mysql.com/)
 [![Git](https://img.shields.io/badge/Git-1E1E1E?style=flat-square&logo=git&logoColor=F05032)](https://git-scm.com/)
 [![Docker](https://img.shields.io/badge/Docker-1E1E1E?style=flat-square&logo=docker&logoColor=2496ED)](https://www.docker.com/)
-
+[![Node.js](https://img.shields.io/badge/Node.js-1E1E1E?style=flat-square&logo=nodedotjs&logoColor=339933)](https://nodejs.org/)
 
 
 ---
@@ -38,7 +39,7 @@ Mais do que um simples painel de visualização, o **Aquality** atua como uma fe
 
 ---
 
-## Como Iniciar o Projeto
+## Como Iniciar o Projeto 
 
 Siga as instruções abaixo para configurar e executar os ambientes de Front-end e Back-end da aplicação WEB.
 <br>
@@ -104,15 +105,58 @@ http://localhost:5713
 
 Abra o link no navegador para acessar o sistema.
 
-<br>
+A partir de agora, o Front-end Web e o Back-end da aplicação já estão rodando e prontos para acesso. Caso também deseje testar a nossa solução em smartphones, siga as instruções abaixo para inicializar o ambiente Mobile.
 
 ---
 
 <br>
 
-### ⚠️ Inicialização Segura do Mobile em Desenvolvimento
-Atualmente estamos trabalhando na estrutura e configuração segura da versão Mobile do projeto.
-Em breve, novas instruções de execução e acesso serão disponibilizadas.
+## Como Iniciar o Projeto Mobile
+
+Siga as instruções abaixo para configurar e executar o ambiente Mobile da aplicação.
+<br>
+<br>
+
+<h3>
+  📱 1. Pré-requisitos
+</h3>
+
+Antes de iniciar, é necessário ter o Node.js instalado na sua máquina e o aplicativo Expo Go no seu celular (ou um emulador configurado).
+
+* Instale o Node.js (LTS): https://nodejs.org/
+* Instale o aplicativo **Expo Go** no seu smartphone (disponível na Google Play Store ou App Store).
+
+---
+
+<h3> 📥 2. Clonar o Repositório </h3>
+
+Abra o terminal e execute:
+
+```bash
+git clone [https://github.com/gacsilva2005/Aquality.git](https://github.com/gacsilva2005/Aquality.git)
+Depois, acesse a pasta do projeto:
+```
+
+```Bash
+cd Aquality
+Acesse a pasta do Front-End e instale todas as dependências necessárias do projeto:
+```
+
+```Bash
+cd Front-End
+npm install
+No terminal, limpe o cache e inicialize o servidor do Expo executando o seguinte comando:
+```
+
+```Bash
+npx expo start -c
+Após a inicialização do Expo, um QR Code será exibido diretamente no seu terminal.
+```
+
+No celular: Abra o aplicativo Expo Go e escaneie o QR Code para abrir o app.
+
+No emulador: Se preferir rodar no computador, certifique-se de que o emulador está aberto e pressione a (para Android) ou i (para iOS) no terminal.
+
 
 <br> 
 
