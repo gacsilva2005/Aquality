@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { theme } from '../../global/themas';
@@ -8,17 +8,28 @@ interface ModalMetaHidratacaoProps {
     onClose: () => void;
     atletaNome: string;
     ultimaTaxa: number | null;
-    onSave: (data: any) => void;
+    metaInicial?: number;
+    observacaoInicial?: string;
+    onSave: (data: { metaVolumeMl: number; observacoes: string }) => void;
 }
 
-export function ModalMetaHidratacao({ visible, onClose, atletaNome, ultimaTaxa, onSave }: ModalMetaHidratacaoProps) {
+export function ModalMetaHidratacao({ visible, onClose, atletaNome, ultimaTaxa, metaInicial, observacaoInicial, onSave }: ModalMetaHidratacaoProps) {
     const [meta, setMeta] = useState('');
-    const [condicao, setCondicao] = useState('Normal');
-    const [tipoSessao, setTipoSessao] = useState('Treino Tático');
     const [observacao, setObservacao] = useState('');
 
+    useEffect(() => {
+        if (visible) {
+            setMeta(metaInicial ? String(metaInicial) : '3000');
+            setObservacao(observacaoInicial || '');
+        }
+    }, [visible, metaInicial, observacaoInicial]);
+
     const handleSave = () => {
-        onSave({ meta: parseFloat(meta), condicao, tipoSessao, observacao });
+        const parsedMeta = parseInt(meta, 10);
+        onSave({ 
+            metaVolumeMl: isNaN(parsedMeta) ? 3000 : parsedMeta, 
+            observacoes: observacao 
+        });
         onClose();
     };
 
@@ -40,13 +51,13 @@ export function ModalMetaHidratacao({ visible, onClose, atletaNome, ultimaTaxa, 
 
                     {/* BODY */}
                     <View style={styles.body}>
-                        <Text style={styles.label}>Meta de Ingestão (L/h)</Text>
+                        <Text style={styles.label}>Meta de Ingestão (ml)</Text>
                         <View style={styles.inputWrapper}>
                             <Feather name="droplet" size={20} color={theme.colors.primary} style={styles.icon} />
                             <TextInput 
                                 style={styles.input}
-                                placeholder="Ex: 1.5"
-                                keyboardType="decimal-pad"
+                                placeholder="Ex: 3000"
+                                keyboardType="numeric"
                                 value={meta}
                                 onChangeText={setMeta}
                             />
@@ -56,32 +67,6 @@ export function ModalMetaHidratacao({ visible, onClose, atletaNome, ultimaTaxa, 
                                 ↳ Última taxa registrada: {ultimaTaxa.toFixed(2)} L/h
                             </Text>
                         )}
-
-                        <Text style={[styles.label, { marginTop: 16 }]}>Condição Ambiental</Text>
-                        <View style={styles.buttonGroup}>
-                            {['Frio', 'Normal', 'Calor Intenso'].map(opt => (
-                                <TouchableOpacity 
-                                    key={opt} 
-                                    style={[styles.chip, condicao === opt && styles.chipActive]}
-                                    onPress={() => setCondicao(opt)}
-                                >
-                                    <Text style={[styles.chipText, condicao === opt && styles.chipTextActive]}>{opt}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-
-                        <Text style={[styles.label, { marginTop: 16 }]}>Tipo de Sessão</Text>
-                        <View style={styles.buttonGroup}>
-                            {['Tático', 'Regenerativo', 'Oficial', 'Força'].map(opt => (
-                                <TouchableOpacity 
-                                    key={opt} 
-                                    style={[styles.chip, tipoSessao === opt && styles.chipActive]}
-                                    onPress={() => setTipoSessao(opt)}
-                                >
-                                    <Text style={[styles.chipText, tipoSessao === opt && styles.chipTextActive]}>{opt}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
 
                         <Text style={[styles.label, { marginTop: 16 }]}>Observação (Opcional)</Text>
                         <View style={styles.inputWrapper}>
