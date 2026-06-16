@@ -47,20 +47,34 @@ public class SessaoDeTreino {
     @Setter
     private Boolean usouEquipamento;
 
-    // Relação 1:1 Registro de Sintoma
+    // Relação 1:1 Registro de Sintoma Pré
     @Setter
-    @OneToOne(mappedBy = "sessaoDeTreino", cascade = CascadeType.ALL)
-    private RegistroDeSintoma registroDeSintoma;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "registro_sintoma_pre_id", referencedColumnName = "id")
+    private RegistroDeSintoma registroDeSintomaPre;
+
+    // Relação 1:1 Registro de Sintoma Pós
+    @Setter
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "registro_sintoma_pos_id", referencedColumnName = "id")
+    private RegistroDeSintoma registroDeSintomaPos;
 
     // Relação 1:1 Condição Ambiental
     @Setter
     @OneToOne(mappedBy = "sessaoDeTreino", cascade = CascadeType.ALL)
     private CondicaoAmbiental condicaoAmbiental;
 
-    // Relação 1:1 Avaliação Basal
+    // Relação 1:1 Avaliação Basal Pré
     @Setter
-    @OneToOne(mappedBy = "sessaoDeTreino", cascade = CascadeType.ALL)
-    private AvaliacaoBasal avaliacaoBasal;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "avaliacao_basal_pre_id", referencedColumnName = "id")
+    private AvaliacaoBasal avaliacaoBasalPre;
+
+    // Relação 1:1 Avaliação Basal Pós (pro)
+    @Setter
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "avaliacao_basal_pro_id", referencedColumnName = "id")
+    private AvaliacaoBasal avaliacaoBasalPro;
 
     // Relação 1:1 Medição de Eletrólitos
     @Setter

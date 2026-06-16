@@ -25,8 +25,7 @@ public class SessaoDeTreinoService {
             AtletaRepository atletaRepository,
             RegistroDoPesoRepository pesoRepository,
             CalculadoraFisiologica calculadoraFisiologica,
-            KitRepository kitRepository
-    ) {
+            KitRepository kitRepository) {
         this.repository = sessaoRepository;
         this.atletaRepository = atletaRepository;
         this.pesoRepository = pesoRepository;
@@ -37,12 +36,16 @@ public class SessaoDeTreinoService {
     private SessaoTreinoResponseDTO mapToResponseDTO(SessaoDeTreino sessao) {
         Float pesoPre = (sessao.getPesagemPre() != null) ? sessao.getPesagemPre().getPeso() : null;
         Float pesoPos = (sessao.getPesagemPos() != null) ? sessao.getPesagemPos().getPeso() : null;
-        String sintomas = sessao.getRegistroDeSintoma() != null ? sessao.getRegistroDeSintoma().getSintomas() : null;
-        Integer hidratacaoMl = (sessao.getRegistroDeHidratacao() != null) ? sessao.getRegistroDeHidratacao().getVolume().intValue() : null;
-        
+        String sintomas = sessao.getRegistroDeSintomaPre() != null ? sessao.getRegistroDeSintomaPre().getSintomas()
+                : null;
+        Integer hidratacaoMl = (sessao.getRegistroDeHidratacao() != null)
+                ? sessao.getRegistroDeHidratacao().getVolume().intValue()
+                : null;
+
         Integer duracaoSegundos = 0;
         if (sessao.getDataHoraInicio() != null && sessao.getDataHoraFim() != null) {
-            duracaoSegundos = (int) java.time.Duration.between(sessao.getDataHoraInicio(), sessao.getDataHoraFim()).toSeconds();
+            duracaoSegundos = (int) java.time.Duration.between(sessao.getDataHoraInicio(), sessao.getDataHoraFim())
+                    .toSeconds();
         }
 
         String statusHidratacao = calculadoraFisiologica.classificarStatusHidratacao(pesoPre, pesoPos);
@@ -64,8 +67,7 @@ public class SessaoDeTreinoService {
                 sessao.getChecklistBalancaCorreta(),
                 sessao.getChecklistSuperficiePlana(),
                 sessao.getChecklistVestimentaCorreta(),
-                sessao.getChecklistSemCalcados()
-        );
+                sessao.getChecklistSemCalcados());
     }
 
     public SessaoTreinoResponseDTO salvar(SessaoDeTreino sessao) {
@@ -148,6 +150,22 @@ public class SessaoDeTreinoService {
 
         sessao.finalizar(pesagemPos, hidratacao, dto.getDuracaoSegundos(), calculadoraFisiologica);
 
+        if (dto.getCorUrina() != null || dto.getSede() != null) {
+            AvaliacaoBasal avalPos = new AvaliacaoBasal();
+            avalPos.setUrina(dto.getCorUrina());
+            avalPos.setSede(dto.getSede());
+            avalPos.setSessaoDeTreino(sessao);
+            sessao.setAvaliacaoBasalPro(avalPos);
+        }
+
+        if (dto.getSintomas() != null && !dto.getSintomas().isBlank()) {
+            RegistroDeSintoma sintomasPos = new RegistroDeSintoma();
+            sintomasPos.setSintomas(dto.getSintomas());
+            sintomasPos.setDataHora(java.time.LocalDateTime.now());
+            sintomasPos.setSessaoDeTreino(sessao);
+            sessao.setRegistroDeSintomaPos(sintomasPos);
+        }
+
         repository.save(sessao);
 
         return mapToResponseDTO(sessao);
@@ -172,6 +190,14 @@ public class SessaoDeTreinoService {
 
         sessao.setPesagemPre(pesagemPre);
 
+        if (dto.getCorUrina() != null || dto.getSede() != null) {
+            AvaliacaoBasal avalPre = new AvaliacaoBasal();
+            avalPre.setUrina(dto.getCorUrina());
+            avalPre.setSede(dto.getSede());
+            avalPre.setSessaoDeTreino(sessao);
+            sessao.setAvaliacaoBasalPre(avalPre);
+        }
+
         if (dto.getSintomas() != null && !dto.getSintomas().isBlank()) {
             RegistroDeSintoma registroSintoma = new RegistroDeSintoma();
 
@@ -179,17 +205,17 @@ public class SessaoDeTreinoService {
             registroSintoma.setDataHora(java.time.LocalDateTime.now());
 
             registroSintoma.setSessaoDeTreino(sessao);
-            sessao.setRegistroDeSintoma(registroSintoma);
+            sessao.setRegistroDeSintomaPre(registroSintoma);
         }
 
         if (dto.getChecklist() != null) {
             PesagemPreTreinoDTO.ChecklistDTO c = dto.getChecklist();
-            sessao.setChecklistBexiga(           Boolean.TRUE.equals(c.getBexiga()));
-            sessao.setChecklistBalancaCorreta(   Boolean.TRUE.equals(c.getBalancaCorreta()));
-            sessao.setChecklistSuperficiePlana(  Boolean.TRUE.equals(c.getSuperficiePlana()));
+            sessao.setChecklistBexiga(Boolean.TRUE.equals(c.getBexiga()));
+            sessao.setChecklistBalancaCorreta(Boolean.TRUE.equals(c.getBalancaCorreta()));
+            sessao.setChecklistSuperficiePlana(Boolean.TRUE.equals(c.getSuperficiePlana()));
             sessao.setChecklistVestimentaCorreta(Boolean.TRUE.equals(c.getVestimentaCorreta()));
-            sessao.setChecklistSemCalcados(      Boolean.TRUE.equals(c.getSemCalcados()));
-            sessao.setChecklistSemAcessorios(    Boolean.TRUE.equals(c.getSemAcessorios()));
+            sessao.setChecklistSemCalcados(Boolean.TRUE.equals(c.getSemCalcados()));
+            sessao.setChecklistSemAcessorios(Boolean.TRUE.equals(c.getSemAcessorios()));
         }
 
         SessaoDeTreino salva = repository.save(sessao);

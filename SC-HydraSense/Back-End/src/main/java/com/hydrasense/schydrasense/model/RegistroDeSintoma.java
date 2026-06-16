@@ -24,9 +24,9 @@ public class RegistroDeSintoma {
     @Setter
     private LocalDateTime dataHora;
 
-    // Relação 1:1 SessaoDeTreino
+    // Relação M:1 SessaoDeTreino
     @Setter
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "sessao_id")
     private SessaoDeTreino sessaoDeTreino;
 

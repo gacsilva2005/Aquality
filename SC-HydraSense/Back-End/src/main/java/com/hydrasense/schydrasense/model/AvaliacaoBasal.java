@@ -15,7 +15,10 @@ public class AvaliacaoBasal {
     private String corUrina;
     private Boolean sensacaoSede;
 
-    @OneToOne
+    private Integer urina;
+    private Integer sede;
+
+    @ManyToOne
     @JoinColumn(name = "sessao_id")
     private SessaoDeTreino sessaoDeTreino;
 }

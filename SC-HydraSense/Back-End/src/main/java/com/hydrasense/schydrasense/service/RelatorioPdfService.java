@@ -58,7 +58,7 @@ public class RelatorioPdfService {
                 pesoPre,
                 sessao.getCondicaoAmbiental() != null && sessao.getCondicaoAmbiental().getTemperatura() != null ? sessao.getCondicaoAmbiental().getTemperatura() : 25f,
                 sessao.getCondicaoAmbiental() != null && sessao.getCondicaoAmbiental().getUmidade() != null ? sessao.getCondicaoAmbiental().getUmidade().intValue() : 50,
-                sessao.getAvaliacaoBasal() != null ? sessao.getAvaliacaoBasal().getCorUrina() : "3",
+                sessao.getAvaliacaoBasalPre() != null ? (sessao.getAvaliacaoBasalPre().getUrina() != null ? String.valueOf(sessao.getAvaliacaoBasalPre().getUrina()) : sessao.getAvaliacaoBasalPre().getCorUrina()) : "3",
                 sessao.getChecklistVestimentaCorreta(),
                 sessao.getChecklistBexiga(),
                 sessao.getChecklistBalancaCorreta()
@@ -74,7 +74,7 @@ public class RelatorioPdfService {
         RelatorioPdfDTO.PosSessaoRecord pos = new RelatorioPdfDTO.PosSessaoRecord(
                 pesoPos,
                 sessao.getBalancoHidrico(),
-                sessao.getRegistroDeSintoma() != null ? sessao.getRegistroDeSintoma().getSintomas() : "Nenhum",
+                sessao.getRegistroDeSintomaPos() != null ? sessao.getRegistroDeSintomaPos().getSintomas() : (sessao.getRegistroDeSintomaPre() != null ? sessao.getRegistroDeSintomaPre().getSintomas() : "Nenhum"),
                 "Boa" // Placeholder
         );
 
@@ -102,7 +102,7 @@ public class RelatorioPdfService {
         RelatorioPdfDTO.AtletaRecord atletaRecord = new RelatorioPdfDTO.AtletaRecord(
                 atleta.getNome() != null ? atleta.getNome() : "Desconhecido",
                 "ID-" + atleta.getId(),
-                atleta.getModalidadePrincipal() != null ? atleta.getModalidadePrincipal() : sessao.getModalidade(),
+                atleta.getModalidade() != null ? atleta.getModalidade() : sessao.getModalidade(),
                 fotoAtletaBase64
         );
 
