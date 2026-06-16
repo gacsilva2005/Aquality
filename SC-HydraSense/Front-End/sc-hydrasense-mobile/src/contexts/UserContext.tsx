@@ -32,6 +32,7 @@ interface UserData {
     registro?: string;
     especialidade?: string;
     codigoEquipe?: string;
+    kitPrincipalId?: number | null;
 }
 
 interface UserContextData {

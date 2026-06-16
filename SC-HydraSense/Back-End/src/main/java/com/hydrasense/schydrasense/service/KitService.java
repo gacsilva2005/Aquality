@@ -26,4 +26,12 @@ public class KitService {
         return kitRepository.findById(kitId)
                 .orElseThrow(() -> new RuntimeException("Kit não encontrado: " + kitId));
     }
+
+    public Kit salvar(Kit kit) {
+        return kitRepository.save(kit);
+    }
+
+    public void deletar(Long kitId) {
+        kitRepository.deleteById(kitId);
+    }
 }
