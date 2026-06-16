@@ -77,7 +77,7 @@ export function SideBarPagePerfil({ aberto, onFechar }: SideBarPagePerfilProps) 
 
         setCarregando(true);
         try {
-            const response = await fetch(`http://localhost:8080/profissionais/${user.id}`, {
+            const response = await fetch(`http://127.0.0.1:8080/profissionais/${user.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"

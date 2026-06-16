@@ -19,7 +19,7 @@ export function Equipes() {
     const carregarAtletas = useCallback(async () => {
       try {
         const clubeId = user?.clube?.id;
-        const response = await fetch(`http://localhost:8080/Atleta/clube/${clubeId}`);
+        const response = await fetch(`http://127.0.0.1:8080/Atleta/clube/${clubeId}`);
         const data = await response.json();
         setAtletas(data);
       } catch (error) {
@@ -32,7 +32,7 @@ export function Equipes() {
         const clubeId = user?.clube?.id;
 
         const response = await fetch(
-          `http://localhost:8080/Equipe/clube/${clubeId}`
+          `http://127.0.0.1:8080/Equipe/clube/${clubeId}`
         );
 
         const data = await response.json();
@@ -62,7 +62,7 @@ export function Equipes() {
                 atletasIds: atletasIds
             };
 
-            const response = await fetch(`http://localhost:8080/Equipe`, {
+            const response = await fetch(`http://127.0.0.1:8080/Equipe`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,31 +1,48 @@
-import { Download, Filter, Thermometer, Droplets, ChevronRight, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Download, Filter, Thermometer, Droplets, ChevronRight, ArrowLeft, X } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
 
 export function RelatorioEquipe() {
     const navigate = useNavigate();
+    const { id } = useParams<{ id: string }>(); 
+    const [loading, setLoading] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+    const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
 
     const handleExportarPdf = async () => {
+        setLoading(true);
         try {
-            // ID 1 mockado para a prova de conceito ponta a ponta
-            const sessaoId = 1;
-            const response = await fetch(`http://localhost:8080/api/relatorios/sessao/${sessaoId}/pdf`);
+            const equipeId = id || '1'; // fallback caso teste isolado
+            const response = await fetch(`http://127.0.0.1:8080/api/relatorios/equipe/${equipeId}/pdf`);
             
+            if (response.status === 204) {
+                alert('Sem dados para esta equipe no período.');
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error("Erro ao gerar PDF");
             }
 
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `relatorio-hydroperform-${sessaoId}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            
+            setPdfBlobUrl(url);
+            setShowPreview(true);
         } catch (error) {
             console.error("Erro no download:", error);
             alert("Erro ao exportar o relatório PDF. Verifique se o backend está rodando.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDownload = () => {
+        if (pdfBlobUrl) {
+            const a = document.createElement('a');
+            a.href = pdfBlobUrl;
+            a.download = `relatorio-aquality-equipe-${id || '1'}.pdf`;
+            a.click();
         }
     };
 
@@ -47,8 +64,8 @@ export function RelatorioEquipe() {
                             FUTEBOL MASCULINO A
                         </h1>
                     </div>
-                    <button onClick={handleExportarPdf} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', padding: '12px 24px' }}>
-                        <Download size={18} /> EXPORTAR RELATÓRIO
+                    <button onClick={handleExportarPdf} disabled={loading} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', padding: '12px 24px' }}>
+                        <Download size={18} /> {loading ? 'GERANDO...' : 'EXPORTAR RELATÓRIO'}
                     </button>
                 </div>
             </div>
@@ -197,6 +214,38 @@ export function RelatorioEquipe() {
                     </tbody>
                 </table>
             </div>
+
+            {/* Modal Prévia Web */}
+            {showPreview && pdfBlobUrl && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(17, 24, 39, 0.7)', backdropFilter: 'blur(4px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ background: 'white', width: '90%', height: '90%', borderRadius: '12px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                        <div style={{ padding: '18px 24px', borderBottom: '1px solid #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F9FAFB' }}>
+                            <h3 style={{ margin: 0, color: '#111827', fontSize: '18px', fontWeight: 700, fontFamily: 'Inter, system-ui, sans-serif' }}>
+                                Prévia do Relatório da Equipe
+                            </h3>
+                            <button 
+                                onClick={() => setShowPreview(false)} 
+                                style={{ background: 'none', border: 'none', color: '#4B5563', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px', borderRadius: '50%', width: '32px', height: '32px', transition: 'all 0.2s' }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#E5E7EB';
+                                    e.currentTarget.style.color = '#111827';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                    e.currentTarget.style.color = '#4B5563';
+                                }}
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <iframe src={pdfBlobUrl} style={{ flex: 1, border: 'none', background: '#F3F4F6' }} title="Prévia PDF" />
+                        <div style={{ padding: '16px 24px', display: 'flex', justifyContent: 'flex-end', gap: '12px', borderTop: '1px solid #E5E7EB', background: '#F9FAFB' }}>
+                            <button onClick={() => setShowPreview(false)} className="btn-ghost-back" style={{ padding: '10px 20px', fontSize: '14px', fontWeight: 600 }}>Fechar</button>
+                            <button onClick={handleDownload} className="btn-primary" style={{ padding: '10px 20px', fontSize: '14px', fontWeight: 600 }}>Baixar PDF</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
