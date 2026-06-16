@@ -102,7 +102,7 @@ public class RelatorioPdfService {
         RelatorioPdfDTO.AtletaRecord atletaRecord = new RelatorioPdfDTO.AtletaRecord(
                 atleta.getNome() != null ? atleta.getNome() : "Desconhecido",
                 "ID-" + atleta.getId(),
-                atleta.getModalidadePrincipal() != null ? atleta.getModalidadePrincipal() : sessao.getModalidade(),
+                atleta.getModalidade() != null ? atleta.getModalidade() : sessao.getModalidade(),
                 fotoAtletaBase64
         );
 
