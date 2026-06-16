@@ -44,7 +44,27 @@ export function Atletas() {
 
     // Extração dinâmica de opções para os selects
     const timesUnicos = Array.from(new Set(atletasBase.map(a => a.equipeNome))).filter(Boolean);
-    const modalidadesUnicas = Array.from(new Set(atletasBase.map(a => a.modalidade))).filter(Boolean);
+    const modalidadesUnicas = useMemo(() => {
+        const set = new Set<string>();
+        atletasBase.forEach(a => {
+            if (!a.modalidade) return;
+            try {
+                const parsed = JSON.parse(a.modalidade);
+                if (Array.isArray(parsed)) {
+                    parsed.forEach(m => set.add(m));
+                } else if (typeof parsed === 'string') {
+                    set.add(parsed);
+                }
+            } catch (e) {
+                if (a.modalidade.includes(',')) {
+                    a.modalidade.split(',').forEach((m: string) => set.add(m.trim()));
+                } else {
+                    set.add(a.modalidade.trim());
+                }
+            }
+        });
+        return Array.from(set);
+    }, [atletasBase]);
 
     // Lógica de Filtragem Cruzada
     const atletasFiltrados = useMemo(() => {
@@ -60,7 +80,26 @@ export function Atletas() {
             if (filtroStatus !== 'Todos os status' && atleta.status !== filtroStatus) return false;
 
             // Filtro Modalidade
-            if (filtroModalidade !== 'Todas as modalidades' && atleta.modalidade !== filtroModalidade) return false;
+            if (filtroModalidade !== 'Todas as modalidades') {
+                if (!atleta.modalidade) return false;
+                let matches = false;
+                try {
+                    const parsed = JSON.parse(atleta.modalidade);
+                    if (Array.isArray(parsed)) {
+                        matches = parsed.some(m => m.toLowerCase() === filtroModalidade.toLowerCase());
+                    } else if (typeof parsed === 'string') {
+                        matches = parsed.toLowerCase() === filtroModalidade.toLowerCase();
+                    }
+                } catch (e) {
+                    if (atleta.modalidade.includes(',')) {
+                        const list = atleta.modalidade.split(',').map((m: string) => m.trim().toLowerCase());
+                        matches = list.includes(filtroModalidade.toLowerCase());
+                    } else {
+                        matches = atleta.modalidade.trim().toLowerCase() === filtroModalidade.toLowerCase();
+                    }
+                }
+                if (!matches) return false;
+            }
 
             // Filtro Última Sessão
             if (filtroSessao !== 'Qualquer momento') {
@@ -228,7 +267,18 @@ export function Atletas() {
                                 </td>
 
                                 <td>
-                                    {atleta.modalidade || '--'}
+                                    {(() => {
+                                        if (!atleta.modalidade || atleta.modalidade === '[]') return '--';
+                                        try {
+                                            const parsed = JSON.parse(atleta.modalidade);
+                                            if (Array.isArray(parsed)) {
+                                                return parsed.join(', ');
+                                            }
+                                            return parsed;
+                                        } catch (e) {
+                                            return atleta.modalidade;
+                                        }
+                                    })()}
                                 </td>
 
                                 <td>

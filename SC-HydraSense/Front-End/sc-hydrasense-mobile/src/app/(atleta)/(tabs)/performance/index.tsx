@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import { useFocusEffect } from 'expo-router';
 import Constants from 'expo-constants';
 
 // TIPOS
-type FilterType = 'TODOS' | 'CARDIO' | 'MUSCULAÇÃO';
+type FilterType = string;
 
 type StatusType = 'OPTIMAL' | 'WARNING' | 'CRITICAL';
 
@@ -24,7 +24,7 @@ interface Session {
   id: string;
   day: string;
   month: string;
-  type: 'CARDIO' | 'MUSCULAÇÃO';
+  type: string;
   sweatRate: number; 
   status: StatusType;
 }
@@ -66,6 +66,20 @@ export default function Performance() {
   const [filter, setFilter]       = useState<FilterType>('TODOS');
   const [sessions, setSessions]   = useState<Session[]>([]);
 
+  // Obter modalidades únicas registradas nas sessões do atleta
+  const filterOptions = useMemo(() => {
+    if (sessions.length === 0) {
+      return ['TODOS', 'CARDIO', 'MUSCULAÇÃO'];
+    }
+    const uniqueMods = new Set<string>();
+    sessions.forEach(s => {
+      if (s.type) {
+        uniqueMods.add(s.type.toUpperCase());
+      }
+    });
+    return ['TODOS', ...Array.from(uniqueMods)];
+  }, [sessions]);
+
   // ── Buscar dados da API ──
   const fetchSessions = useCallback(async () => {
     if (!user?.id) return;
@@ -87,10 +101,7 @@ export default function Performance() {
           const day = d.getDate().toString().padStart(2, '0');
           const month = meses[d.getMonth()];
 
-          let typeStr = s.modalidade ? s.modalidade.toUpperCase() : 'CARDIO';
-          if (typeStr !== 'CARDIO' && typeStr !== 'MUSCULAÇÃO') {
-            typeStr = 'CARDIO'; // Fallback
-          }
+          const typeStr = s.modalidade ? s.modalidade.toUpperCase() : 'CARDIO';
 
           const pesoPre = s.pesoPre || 70.0;
           const perdaPeso = pesoPre - (s.pesoPos || pesoPre);
@@ -227,7 +238,7 @@ export default function Performance() {
             showsHorizontalScrollIndicator={false} 
             contentContainerStyle={styles.filterRow}
           >
-            {(['TODOS', 'CARDIO', 'MUSCULAÇÃO'] as FilterType[]).map(f => (
+            {filterOptions.map(f => (
               <TouchableOpacity
                 key={f}
                 style={[styles.filterBtn, filter === f && styles.filterBtnActive]}
