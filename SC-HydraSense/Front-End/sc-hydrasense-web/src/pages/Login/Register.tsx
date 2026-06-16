@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Microscope, Utensils, Activity, BriefcaseMedical, MapPin, Award, User, Hash, Trophy, ArrowLeft } from 'lucide-react';
 import { Input } from '../../components/ui/Input';
+import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import './Login.css';
 
@@ -139,23 +140,18 @@ export function Register() {
               required
             />
 
-            <div className="campo-entrada">
-              <label>SEXO BIOLÓGICO</label>
-              <div className="container-input-linha">
-                <User size={18} color="#6C757D" />
-                <select
-                  required
-                  name="sexo"
-                  className="select-registro"
-                  value={formData.sexo}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>Selecione</option>
-                  <option value="Masculino">Masculino</option>
-                  <option value="Feminino">Feminino</option>
-                </select>
-              </div>
-            </div>
+            <Select
+              label="SEXO BIOLÓGICO"
+              iconLeft={<User size={18} color="#6C757D" />}
+              name="sexo"
+              value={formData.sexo}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>Selecione</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+            </Select>
           </div>
 
           <div className="linha-dupla">
@@ -170,22 +166,17 @@ export function Register() {
               required
             />
 
-            <div className="campo-entrada">
-              <label>UF DA FILIAÇÃO</label>
-              <div className="container-input-linha">
-                <MapPin size={18} color="#6C757D" />
-                <select
-                  required
-                  name="uf"
-                  className="select-registro"
-                  value={formData.uf}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>Selecione</option>
-                  {UFS.map(uf => <option key={uf} value={uf}>{uf}</option>)}
-                </select>
-              </div>
-            </div>
+            <Select
+              label="UF DA FILIAÇÃO"
+              iconLeft={<MapPin size={18} color="#6C757D" />}
+              name="uf"
+              value={formData.uf}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>Selecione</option>
+              {UFS.map(uf => <option key={uf} value={uf}>{uf}</option>)}
+            </Select>
           </div>
 
           <div className="linha-dupla">
