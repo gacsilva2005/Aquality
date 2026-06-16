@@ -1,228 +1,293 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Modal, ActivityIndicator, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-
-// Importando as bibliotecas
-import { File, Paths } from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
+import { LineChart } from 'react-native-chart-kit';
 import Constants from 'expo-constants';
 
-// Importando os estilos e o tema
 import { theme } from '../../../../global/themas';
 import { styles } from './styles';
-import {Header} from "@/src/components/Header";
+import { Header } from "@/src/components/Header";
 import { Screen } from '../../../../components/Screen';
+import { useUser } from '../../../../contexts/UserContext';
+import { useRouter } from 'expo-router';
 
-export default function ReportsScreen() {
+interface DashboardData {
+  totalAtletas: number;
+  sessoesUltimos7Dias: number;
+  taxaMediaSudorese: number;
+  variacaoMediaMassa: number;
+  temperaturaAtual: number | null;
+  umidadeAtual: number | null;
+  descricaoClima: string | null;
+  aumentoSudoresePercent: number | null;
+  aguaRecomendadaLitros: number | null;
+  rankingPerformance: { id: number; nome: string; avatar: string | null; totalSessoes: number; sessoesIdeais: number; percentualIdeal: number }[];
+  mapaRisco: { id: number; nome: string; avatar: string | null; status: string; statusColor: string; variacaoMassa: number; taxaSudorese: number; alerta: string }[];
+  sintomasRecorrentes: { sintoma: string; ocorrencias: number; percentual: number }[];
+  alertasOutliers: { sessaoId: number; atletaId: number; nomeAtleta: string; tipo: string; descricao: string; dataHora: string }[];
+  tendenciaSemanal: { dia: string; mediaBalancoHidrico: number; mediaTaxaSudorese: number; totalSessoes: number }[];
+  atletasCriticos: number;
+  atletasAtencao: number;
+  atletasIdeais: number;
+  atletasSuperingestao: number;
+}
 
-  // 1. Criando os estados para controlar o Pop-up
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalConfig, setModalConfig] = useState({
-    title: '',
-    message: '',
-    isError: false,
-  });
+export default function DashboardProfissional() {
+  const { user } = useUser();
+  const router = useRouter();
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Novos estados para o fluxo do PDF
-  const [loading, setLoading] = useState(false);
+  const clubeId = user?.clube?.id || 1;
 
-  // Em um cenário real, viria do AuthContext (ex: const { user } = useAuth(); const clubeId = user.clubeId;)
-  const clubeId = "1";
-
-  // Função auxiliar para chamar o pop-up facilmente
-  const showPopUp = (title: string, message: string, isError: boolean = false) => {
-    setModalConfig({ title, message, isError });
-    setModalVisible(true);
-  };
-
-  const handleExport = async () => {
-    if (!clubeId) {
-        showPopUp("Erro", "Clube ID não encontrado no contexto.", true);
-        return;
-    }
-    
-    setLoading(true);
-    try {
-      const hostIp = Constants.expoConfig?.hostUri?.split(':')[0] || '10.0.2.2';
-      const API_URL = process.env.EXPO_PUBLIC_API_URL || `http://${hostIp}:8080`;
-      const url = `${API_URL}/api/relatorios/geral/${clubeId}/pdf`;
-      const destino = new File(Paths.document, `relatorio_geral_${clubeId}.pdf`);
-      
-      const resultFile = await File.downloadFileAsync(url, destino, { idempotent: true });
-      
-      if (resultFile.size === 0) {
-        Alert.alert("Aviso", "Sem dados no período");
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const hostUri = Constants?.expoConfig?.hostUri;
+        const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+        const API_URL = process.env.EXPO_PUBLIC_API_URL || `http://${ip}:8080`;
+        const res = await fetch(`${API_URL}/api/dashboard/profissional/${clubeId}`);
+        if (res.ok) {
+          setData(await res.json());
+        }
+      } catch (e) {
+        console.error('Erro ao buscar dashboard profissional:', e);
+      } finally {
         setLoading(false);
-        return;
       }
+    };
+    fetchDashboard();
+  }, [clubeId]);
 
-      setLoading(false);
-      
-      const isAvailable = await Sharing.isAvailableAsync();
-      if (isAvailable) {
-          await Sharing.shareAsync(resultFile.uri, { mimeType: 'application/pdf', dialogTitle: 'Compartilhar Relatório Geral' });
-      } else {
-          showPopUp('Não Suportado', 'O compartilhamento não está disponível neste dispositivo.', true);
-      }
+  if (loading) {
+    return (
+      <Screen backgroundColor={theme.colors.background} scrollable={false} HeaderComponent={<Header />}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <Text style={{ marginTop: 12, color: theme.colors.textSecondary, fontFamily: theme.fonts.bodyRegular }}>Carregando dashboard...</Text>
+        </View>
+      </Screen>
+    );
+  }
 
-    } catch (error) {
-      console.error(error);
-      showPopUp('Ops, algo deu errado', 'Não foi possível gerar o arquivo para exportação.', true);
-      setLoading(false);
-    }
+  const chartLabels = (data?.tendenciaSemanal ?? []).map(t => t.dia);
+  const chartBalanco = (data?.tendenciaSemanal ?? []).map(t => t.mediaBalancoHidrico);
+
+  const getAvatarSource = (avatar: string | null) => {
+    if (!avatar) return require('../../../../assets/images/anonymous_avatar.png');
+    if (avatar.startsWith('data:image') || avatar.startsWith('http')) return { uri: avatar };
+    return { uri: `data:image/jpeg;base64,${avatar}` };
   };
 
+  return (
+    <Screen backgroundColor={theme.colors.background} scrollable={true} HeaderComponent={<Header />}>
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-
-    return (
-      <Screen
-          backgroundColor={theme.colors.background}
-          scrollable={true}
-          HeaderComponent={<Header />}
-      >
-          <SafeAreaView style={styles.container}>
-              <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            {/* HEADER */}
-            <View style={styles.headerContainer}>
-              <View>
-                <Text style={styles.headerTitle}>RELATÓRIOS</Text>
-                <Text style={styles.headerSubtitle}>Visão Geral da Equipe</Text>
-              </View>
-              <TouchableOpacity style={styles.exportButton} onPress={handleExport} disabled={loading}>
-                {loading ? (
-                    <ActivityIndicator size="small" color={theme.colors.textWhite} />
-                ) : (
-                    <>
-                        <Feather name="download" size={16} color={theme.colors.textWhite} />
-                        <Text style={styles.exportButtonText}>EXPORTAR</Text>
-                    </>
-                )}
-              </TouchableOpacity>
+          {/* ═══ HEADER ═══ */}
+          <View style={styles.headerContainer}>
+            <View>
+              <Text style={styles.headerTitle}>DASHBOARD</Text>
+              <Text style={styles.headerSubtitle}>Monitoramento Fisiológico</Text>
             </View>
+          </View>
 
-            {/* PRONTIDÃO DA EQUIPE */}
+          {/* ═══ SEÇÃO 1: VISÃO GERAL — KPIs ═══ */}
+          <View style={styles.kpiGrid}>
+            <View style={styles.kpiCard}>
+              <MaterialCommunityIcons name="account-group" size={20} color={theme.colors.primary} />
+              <Text style={styles.kpiValue}>{data?.totalAtletas ?? 0}</Text>
+              <Text style={styles.kpiLabel}>ATLETAS</Text>
+            </View>
+            <View style={styles.kpiCard}>
+              <Feather name="activity" size={20} color={theme.colors.primary} />
+              <Text style={styles.kpiValue}>{data?.sessoesUltimos7Dias ?? 0}</Text>
+              <Text style={styles.kpiLabel}>SESSÕES 7D</Text>
+            </View>
+            <View style={styles.kpiCard}>
+              <MaterialCommunityIcons name="water" size={20} color={theme.colors.primary} />
+              <Text style={styles.kpiValue}>{data?.taxaMediaSudorese?.toFixed(1) ?? '—'}</Text>
+              <Text style={styles.kpiLabel}>SUOR L/h</Text>
+            </View>
+            <View style={styles.kpiCard}>
+              <Feather name="percent" size={20} color={theme.colors.primary} />
+              <Text style={styles.kpiValue}>{data?.variacaoMediaMassa?.toFixed(1) ?? '—'}%</Text>
+              <Text style={styles.kpiLabel}>Δ MASSA</Text>
+            </View>
+          </View>
+
+          {/* ═══ SEÇÃO 2: CLIMA ATUAL ═══ */}
+          {data?.temperaturaAtual != null && (
             <View style={styles.card}>
-              <Text style={styles.cardTitle}>Prontidão da Equipe</Text>
-              <View style={styles.scoreContainer}>
-                <Text style={styles.scoreLarge}>84</Text>
-                <Text style={styles.scoreLabel}>% MÉDIA</Text>
+              <View style={styles.cardHeaderRow}>
+                <MaterialCommunityIcons name="weather-partly-cloudy" size={22} color={theme.colors.primary} />
+                <Text style={styles.cardTitle}>CONDIÇÕES AMBIENTAIS</Text>
               </View>
-              <View style={styles.badgeSuccess}>
-                <Feather name="trending-up" size={14} color={theme.colors.success} />
-                <Text style={styles.badgeSuccessText}>+2.4% vs Semana Passada</Text>
+              <View style={styles.climaRow}>
+                <View style={styles.climaItem}>
+                  <Feather name="thermometer" size={16} color={theme.colors.critical} />
+                  <Text style={styles.climaValue}>{data.temperaturaAtual?.toFixed(0)}°C</Text>
+                </View>
+                <View style={styles.climaItem}>
+                  <MaterialCommunityIcons name="water-percent" size={16} color="#3B82F6" />
+                  <Text style={styles.climaValue}>{data.umidadeAtual?.toFixed(0)}%</Text>
+                </View>
+                <View style={styles.climaItem}>
+                  <Feather name="trending-up" size={16} color={theme.colors.warning} />
+                  <Text style={styles.climaValue}>+{data.aumentoSudoresePercent?.toFixed(0)}% suor</Text>
+                </View>
               </View>
+              <Text style={styles.climaDesc}>{data.descricaoClima} • Recomendação: +{data.aguaRecomendadaLitros?.toFixed(1)}L/dia</Text>
             </View>
+          )}
 
-            {/* TENDÊNCIAS DA SEMANA */}
-            <Text style={styles.sectionTitle}>TENDÊNCIAS DA SEMANA</Text>
-            <View style={styles.row}>
-              <View style={[styles.card, styles.halfCard]}>
-                <View style={styles.iconRow}>
-                  <MaterialCommunityIcons name="fire" size={24} color={theme.colors.critical} />
-                  <MaterialCommunityIcons name="fire" size={24} color={theme.colors.border} />
-                </View>
-                <Text style={styles.cardSubtitle}>CARGA AGUDA</Text>
-                <Text style={styles.statValue}>4.2<Text style={styles.statUnit}>k</Text></Text>
-              </View>
-
-              <View style={[styles.card, styles.halfCard]}>
-                <View style={styles.iconRow}>
-                  <MaterialCommunityIcons name="heart" size={24} color={theme.colors.primary} />
-                  <MaterialCommunityIcons name="heart" size={24} color={theme.colors.border} />
-                </View>
-                <Text style={styles.cardSubtitle}>FADIGA (RPE)</Text>
-                <Text style={styles.statValue}>7.8</Text>
-              </View>
-            </View>
-
-            {/* MAPA DE RISCO */}
-            <View style={styles.riskHeader}>
-              <Text style={styles.sectionTitle}>MAPA DE RISCO</Text>
-              <View style={styles.riskBadge}>
-                <Text style={styles.riskBadgeText}>3 CRÍTICOS</Text>
-              </View>
-            </View>
-
-            {/* Lista de Atletas */}
-            <View style={styles.athleteList}>
-              {/* Atleta 1 - Crítico */}
-              <View style={[styles.athleteCard, { borderLeftColor: theme.colors.critical }]}>
-                <Image source={{ uri: 'https://i.pravatar.cc/100?img=11' }} style={styles.avatar} />
-                <View style={styles.athleteInfo}>
-                  <Text style={styles.athleteName}>Silva, L.</Text>
-                  <View style={styles.alertRow}>
-                    <Feather name="alert-triangle" size={12} color={theme.colors.critical} />
-                    <Text style={[styles.alertText, { color: theme.colors.critical }]}>SOBRECARGA AGUDA</Text>
-                  </View>
-                </View>
-                <Text style={[styles.athleteScore, { color: theme.colors.critical }]}>92<Text style={styles.scoreUnit}>%</Text></Text>
-              </View>
-
-              {/* Atleta 2 - Alerta Primário */}
-              <View style={[styles.athleteCard, { borderLeftColor: theme.colors.primary }]}>
-                <Image source={{ uri: 'https://i.pravatar.cc/100?img=12' }} style={styles.avatar} />
-                <View style={styles.athleteInfo}>
-                  <Text style={styles.athleteName}>Costa, M.</Text>
-                  <View style={styles.alertRow}>
-                    <Feather name="trending-up" size={12} color={theme.colors.primary} />
-                    <Text style={[styles.alertText, { color: theme.colors.primary }]}>FADIGA ALTA</Text>
-                  </View>
-                </View>
-                <Text style={[styles.athleteScore, { color: theme.colors.primary }]}>85<Text style={styles.scoreUnit}>%</Text></Text>
-              </View>
-
-              {/* Atleta 3 - Aviso (Warning) */}
-              <View style={[styles.athleteCard, { borderLeftColor: theme.colors.warning }]}>
-                <Image source={{ uri: 'https://i.pravatar.cc/100?img=13' }} style={styles.avatar} />
-                <View style={styles.athleteInfo}>
-                  <Text style={styles.athleteName}>Santos, P.</Text>
-                  <View style={styles.alertRow}>
-                    <Feather name="moon" size={12} color={theme.colors.warning} />
-                    <Text style={[styles.alertText, { color: theme.colors.warning }]}>DÉFICIT DE SONO</Text>
-                  </View>
-                </View>
-                <Text style={[styles.athleteScore, { color: theme.colors.warning }]}>78<Text style={styles.scoreUnit}>%</Text></Text>
-              </View>
-            </View>
-
-            <View style={{ height: 40 }} />
-
-          {/* POP-UP ESTILIZADO  */}
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)} // Para o botão de voltar do Android
-          >
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalContent}>
-
-                {/* Ícone dinâmico: Muda de cor/formato se for erro ou sucesso */}
-                <View style={[styles.modalIconContainer, { backgroundColor: modalConfig.isError ? theme.colors.primaryLight : 'rgba(22, 163, 74, 0.1)' }]}>
-                  <Feather
-                    name={modalConfig.isError ? "alert-circle" : "check-circle"}
-                    size={32}
-                    color={modalConfig.isError ? theme.colors.primary : theme.colors.success}
-                  />
-                </View>
-
-                <Text style={styles.modalTitle}>{modalConfig.title}</Text>
-                <Text style={styles.modalMessage}>{modalConfig.message}</Text>
-
+          {/* ═══ SEÇÃO 3: RANKING DE PERFORMANCE ═══ */}
+          <Text style={styles.sectionTitle}>🏆 RANKING — ADESÃO HÍDRICA</Text>
+          <View style={styles.card}>
+            {(data?.rankingPerformance ?? []).length === 0 ? (
+              <Text style={styles.emptyText}>Sem dados suficientes para ranking</Text>
+            ) : (
+              (data?.rankingPerformance ?? []).map((atleta, index) => (
                 <TouchableOpacity
-                  style={[styles.modalButton, { backgroundColor: modalConfig.isError ? theme.colors.primary : theme.colors.success }]}
-                  onPress={() => setModalVisible(false)}
+                  key={atleta.id}
+                  style={styles.rankingRow}
+                  onPress={() => router.push(`/(profissional)/athlete/${atleta.id}` as any)}
                 >
-                  <Text style={styles.modalButtonText}>ENTENDI</Text>
+                  <Text style={styles.rankingPosition}>{index + 1}º</Text>
+                  <Image source={getAvatarSource(atleta.avatar)} style={styles.rankingAvatar} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.rankingName}>{atleta.nome}</Text>
+                    <View style={styles.progressBarBg}>
+                      <View style={[styles.progressBarFill, { width: `${Math.min(atleta.percentualIdeal, 100)}%` }]} />
+                    </View>
+                  </View>
+                  <Text style={styles.rankingPercent}>{atleta.percentualIdeal.toFixed(0)}%</Text>
                 </TouchableOpacity>
+              ))
+            )}
+          </View>
 
-              </View>
+          {/* ═══ SEÇÃO 4: MAPA DE RISCO ═══ */}
+          <View style={styles.riskHeader}>
+            <Text style={styles.sectionTitle}>⚠️ MAPA DE RISCO</Text>
+          </View>
+
+          {/* Distribuição de status */}
+          <View style={styles.riskDistRow}>
+            <View style={[styles.riskDistBadge, { backgroundColor: '#DCFCE7' }]}>
+              <Text style={[styles.riskDistText, { color: '#16A34A' }]}>✓ {data?.atletasIdeais ?? 0} Ideal</Text>
             </View>
-          </Modal>
-              </ScrollView>
+            <View style={[styles.riskDistBadge, { backgroundColor: '#FEF3C7' }]}>
+              <Text style={[styles.riskDistText, { color: '#D97706' }]}>⚡ {data?.atletasAtencao ?? 0} Atenção</Text>
+            </View>
+            <View style={[styles.riskDistBadge, { backgroundColor: '#FEE2E2' }]}>
+              <Text style={[styles.riskDistText, { color: '#DC2626' }]}>🔴 {data?.atletasCriticos ?? 0} Crítico</Text>
+            </View>
+            {(data?.atletasSuperingestao ?? 0) > 0 && (
+              <View style={[styles.riskDistBadge, { backgroundColor: '#EDE9FE' }]}>
+                <Text style={[styles.riskDistText, { color: '#7C3AED' }]}>💧 {data?.atletasSuperingestao} Super</Text>
+              </View>
+            )}
+          </View>
 
-          </SafeAreaView>
-      </Screen>
+          {/* Lista de atletas de risco (só não-ideais) */}
+          {(data?.mapaRisco ?? []).filter(a => a.status !== 'IDEAL').map(atleta => (
+            <TouchableOpacity
+              key={atleta.id}
+              style={[styles.athleteCard, { borderLeftColor: atleta.statusColor }]}
+              onPress={() => router.push(`/(profissional)/athlete/${atleta.id}` as any)}
+            >
+              <Image source={getAvatarSource(atleta.avatar)} style={styles.avatar} />
+              <View style={styles.athleteInfo}>
+                <Text style={styles.athleteName}>{atleta.nome}</Text>
+                <View style={styles.alertRow}>
+                  <Feather name="alert-triangle" size={12} color={atleta.statusColor} />
+                  <Text style={[styles.alertText, { color: atleta.statusColor }]}>{atleta.alerta}</Text>
+                </View>
+              </View>
+              <View style={{ alignItems: 'flex-end' }}>
+                <Text style={[styles.athleteScore, { color: atleta.statusColor }]}>{atleta.variacaoMassa?.toFixed(1)}%</Text>
+                <Text style={styles.athleteSubScore}>{atleta.taxaSudorese?.toFixed(1)} L/h</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+
+          {/* ═══ SEÇÃO 5: SINTOMAS RECORRENTES ═══ */}
+          {(data?.sintomasRecorrentes ?? []).length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>🩺 SINTOMAS RECORRENTES (14 DIAS)</Text>
+              <View style={styles.card}>
+                {data!.sintomasRecorrentes.map((s, i) => (
+                  <View key={i} style={styles.sintomaRow}>
+                    <Text style={styles.sintomaName}>{s.sintoma}</Text>
+                    <View style={styles.sintomaBarBg}>
+                      <View style={[styles.sintomaBarFill, { width: `${Math.min(s.percentual, 100)}%` }]} />
+                    </View>
+                    <Text style={styles.sintomaPercent}>{s.percentual.toFixed(0)}%</Text>
+                  </View>
+                ))}
+              </View>
+            </>
+          )}
+
+          {/* ═══ SEÇÃO 6: ALERTAS DE OUTLIERS ═══ */}
+          {(data?.alertasOutliers ?? []).length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>🚨 ALERTAS DE INCONSISTÊNCIA</Text>
+              {data!.alertasOutliers.map((alerta, i) => (
+                <View key={i} style={styles.outlierCard}>
+                  <View style={styles.outlierHeader}>
+                    <Feather name="alert-circle" size={18} color={theme.colors.primary} />
+                    <Text style={styles.outlierTipo}>
+                      {alerta.tipo === 'TAXA_MUITO_ALTA' ? 'Taxa Muito Alta' : alerta.tipo === 'TAXA_MUITO_BAIXA' ? 'Taxa Muito Baixa' : 'Variação Excessiva'}
+                    </Text>
+                  </View>
+                  <Text style={styles.outlierDesc}>{alerta.descricao}</Text>
+                  <Text style={styles.outlierMeta}>{alerta.nomeAtleta} • {alerta.dataHora}</Text>
+                </View>
+              ))}
+            </>
+          )}
+
+
+          {/* ═══ SEÇÃO 8: TENDÊNCIA SEMANAL ═══ */}
+          <Text style={styles.sectionTitle}>📈 TENDÊNCIA SEMANAL</Text>
+          {chartBalanco.length > 0 && chartBalanco.some(v => v !== 0) ? (
+            <View style={styles.card}>
+              <LineChart
+                data={{
+                  labels: chartLabels,
+                  datasets: [{ data: chartBalanco.length > 0 ? chartBalanco : [0] }],
+                }}
+                width={Dimensions.get('window').width - 64}
+                height={160}
+                chartConfig={{
+                  backgroundGradientFrom: '#FFFFFF',
+                  backgroundGradientTo: '#FFFFFF',
+                  color: (opacity = 1) => `rgba(217, 4, 41, ${opacity})`,
+                  labelColor: (opacity = 1) => `rgba(102, 102, 102, ${opacity})`,
+                  strokeWidth: 2,
+                  fillShadowGradientFrom: '#D90429',
+                  fillShadowGradientTo: '#FFFFFF',
+                  fillShadowGradientFromOpacity: 0.15,
+                  fillShadowGradientToOpacity: 0.0,
+                  propsForDots: { r: '4', strokeWidth: '2', stroke: '#D90429', fill: '#FFFFFF' },
+                }}
+                bezier
+                style={{ borderRadius: 16 }}
+              />
+              <Text style={styles.chartFooter}>BALANÇO HÍDRICO MÉDIO (KG) — ÚLTIMOS 7 DIAS</Text>
+            </View>
+          ) : (
+            <View style={[styles.card, { alignItems: 'center', padding: 24 }]}>
+              <Text style={styles.emptyText}>Sem dados de tendência para exibir</Text>
+            </View>
+          )}
+
+          <View style={{ height: 40 }} />
+        </ScrollView>
+      </SafeAreaView>
+    </Screen>
   );
 }

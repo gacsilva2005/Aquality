@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../../../../global/themas'; // Ajuste este caminho para onde o seu theme.ts realmente está!
+import { theme } from '../../../../global/themas';
 
 export const styles = StyleSheet.create({
   container: {
@@ -10,6 +10,8 @@ export const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     paddingTop: theme.spacing.lg,
   },
+
+  // ═══ HEADER ═══
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -27,126 +29,169 @@ export const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
     marginTop: theme.spacing.xs,
   },
-  exportButton: {
-    backgroundColor: theme.colors.primary,
+
+  // ═══ KPI GRID ═══
+  kpiGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.md,
+  },
+  kpiCard: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
+    width: '48%',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.sm,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
-  exportButtonText: {
+  kpiValue: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 26,
+    color: theme.colors.textPrimary,
+    marginTop: 6,
+  },
+  kpiLabel: {
     fontFamily: theme.fonts.bodyBold,
-    color: theme.colors.textWhite,
-    fontSize: 12,
-    marginLeft: theme.spacing.sm,
+    fontSize: 10,
+    color: theme.colors.textSecondary,
+    marginTop: 2,
+    letterSpacing: 0.5,
   },
+
+  // ═══ GENERIC CARD ═══
   card: {
     backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.lg,
-    marginBottom: theme.spacing.lg,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  cardTitle: {
-    fontFamily: theme.fonts.headingRegular,
-    fontSize: 16,
-    color: theme.colors.textPrimary,
-    marginBottom: 10,
-  },
-  scoreContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: theme.spacing.md,
-  },
-  scoreLarge: {
-    fontFamily: theme.fonts.headingBold,
-    fontSize: 64,
-    color: theme.colors.textPrimary,
-    lineHeight: 70,
-  },
-  scoreLabel: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 12,
-    color: theme.colors.textSecondary,
-    marginLeft: theme.spacing.sm,
-  },
-  badgeSuccess: {
-    // Fundo leve usando o verde success com opacidade (ou hardcode #E8F5E9)
-    backgroundColor: 'rgba(22, 163, 74, 0.1)', 
-    alignSelf: 'flex-start',
+  cardHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: theme.borderRadius.full,
+    gap: 8,
+    marginBottom: theme.spacing.sm,
   },
-  badgeSuccessText: {
-    fontFamily: theme.fonts.bodyBold,
-    color: theme.colors.success,
-    fontSize: 12,
-    marginLeft: 6,
-  },
-  sectionTitle: {
+  cardTitle: {
     fontFamily: theme.fonts.headingBold,
-    fontSize: 16,
+    fontSize: 13,
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.md,
+    letterSpacing: 0.5,
   },
-  row: {
+
+  // ═══ CLIMA ═══
+  climaRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
+    marginBottom: theme.spacing.sm,
   },
-  halfCard: {
-    width: '48%',
-    padding: theme.spacing.md,
-  },
-  iconRow: {
+  climaItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing.md,
+    alignItems: 'center',
+    gap: 4,
   },
-  cardSubtitle: {
-    fontFamily: theme.fonts.bodyMedium,
+  climaValue: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 14,
+    color: theme.colors.textPrimary,
+  },
+  climaDesc: {
+    fontFamily: theme.fonts.bodyRegular,
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xs,
+    textAlign: 'center',
   },
-  statValue: {
+
+  // ═══ SECTION TITLE ═══
+  sectionTitle: {
     fontFamily: theme.fonts.headingBold,
-    fontSize: 28,
+    fontSize: 14,
     color: theme.colors.textPrimary,
+    marginBottom: theme.spacing.sm,
+    marginTop: theme.spacing.sm,
   },
-  statUnit: {
-    fontFamily: theme.fonts.headingRegular,
+
+  // ═══ RANKING ═══
+  rankingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+  },
+  rankingPosition: {
+    fontFamily: theme.fonts.headingBold,
     fontSize: 16,
-    color: theme.colors.textPrimary,
+    color: theme.colors.primary,
+    width: 30,
+    textAlign: 'center',
   },
+  rankingAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: theme.spacing.sm,
+  },
+  rankingName: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 13,
+    color: theme.colors.textPrimary,
+    marginBottom: 4,
+  },
+  progressBarBg: {
+    height: 6,
+    backgroundColor: theme.colors.border,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: 6,
+    backgroundColor: theme.colors.primary,
+    borderRadius: 3,
+  },
+  rankingPercent: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 16,
+    color: theme.colors.primary,
+    marginLeft: theme.spacing.sm,
+    minWidth: 40,
+    textAlign: 'right',
+  },
+
+  // ═══ MAPA DE RISCO ═══
   riskHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.sm,
+    marginTop: theme.spacing.sm,
   },
-  riskBadge: {
-    backgroundColor: theme.colors.primaryLight,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: theme.borderRadius.md,
+  riskDistRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
     marginBottom: theme.spacing.md,
   },
-  riskBadgeText: {
+  riskDistBadge: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: theme.borderRadius.full,
+  },
+  riskDistText: {
     fontFamily: theme.fonts.bodyBold,
-    color: theme.colors.primary,
-    fontSize: 10,
+    fontSize: 11,
   },
-  athleteList: {
-    gap: theme.spacing.sm,
-  },
+
+  // ═══ ATHLETE CARDS (RISCO) ═══
   athleteCard: {
     backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.md,
@@ -159,136 +204,126 @@ export const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
     elevation: 1,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: theme.borderRadius.md,
-    marginRight: theme.spacing.md,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: theme.spacing.sm,
   },
   athleteInfo: {
     flex: 1,
   },
   athleteName: {
     fontFamily: theme.fonts.bodyBold,
-    fontSize: 16,
+    fontSize: 14,
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.xs,
+    marginBottom: 2,
   },
   alertRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   alertText: {
-    fontFamily: theme.fonts.bodyBold,
+    fontFamily: theme.fonts.bodyMedium,
     fontSize: 10,
     marginLeft: theme.spacing.xs,
   },
   athleteScore: {
     fontFamily: theme.fonts.headingBold,
-    fontSize: 24,
+    fontSize: 18,
   },
-  scoreUnit: {
-    fontFamily: theme.fonts.headingRegular,
-    fontSize: 14,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.surface,
-    paddingVertical: 10,
-    paddingBottom: 24, // Área segura do iPhone
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    justifyContent: 'space-around',
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-  },
-  navItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-    width: '25%',
-  },
-  navItemActive: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.primary,
-    borderRadius: theme.borderRadius.md,
-    paddingVertical: 10,
-    width: '25%',
-    marginHorizontal: 10,
-  },
-  navText: {
-    fontFamily: theme.fonts.bodyMedium,
+  athleteSubScore: {
+    fontFamily: theme.fonts.bodyRegular,
     fontSize: 10,
     color: theme.colors.textSecondary,
-    marginTop: 4,
-  },
-  navTextActive: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 10,
-    color: theme.colors.textWhite,
-    marginTop: 4,
   },
 
-  // ==========================================
-  // ESTILOS DO POP-UP (MODAL)
-  // ==========================================
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fundo escuro semi-transparente
-    justifyContent: 'center',
+  // ═══ SINTOMAS ═══
+  sintomaRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: theme.spacing.lg,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
-  modalContent: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.xl,
-    width: '100%',
-    maxWidth: 340,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  modalIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: theme.borderRadius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
-  },
-  modalTitle: {
-    fontFamily: theme.fonts.headingBold,
-    fontSize: 20,
+  sintomaName: {
+    fontFamily: theme.fonts.bodyMedium,
+    fontSize: 13,
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.sm,
-    textAlign: 'center',
+    width: 100,
   },
-  modalMessage: {
+  sintomaBarBg: {
+    flex: 1,
+    height: 8,
+    backgroundColor: theme.colors.border,
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginHorizontal: 8,
+  },
+  sintomaBarFill: {
+    height: 8,
+    backgroundColor: '#F97316',
+    borderRadius: 4,
+  },
+  sintomaPercent: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 13,
+    color: theme.colors.textPrimary,
+    minWidth: 36,
+    textAlign: 'right',
+  },
+
+  // ═══ OUTLIERS ═══
+  outlierCard: {
+    backgroundColor: '#FEF2F2',
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    marginBottom: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: theme.colors.primary,
+  },
+  outlierHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  outlierTipo: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 13,
+    color: theme.colors.primary,
+  },
+  outlierDesc: {
     fontFamily: theme.fonts.bodyRegular,
-    fontSize: 14,
+    fontSize: 12,
+    color: theme.colors.textPrimary,
+    marginBottom: 4,
+  },
+  outlierMeta: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 10,
+    color: theme.colors.textSecondary,
+  },
+
+
+  // ═══ GRÁFICO ═══
+  chartFooter: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 10,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginBottom: theme.spacing.lg,
-    lineHeight: 20,
+    marginTop: 8,
+    letterSpacing: 0.5,
   },
-  modalButton: {
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.md,
-    width: '100%',
-    alignItems: 'center',
-  },
-  modalButtonText: {
-    fontFamily: theme.fonts.bodyBold,
-    color: theme.colors.textWhite,
-    fontSize: 14,
+
+  // ═══ EMPTY STATE ═══
+  emptyText: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 13,
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    paddingVertical: 8,
   },
 });
