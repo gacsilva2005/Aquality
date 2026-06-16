@@ -119,12 +119,13 @@ export default function CadastroProfissional() {
                     await SecureStore.deleteItemAsync('biometric_password');
                 }
 
-                alert.success('Sucesso!', 'Conta criada com sucesso.', [
-                    { 
-                        text: 'OK', 
-                        onPress: () => router.back()
+                alert.success('Sucesso!', 'Conta criada com sucesso.', () => {
+                    if (router.canGoBack()) {
+                        router.back();
+                    } else {
+                        router.replace('/');
                     }
-                ]);
+                });
             } else {
                 const errorData = await response.json();
                 alert.error('Erro no Cadastro', errorData.message || 'Não foi possível criar a conta.');

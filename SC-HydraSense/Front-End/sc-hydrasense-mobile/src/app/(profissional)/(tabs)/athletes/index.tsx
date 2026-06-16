@@ -94,7 +94,7 @@ export default function Athletes() {
                             ? (atleta.fotoPerfil.startsWith('data:image')
                                 ? { uri: atleta.fotoPerfil }
                                 : { uri: `data:image/jpeg;base64,${atleta.fotoPerfil}` })
-                            : require('../../../../assets/images/karate.jpeg')
+                            : require('../../../../assets/images/anonymous_avatar.png')
                     };
                 })
             );

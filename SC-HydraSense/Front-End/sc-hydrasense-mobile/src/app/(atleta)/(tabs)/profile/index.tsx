@@ -155,8 +155,10 @@ export default function Profile() {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         console.log("Sessão encerrada");
+        await SecureStore.deleteItemAsync('usuarioLogado');
+        setUser(null);
         router.replace('/');
     };
 
@@ -196,7 +198,7 @@ export default function Profile() {
                 <View style={styles.photoSection}>
                     <View style={styles.photoContainer}>
                         <Image
-                            source={profileImage ? { uri: profileImage } : require('../../../../assets/images/logo.png')}
+                            source={profileImage ? { uri: profileImage } : require('../../../../assets/images/anonymous_avatar.png')}
                             style={styles.profilePhoto}
                         />
                         {isEditing && (

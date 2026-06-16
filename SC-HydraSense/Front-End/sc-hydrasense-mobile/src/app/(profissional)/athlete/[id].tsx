@@ -140,7 +140,7 @@ export default function AthleteDetails() {
         ? (athleteData.fotoPerfil.startsWith('data:image')
             ? { uri: athleteData.fotoPerfil }
             : { uri: `data:image/jpeg;base64,${athleteData.fotoPerfil}` })
-        : require('../../../assets/images/karate.jpeg');
+        : require('../../../assets/images/anonymous_avatar.png');
 
     // Gráfico de Sudorese
     const finishedSessions = sessions.filter((s: any) => s.dataHoraFim !== null && s.taxaSudorese !== null);
