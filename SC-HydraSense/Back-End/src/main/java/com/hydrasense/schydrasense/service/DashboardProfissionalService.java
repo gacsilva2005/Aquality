@@ -8,7 +8,9 @@ import com.hydrasense.schydrasense.dto.WeatherResponseDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.SessaoDeTreino;
 import com.hydrasense.schydrasense.repository.AtletaRepository;
+import com.hydrasense.schydrasense.repository.EquipeRepository;
 import com.hydrasense.schydrasense.repository.SessaoDeTreinoRepository;
+import com.hydrasense.schydrasense.model.Equipe;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class DashboardProfissionalService {
 
     private final AtletaRepository atletaRepository;
+    private final EquipeRepository equipeRepository;
     private final SessaoDeTreinoRepository sessaoRepository;
     private final CalculadoraFisiologica calculadora;
     private final WeatherService weatherService;
@@ -29,21 +32,34 @@ public class DashboardProfissionalService {
 
     public DashboardProfissionalService(
             AtletaRepository atletaRepository,
+            EquipeRepository equipeRepository,
             SessaoDeTreinoRepository sessaoRepository,
             CalculadoraFisiologica calculadora,
             WeatherService weatherService) {
         this.atletaRepository = atletaRepository;
+        this.equipeRepository = equipeRepository;
         this.sessaoRepository = sessaoRepository;
         this.calculadora = calculadora;
         this.weatherService = weatherService;
         this.objectMapper = new ObjectMapper();
     }
 
-    public DashboardProfissionalDTO gerarDashboard(Long clubeId, Double lat, Double lon) {
+    public DashboardProfissionalDTO gerarDashboard(Long clubeId, Long equipeId, Integer dias, Double lat, Double lon) {
         DashboardProfissionalDTO dto = new DashboardProfissionalDTO();
 
-        // Buscar todos os atletas do clube
-        List<Atleta> atletas = atletaRepository.findByClubeId(clubeId);
+        // Buscar atletas do clube ou da equipe
+        List<Atleta> atletas;
+        if (equipeId != null && equipeId > 0) {
+            Equipe equipe = equipeRepository.findById(equipeId).orElse(null);
+            if (equipe != null && equipe.getClube().getId().equals(clubeId)) {
+                atletas = equipe.getAtletas();
+            } else {
+                atletas = new ArrayList<>();
+            }
+        } else {
+            atletas = atletaRepository.findByClubeId(clubeId);
+        }
+
         List<Long> atletaIds = atletas.stream().map(Atleta::getId).collect(Collectors.toList());
 
         dto.setTotalAtletas(atletas.size());
@@ -59,11 +75,12 @@ public class DashboardProfissionalService {
         }
 
         LocalDate hoje = LocalDate.now();
-        LocalDateTime inicio7Dias = hoje.minusDays(7).atStartOfDay();
-        LocalDateTime inicio14Dias = hoje.minusDays(14).atStartOfDay();
+        int diasPeriodo = dias != null && dias > 0 ? dias : 7;
+        LocalDateTime inicio7Dias = hoje.minusDays(diasPeriodo).atStartOfDay(); // Mantemos o nome para evitar refatoração massiva
+        LocalDateTime inicio14Dias = hoje.minusDays(Math.max(14, diasPeriodo)).atStartOfDay();
         LocalDateTime fimHoje = hoje.plusDays(1).atStartOfDay();
 
-        // Buscar todas as sessões finalizadas dos últimos 14 dias (cobre 7 dias e 14 dias)
+        // Buscar todas as sessões finalizadas
         List<SessaoDeTreino> sessoesTodas14d = sessaoRepository.findByAtletaIdInAndDataHoraFimBetween(atletaIds, inicio14Dias, fimHoje);
         List<SessaoDeTreino> sessoes7d = sessoesTodas14d.stream()
                 .filter(s -> s.getDataHoraFim() != null && s.getDataHoraFim().isAfter(inicio7Dias))
