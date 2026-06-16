@@ -1,0 +1,542 @@
+﻿/* =====================================================
+   HOME.CSS â€” PÃ¡gina de Login principal
+   Depende de: index.css (variÃ¡veis globais)
+   ===================================================== */
+
+/* Layout Geral */
+.login-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--hydro-bg-card);
+  overflow: hidden;
+}
+
+/* =====================================================
+   LADO ESQUERDO: BRANDING
+   ===================================================== */
+.login-branding {
+  width: 55%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px 0;
+  position: relative;
+  overflow: hidden;
+  color: var(--hydro-bg-card);
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  letter-spacing: 2px;
+  padding-left: 60px;
+}
+
+.logo-section svg {
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+}
+
+.branding-content {
+  max-width: 500px;
+  text-align: left;
+  padding-left: 60px;
+}
+
+.hero-title {
+  font-size: 64px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  line-height: 0.85;
+  margin-bottom: 20px;
+  letter-spacing: -2px;
+  color: var(--hydro-bg-card);
+}
+
+.hero-subtitle {
+  font-size: 16px;
+  font-family: var(--font-body);
+  opacity: 0.9;
+  line-height: 1.4;
+  max-width: 400px;
+  color: var(--hydro-bg-card);
+}
+
+.branding-footer {
+  width: 100%;
+  text-align: center;
+  opacity: 0.5;
+  padding-bottom: 10px;
+}
+
+.hospital-name {
+  font-size: 32px;
+  font-weight: 300;
+  font-family: var(--font-display);
+  margin: 0 0 15px 0;
+  letter-spacing: 12px;
+  line-height: 1;
+  color: var(--hydro-bg-card);
+}
+
+.brand-name {
+  font-size: 56px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  margin: 0;
+  line-height: 1;
+  color: var(--hydro-bg-card);
+}
+
+/* =====================================================
+   LADO DIREITO: FORMULÃRIO
+   ===================================================== */
+.login-form-side {
+  width: 45%;
+  background-color: var(--hydro-bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px 0 0 30px;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
+  z-index: 5;
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  text-align: left;
+}
+
+.form-header h1 {
+  font-size: 24px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--hydro-critical);
+  margin-bottom: 8px;
+}
+
+.form-header p {
+  color: var(--hydro-text-muted);
+  font-size: 14px;
+  margin-bottom: 40px;
+}
+
+/* Inputs */
+.input-group {
+  margin-bottom: 25px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--hydro-text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-field {
+  display: flex;
+  align-items: center;
+  border-bottom: 1.5px solid var(--hydro-border);
+  padding-bottom: 8px;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus-within {
+  border-bottom-color: var(--hydro-action);
+}
+
+.input-field input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-family: var(--font-body);
+  background: transparent;
+  color: var(--hydro-text-primary);
+}
+
+/* OpÃ§Ãµes do formulÃ¡rio */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.forgot-password {
+  background: none;
+  border: none;
+  color: var(--hydro-action);
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  padding: 0;
+  transition: filter 0.2s;
+}
+
+.forgot-password:hover {
+  filter: brightness(1.2);
+}
+
+/* BotÃ£o primÃ¡rio de login */
+.btn-login-primary {
+  width: 100%;
+  background-color: var(--hydro-critical);
+  color: var(--hydro-bg-card);
+  padding: 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-top: 30px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-login-primary:hover {
+  background-color: var(--hydro-action);
+  transform: translateY(-1px);
+}
+
+/* BotÃµes sociais */
+.social-login {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-social {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid var(--hydro-border);
+  background: var(--hydro-bg-card);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: var(--hydro-text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.btn-social:hover {
+  border-color: var(--hydro-action);
+  color: var(--hydro-action);
+  background-color: rgba(217, 4, 41, 0.04);
+}
+
+.btn-social:hover svg {
+  stroke: var(--hydro-action);
+}
+
+/* Divisor */
+.divider {
+  text-align: center;
+  margin: 30px 0;
+  position: relative;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--hydro-border);
+}
+
+.divider span {
+  position: relative;
+  background: var(--hydro-bg-card);
+  padding: 0 15px;
+  font-size: 10px;
+  color: var(--hydro-text-muted);
+  font-family: var(--font-body);
+}
+
+/* Prompt de cadastro */
+.signup-prompt {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 13px;
+  color: var(--hydro-text-primary);
+  font-family: var(--font-body);
+}
+
+.signup-prompt span {
+  color: var(--hydro-action);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: filter 0.2s;
+}
+
+.signup-prompt span:hover {
+  filter: brightness(1.2);
+}
+
+/* BotÃ£o de mostrar senha */
+.btn-show-password {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--hydro-text-muted);
+  transition: color 0.2s, transform 0.1s;
+}
+
+.btn-show-password:hover {
+  color: var(--hydro-action);
+}
+
+.btn-show-password:active {
+  transform: scale(0.9);
+}
+
+
+.toast-notification {
+    position: fixed;
+    top: 30px;
+    right: -450px; /* Aumentado para garantir que fique fora da tela */
+    width: 380px;
+    background-color: var(--hydro-bg-card);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    gap: 16px;
+    z-index: 9999;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 0; /* Totalmente invisÃ­vel por padrÃ£o */
+    visibility: hidden; /* Impede interaÃ§Ãµes e renderizaÃ§Ã£o residual */
+    overflow: hidden; /* Para a barra de progresso nÃ£o vazar */
+}
+
+/* Classe que faz o toast aparecer */
+.toast-notification.show {
+    right: 30px;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Cores por tipo de alerta */
+.toast-notification.error .toast-icon {
+    color: var(--hydro-action); /* Vermelho do sistema */
+}
+
+.toast-notification.success .toast-icon {
+    color: var(--hydro-success); /* Verde do sistema */
+}
+
+.toast-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.toast-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--hydro-text-primary);
+    margin-bottom: 4px;
+}
+
+.toast-message {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--hydro-text-muted);
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    color: var(--hydro-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.toast-close:hover {
+    background-color: var(--bg-main);
+    color: var(--hydro-text-primary);
+}
+
+/* Barra de progresso animada na parte inferior */
+.toast-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+}
+
+.toast-notification.error .toast-progress-bar {
+    background-color: var(--hydro-action);
+}
+
+.toast-notification.success .toast-progress-bar {
+    background-color: var(--hydro-success);
+}
+
+/* A animaÃ§Ã£o sÃ³ roda quando a classe 'show' estÃ¡ ativa */
+.toast-notification.show .toast-progress-bar {
+    animation: progress 3s linear forwards;
+}
+
+@keyframes progress {
+    100% {
+        width: 0%;
+    }
+}
+
+/* =====================================================
+   RESPONSIVIDADE â€” TABLET (Max 1024px)
+   ===================================================== */
+@media (max-width: 1024px) {
+  .login-branding {
+    width: 45%;
+    padding: 40px 0;
+  }
+
+  .logo-section {
+    padding-left: 40px;
+  }
+
+  .branding-content {
+    padding-left: 40px;
+  }
+
+  .hero-title {
+    font-size: 48px;
+  }
+
+  .hero-subtitle {
+    font-size: 14px;
+    max-width: 320px;
+  }
+
+  .hospital-name {
+    font-size: 24px;
+    letter-spacing: 8px;
+  }
+
+  .brand-name {
+    font-size: 40px;
+  }
+
+  .login-form-side {
+    width: 55%;
+  }
+
+  .form-wrapper {
+    max-width: 360px;
+    padding: 30px;
+  }
+}
+
+/* =====================================================
+   RESPONSIVIDADE â€” MOBILE (Max 768px)
+   ===================================================== */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* Branding vira cabeÃ§alho compacto */
+  .login-branding {
+    width: 100%;
+    padding: 40px 30px 50px 30px;
+    min-height: auto;
+  }
+
+  .logo-section {
+    padding-left: 0;
+    justify-content: center;
+  }
+
+  .branding-content {
+    padding-left: 0;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: 36px;
+    letter-spacing: -1px;
+  }
+
+  .hero-subtitle {
+    font-size: 14px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .branding-footer {
+    display: none;
+  }
+
+  /* FormulÃ¡rio ocupa 100% */
+  .login-form-side {
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    margin-top: -20px;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08);
+    z-index: 10;
+  }
+
+  .form-wrapper {
+    max-width: 100%;
+    padding: 32px 24px;
+  }
+
+  .social-login {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .toast-notification {
+    width: calc(100% - 40px);
+    left: 20px;
+    right: auto;
+  }
+
+  .toast-notification.show {
+    right: auto;
+    left: 20px;
+  }
+}

@@ -1,0 +1,275 @@
+﻿/* =====================================================
+   ATHLETE.CSS â€” Tela de cadastro de atleta
+   Depende de: index.css (variÃ¡veis globais)
+   ===================================================== */
+
+.tela-atleta-background {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-main);
+  display: flex;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Barras laterais decorativas */
+.barra-vinho {
+  position: absolute;
+  top: 0;
+  width: 90px;
+  height: 100%;
+  background-color: var(--hydro-critical);
+  z-index: 5;
+}
+
+.barra-vinho.esquerda { left: 0; }
+.barra-vinho.direita  { right: 0; }
+
+/* Container central */
+.container-atleta-distribuido {
+  width: 100%;
+  max-width: 1100px;
+  z-index: 10;
+  padding: 50px 80px 0 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* CabeÃ§alho */
+.header-atleta {
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.label-passo {
+  color: var(--hydro-text-muted);
+  font-size: 14px;
+  font-weight: 800;
+  font-family: var(--font-body);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.titulo-hero-atleta {
+  font-size: 52px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--hydro-text-primary);
+  margin-top: 15px;
+  letter-spacing: -1.5px;
+}
+
+/* Grid de inputs */
+.form-atleta-full {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+.grid-campos-atleta {
+  display: flex;
+  gap: 40px;
+  width: 100%;
+}
+
+.bloco-input {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bloco-input label {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--font-body);
+  color: var(--hydro-text-muted);
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Input estilizado */
+.wrapper-input-atleta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--hydro-border);
+  border-radius: 8px;
+  padding: 18px 25px;
+  transition: border-color 0.2s;
+}
+
+.wrapper-input-atleta:focus-within {
+  border-color: var(--hydro-action);
+}
+
+.wrapper-input-atleta input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 18px;
+  font-family: var(--font-body);
+  outline: none;
+  color: var(--hydro-text-primary);
+}
+
+.wrapper-input-atleta svg {
+  color: var(--hydro-text-muted);
+  flex-shrink: 0;
+}
+
+/* Erro de validaÃ§Ã£o */
+.wrapper-input-atleta.input-error {
+  border-color: var(--hydro-action);
+}
+
+.mensagem-erro-email {
+  color: var(--hydro-action);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Avisos informativos */
+.container-avisos-central {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.texto-informativo-atleta {
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--hydro-text-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+/* NavegaÃ§Ã£o vertical */
+.navegacao-vertical-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.seta-v-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 0;
+  transition: color 0.2s;
+}
+
+.seta-v-btn.ativa {
+  color: var(--hydro-action);
+}
+
+.seta-v-btn.desativada {
+  color: var(--hydro-text-muted);
+  opacity: 0.2;
+  cursor: default;
+}
+
+.ponto-estilo-minimal {
+  width: 6px;
+  height: 6px;
+  background-color: var(--hydro-border);
+  border-radius: 50%;
+  margin: 2px 0;
+}
+
+.link-voltar-atleta {
+  background: none;
+  border: none;
+  color: var(--hydro-text-muted);
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 15px;
+  align-self: center;
+  transition: color 0.2s;
+}
+
+.link-voltar-atleta:hover {
+  color: var(--hydro-action);
+}
+
+/* =====================================================
+   RESPONSIVIDADE â€” TABLET (Max 1024px)
+   ===================================================== */
+@media (max-width: 1024px) {
+  .barra-vinho {
+    width: 50px;
+  }
+
+  .container-atleta-distribuido {
+    padding: 40px 60px 0 60px;
+  }
+
+  .titulo-hero-atleta {
+    font-size: 40px;
+  }
+}
+
+/* =====================================================
+   RESPONSIVIDADE â€” MOBILE (Max 768px)
+   ===================================================== */
+@media (max-width: 768px) {
+  .tela-atleta-background {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .barra-vinho {
+    display: none;
+  }
+
+  .container-atleta-distribuido {
+    padding: 30px 20px 120px 20px;
+    max-width: 100%;
+  }
+
+  .header-atleta {
+    margin-bottom: 30px;
+  }
+
+  .titulo-hero-atleta {
+    font-size: 32px;
+    letter-spacing: -1px;
+  }
+
+  .grid-campos-atleta {
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .wrapper-input-atleta {
+    padding: 14px 18px;
+  }
+
+  .wrapper-input-atleta input {
+    font-size: 16px;
+  }
+
+  .navegacao-vertical-container {
+    margin-top: 15px;
+  }
+}

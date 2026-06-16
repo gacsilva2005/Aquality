@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/space-grotesk": "^0.4.1",
+    "expo": "^55.0.17",
+    "expo-checkbox": "~55.0.4",
+    "expo-font": "~55.0.6",
+    "expo-router": "~55.0.13",
+    "expo-splash-screen": "~55.0.19",
+    "lucide-react": "^1.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.10",
+    "typescript": "~5.9.2"
+  }
+}

@@ -1,0 +1,293 @@
+﻿/* =====================================================
+   TEAM.CSS â€” Tela de seleÃ§Ã£o/cadastro de equipe
+   Depende de: index.css (variÃ¡veis globais)
+   ATENÃ‡ÃƒO: .texto-passo e .titulo-pagina que existem
+   aqui tambÃ©m em Login.css foram unificados â€” use
+   .cabecalho-fluxo como wrapper para escopo correto.
+   ===================================================== */
+
+.tela-registro-full {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-main);
+  overflow: hidden;
+}
+
+.painel-principal-central {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 80px;
+  box-sizing: border-box;
+}
+
+/* CabeÃ§alho do fluxo (scoped para evitar conflito com Login.css) */
+.cabecalho-fluxo {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.cabecalho-fluxo .texto-passo {
+  color: var(--hydro-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.cabecalho-fluxo .titulo-pagina {
+  font-size: 42px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--hydro-text-primary);
+  margin: 10px 0 0 0;
+  letter-spacing: -1px;
+}
+
+/* Card de seleÃ§Ã£o */
+.card-selecao-equipe {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.modal-equipe {
+  background-color: var(--bg-card);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* BotÃ£o primÃ¡rio da equipe */
+.botao-equipe-primario {
+  background-color: var(--hydro-action);
+  color: var(--hydro-bg-card);
+  border: none;
+  border-radius: 6px;
+  padding: 18px;
+  font-weight: 700;
+  font-size: 14px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.botao-equipe-primario:hover {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+}
+
+.btn-confirmar-codigo {
+  margin-top: 25px;
+}
+
+/* BotÃ£o avanÃ§ar */
+.botao-avancar-fluxo {
+  background: transparent;
+  color: var(--hydro-text-muted);
+  border: none;
+  padding: 16px;
+  font-weight: 800;
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.botao-avancar-fluxo:hover {
+  color: var(--hydro-action);
+}
+
+/* BotÃ£o voltar */
+.botao-voltar-limpo {
+  background: transparent;
+  border: none;
+  color: var(--hydro-text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 5px 0;
+  width: fit-content;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.botao-voltar-limpo:hover {
+  color: var(--hydro-action);
+}
+
+/* Input de cÃ³digo */
+.input-codigo-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-main);
+  border: 2px solid var(--hydro-border);
+  border-radius: 8px;
+  padding: 12px 15px;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+
+.input-codigo-wrapper:focus-within {
+  border-color: var(--hydro-action);
+}
+
+.input-codigo-equipe {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 22px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  outline: none;
+  color: var(--hydro-text-primary);
+  letter-spacing: 4px;
+}
+
+/* Divisor */
+.divisor-avancar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 10px 0;
+}
+
+.linha-divisor {
+  flex: 1;
+  height: 1px;
+  background-color: var(--hydro-border);
+}
+
+/* =====================================================
+   BARRA DE PROGRESSO INFERIOR
+   ===================================================== */
+.progresso-footer-compacto {
+  background-color: var(--hydro-critical);
+  width: 100%;
+  padding: 30px 0;
+  position: fixed;
+  bottom: 0;
+  z-index: 10;
+}
+
+.barra-progresso-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.fluxo-progresso-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.item-progresso {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.trilha-mini {
+  height: 4px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  transition: background-color 0.3s;
+}
+
+.trilha-mini.ativa {
+  background-color: var(--hydro-bg-card);
+}
+
+.legenda-mini {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.legenda-mini.ativa {
+  color: var(--hydro-bg-card);
+}
+
+.legenda-avancar {
+  font-size: 11px;
+  font-family: var(--font-body);
+  color: var(--hydro-text-muted);
+  text-align: center;
+  margin-top: 15px;
+}
+
+/* =====================================================
+   RESPONSIVIDADE â€” MOBILE (Max 768px)
+   ===================================================== */
+@media (max-width: 768px) {
+  .tela-registro-full {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .painel-principal-central {
+    padding-top: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 140px;
+  }
+
+  .cabecalho-fluxo .titulo-pagina {
+    font-size: 30px;
+  }
+
+  .modal-equipe {
+    padding: 24px;
+    max-width: 100%;
+  }
+
+  .input-codigo-equipe {
+    font-size: 18px;
+    letter-spacing: 3px;
+  }
+
+  .progresso-footer-compacto {
+    padding: 20px 0;
+  }
+
+  .fluxo-progresso-wrapper {
+    gap: 10px;
+  }
+
+  .legenda-mini {
+    font-size: 8px;
+  }
+}

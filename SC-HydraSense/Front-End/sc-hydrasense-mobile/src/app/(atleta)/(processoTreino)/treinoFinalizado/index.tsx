@@ -1,0 +1,150 @@
+import React, { useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { styles } from './styles';
+import { theme } from '@/src/global/themas';
+import { Screen } from '../../../../components/Screen';
+import { Button } from '@/src/components/Button';
+
+export default function TreinoFinalizado() {
+    const { seconds, water, taxaSudorese, balancoHidrico, statusHidratacao } = useLocalSearchParams<{
+        seconds?: string;
+        water?: string;
+        taxaSudorese?: string;
+        balancoHidrico?: string;
+        statusHidratacao?: string;
+    }>();
+
+    const totalSeconds = parseInt(seconds || '0', 10);
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    const mainTime = h > 0 ? `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}` : `00:${m.toString().padStart(2, '0')}`;
+    const subTime = `:${s.toString().padStart(2, '0')}`;
+
+    const waterMl = parseInt(water || '0', 10);
+    const waterL = (waterMl / 1000).toFixed(1);
+
+    const rate = parseFloat(taxaSudorese || '0').toFixed(1);
+    const balance = parseFloat(balancoHidrico || '0').toFixed(1);
+
+    // Remoção da função handleRegistrarUrina, pois foi movida para antes do pós-treino
+
+    const handlePerfoarmance = () => {
+        // Navega para a tela de desempenho
+        router.push('/performance');
+    };
+
+    const handlePularEtapa = () => {
+        // Volta direto para o Dashboard
+        router.replace('/dashboard');
+    };
+
+
+    return (
+            <Screen style={styles.container}>
+                
+                <Stack.Screen options={{ headerShown: false, animation: 'fade'}} />
+
+                <View style={styles.content}>
+
+                    <View style={styles.iconContainer}>
+                        <MaterialCommunityIcons
+                            name="check-circle-outline"
+                            size={90}
+                            color={theme.colors.primary}
+                        />
+                    </View>
+
+                    <Text style={styles.title}>TREINO FINALIZADO!</Text>
+                    <Text style={styles.subtitle}>
+                        Deseja registrar sua urina agora{'\n'}para precisão máxima na{'\n'}recuperação?
+                    </Text>
+
+                    {/* --- ADICIONADO: CARDS DE RESUMO --- */}
+                    <View style={[styles.summaryCardsContainer, { flexDirection: 'column', gap: 12, marginBottom: 20 }]}>
+                        {/* Linha 1 */}
+                        <View style={{ flexDirection: 'row', gap: 12, width: '100%' }}>
+                            {/* Card Tempo */}
+                            <View style={styles.summaryCard}>
+                                <View style={styles.cardHeader}>
+                                    <MaterialCommunityIcons name="timer-outline" size={16} color={theme.colors.primary} />
+                                    <Text style={styles.cardTitle}>TEMPO{'\n'}TOTAL</Text>
+                                </View>
+                                <View style={styles.cardValueRow}>
+                                    <Text style={styles.cardValueMain}>{mainTime}</Text>
+                                    <Text style={styles.cardValueSub}>{subTime}</Text>
+                                </View>
+                            </View>
+
+                            {/* Card Água */}
+                            <View style={styles.summaryCard}>
+                                <View style={styles.cardHeader}>
+                                    <MaterialCommunityIcons name="water-outline" size={16} color={theme.colors.primary} />
+                                    <Text style={styles.cardTitle}>ÁGUA{'\n'}CONSUMIDA</Text>
+                                </View>
+                                <View style={styles.cardValueRow}>
+                                    <Text style={styles.cardValueMain}>{waterL}</Text>
+                                    <Text style={styles.cardValueSub}>L</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        {/* Linha 2 */}
+                        <View style={{ flexDirection: 'row', gap: 12, width: '100%' }}>
+                            {/* Card Sudorese */}
+                            <View style={styles.summaryCard}>
+                                <View style={styles.cardHeader}>
+                                    <MaterialCommunityIcons name="weather-sunny" size={16} color={theme.colors.primary} />
+                                    <Text style={styles.cardTitle}>TAXA DE{'\n'}SUDORESE</Text>
+                                </View>
+                                <View style={styles.cardValueRow}>
+                                    <Text style={styles.cardValueMain}>{rate}</Text>
+                                    <Text style={styles.cardValueSub}>L/H</Text>
+                                </View>
+                            </View>
+
+                            {/* Card Balanço */}
+                            <View style={styles.summaryCard}>
+                                <View style={styles.cardHeader}>
+                                    <MaterialCommunityIcons name="scale-balance" size={16} color={theme.colors.primary} />
+                                    <Text style={styles.cardTitle}>BALANÇO{'\n'}HÍDRICO</Text>
+                                </View>
+                                <View style={styles.cardValueRow}>
+                                    <Text style={styles.cardValueMain}>{balance}</Text>
+                                    <Text style={styles.cardValueSub}>L</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    {/* ---------------------------------- */}
+
+                    <View style={styles.buttonsContainer}>
+                        {/* Botão Registrar Urina removido daqui */}
+
+                        <Button
+                            onPress={handlePerfoarmance}
+                            title="VER DESEMPENHO EM PERFORMANCE"
+                            style= {{ backgroundColor: theme.colors.primary, height: 60}}
+                        />
+
+                        <TouchableOpacity
+                            style={styles.secondaryButton}
+                            onPress={handlePularEtapa}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.secondaryButtonText}>PULAR ETAPA</Text>
+                            <MaterialCommunityIcons name="arrow-right" size={15} color={theme.colors.textSecondary} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <Text style={styles.footerText}>
+                        SESSÃO GRAVADA • DATA LOG #676767
+                    </Text>
+
+                </View>
+            </Screen>
+        
+    );
+}

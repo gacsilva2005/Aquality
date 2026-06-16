@@ -1,0 +1,159 @@
+﻿.recovery-page {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #FFFFFF;
+    font-family: var(--font-body);
+}
+
+.recovery-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 80px 20px;
+}
+
+.recovery-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 480px;
+}
+
+.recovery-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 44px;
+}
+
+.recovery-logo-text {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #111111;
+}
+
+.recovery-title {
+    font-family: var(--font-body);
+    font-size: 34px;
+    font-weight: 400;
+    color: #111111;
+    margin: 0 0 30px 0;
+    line-height: 1.15;
+    letter-spacing: -0.6px;
+    text-align: left;
+}
+
+.recovery-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.recovery-input {
+    width: 100%;
+    border: 1px solid #D6D6D6;
+    border-radius: 8px;
+    padding: 18px 20px;
+    font-size: 15px;
+    font-family: var(--font-body);
+    color: #111111;
+    background-color: #FFFFFF;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    margin-bottom: 16px;
+}
+
+.recovery-input::placeholder {
+    color: #9A9A9A;
+}
+
+.recovery-input:focus {
+    border-color: #111111;
+}
+
+.recovery-terms {
+    font-size: 15px;
+    color: #6F6F6F;
+    line-height: 1.7;
+    margin: 2px 0 30px 0;
+    text-align: left;
+}
+
+.recovery-link {
+    color: #111111;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.recovery-link:hover {
+    opacity: 0.6;
+}
+
+.recovery-actions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.recovery-btn-primary {
+    min-width: 130px;
+    background-color: var(--hydro-critical);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 15px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: var(--font-display);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.recovery-btn-primary:hover {
+    background-color: var(--hydro-action);
+    transform: translateY(-1px);
+}
+
+.recovery-btn-primary:active {
+    transform: translateY(0);
+}
+
+.recovery-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 600px) {
+    .recovery-main {
+        padding: 40px 24px;
+    }
+
+    .recovery-title {
+        font-size: 28px;
+    }
+
+    .recovery-btn-primary {
+        width: 100%;
+        border-radius: 10px;
+    }
+
+    .recovery-actions {
+        justify-content: stretch;
+    }
+}

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Aquality - Equipe <%= data.nomeEquipe || 'Geral' %></title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --hydro-bg-main: #F8F9FA;
+            --hydro-bg-card: #FFFFFF;
+            --hydro-bg-header: #121212;
+            --hydro-text-primary: #212529;
+            --hydro-text-muted: #6C757D;
+            --hydro-border: rgba(73, 80, 87, 0.2);
+            --hydro-action: #D90429;
+            --hydro-critical: #641220;
+            --hydro-success: #2B9348;
+            --hydro-attention: #FFD60A;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        @page { size: A4 landscape; margin: 0; }
+
+        body {
+            background-color: var(--hydro-bg-main);
+            font-family: var(--font-body);
+            color: var(--hydro-text-primary);
+            margin: 0; padding: 0;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-container {
+            width: 297mm; min-height: 210mm;
+            margin: 0 auto;
+            background-color: var(--hydro-bg-main);
+            position: relative;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            background-color: var(--hydro-bg-header); color: white;
+            padding: 24px 32px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .header-logo {
+            font-family: var(--font-display); font-weight: 700; font-size: 24px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .header-info {
+            font-family: var(--font-body); font-size: 12px;
+            color: rgba(255, 255, 255, 0.8); text-align: right;
+        }
+        .container { padding: 32px; }
+
+        .table-wrapper {
+            background-color: var(--hydro-bg-card);
+            border: 1px solid var(--hydro-border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        
+        th, td { 
+            padding: 14px 20px; 
+            border-bottom: 1px solid var(--hydro-border); 
+        }
+
+        th {
+            background-color: #F8F9FA;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--hydro-text-muted);
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        tbody tr:nth-child(even) td {
+            background-color: #FAFAFA;
+        }
+
+        tbody tr:hover td {
+            background-color: #FFF5F5;
+        }
+
+        .badge-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            display: inline-block;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .status-optimal { background-color: var(--hydro-success); }
+        .status-attention { background-color: var(--hydro-attention); color: var(--hydro-text-primary); }
+        .status-critical { background-color: var(--hydro-critical); }
+        .status-super { background-color: #0077B6; }
+
+        .footer {
+            position: absolute;
+            bottom: 24px;
+            left: 32px;
+            right: 32px;
+            border-top: 1px solid var(--hydro-border);
+            padding-top: 12px;
+            font-size: 9px;
+            color: var(--hydro-text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+<div class="page-container">
+    <header class="header">
+        <div class="header-logo">
+            <i data-lucide="droplet" color="white" size="28"></i> Aquality
+        </div>
+        <div class="header-info">
+            Data: <%= data.dataGeracao || new Date().toLocaleDateString('pt-BR') %><br>
+            Relatório de Equipe: <%= data.nomeEquipe || 'Time Principal' %>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 style="font-family: var(--font-display); margin-top: 0; font-size: 20px; color: var(--hydro-bg-header);">Resumo Hídrico da Equipe</h2>
+        
+        <% 
+        const atletas = data.atletas || [];
+        %>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Atleta</th>
+                        <th style="text-align: center;">Status Hidratação</th>
+                        <th style="text-align: right;">Variação Massa (%)</th>
+                        <th style="text-align: right;">Taxa Sudorese Estimada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (atletas.length > 0) { %>
+                        <% atletas.forEach(atleta => { %>
+                        <tr>
+                            <td style="font-weight: 600;"><%= atleta.nome %></td>
+                            <td style="text-align: center;">
+                                <% 
+                                let badgeClass = 'status-optimal';
+                                let statusRaw = (atleta.status || '').toUpperCase();
+                                if (statusRaw === 'CRÍTICO' || statusRaw === 'CRITICAL' || statusRaw === 'SEVERO') badgeClass = 'status-critical';
+                                else if (statusRaw === 'ATENÇÃO' || statusRaw === 'WARNING' || statusRaw === 'ATENCAO') badgeClass = 'status-attention';
+                                else if (statusRaw === 'SUPERINGESTAO' || statusRaw === 'SUPER') badgeClass = 'status-super';
+                                %>
+                                <span class="badge-status <%= badgeClass %>">
+                                    <%= atleta.status %>
+                                </span>
+                            </td>
+                            <td style="text-align: right; font-family: var(--font-display); font-weight: 600;"><%= Number(atleta.variacao).toFixed(0) %>%</td>
+                            <td style="text-align: right; font-family: var(--font-display); font-weight: 700; color: var(--hydro-action);"><%= Number(atleta.taxa).toFixed(2) %> L/h</td>
+                        </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--hydro-text-muted); padding: 32px; font-weight: 500;">
+                                Nenhum atleta registrado ou sem dados no período selecionado.
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <% if (atletas.length > 0) { %>
+            <div class="chart-wrapper" style="background:white; padding:24px; border-radius:12px; margin-top:24px; border: 1px solid var(--hydro-border);">
+                <h3 style="margin-top: 0; font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--hydro-text-primary); margin-bottom: 16px;">Taxa Comparativa de Sudorese (Top 5 Atletas)</h3>
+                <div style="height: 140px; position: relative;">
+                    <canvas id="equipeChart"></canvas>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <footer class="footer">
+        <div>Gerado automaticamente por Aquality | Validação Clínica: São Camilo</div>
+        <div>Sessão ID: #<%= data.sessaoId || 'N/A' %></div>
+    </footer>
+</div>
+
+<% if (atletas.length > 0) { %>
+<script>
+    lucide.createIcons();
+    new Chart(document.getElementById('equipeChart'), {
+      type: 'bar',
+      data: { 
+        labels: [<% atletas.slice(0,5).forEach(a=>{ %>'<%= a.nome %>',<% }) %>], 
+        datasets: [{ 
+          label: 'L/h', 
+          data: [<% atletas.slice(0,5).forEach(a=>{ %><%= Number(a.taxa).toFixed(2) %>,<% }) %>], 
+          backgroundColor: '#D90429',
+          borderRadius: 4
+        }] 
+      },
+      options: { 
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } }, 
+        scales: { 
+          y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+          x: { grid: { display: false } }
+        } 
+      }
+    });
+</script>
+<% } else { %>
+<script>
+    lucide.createIcons();
+</script>
+<% } %>
+</body>
+</html>

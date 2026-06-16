@@ -1,0 +1,38 @@
+import { User, Menu } from 'lucide-react';
+import logo from '../../assets/icone_petala.png';
+
+interface HeaderPageWebProps {
+    usuario?: unknown;
+    onPerfilClick: () => void;
+    onMenuClick?: () => void;
+}
+
+export function HeaderPageWeb({ onPerfilClick, onMenuClick }: HeaderPageWebProps) {
+    return (
+        <header className="hydro-header">
+            <div className="hydro-header-logo-container">
+                {onMenuClick && (
+                    <button
+                        type="button"
+                        className="btn-hamburger"
+                        onClick={onMenuClick}
+                        aria-label="Abrir menu"
+                    >
+                        <Menu size={22} />
+                    </button>
+                )}
+                <img src={logo} alt="Logo AQuality" className="hydro-header-logo-img" />
+                <h1 className="hydro-header-title">AQuality</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><input type="text"
+                        placeholder="Buscar..."
+                        className="hydro-header-search" />
+                    </li>
+                    <li onClick={onPerfilClick}><User size={18} /> Perfil</li>
+                </ul>
+            </nav>
+        </header>
+    )
+}

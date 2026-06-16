@@ -1,3 +1,4 @@
+### Java / Maven (Seu código original) ###
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -31,3 +32,48 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# ==========================================
+# ADIÇÕES PARA O PROJETO HYDRASENSE
+# ==========================================
+
+### Variáveis de Ambiente (Segurança) ###
+.env
+.env.*
+!.env.example
+
+### Python / Assistente IA ###
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+pip-log.txt
+models_cache/
+
+
+### Bancos de Dados Locais e Vetoriais ###
+agno.db
+chroma_data/
+*.sqlite3
+*.db
+
+### Node.js / Front-End (Web e Mobile) ###
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+.expo/
+dist/
+out/
+.next/
+coverage/
+
+### Sistema Operacional ###
+.DS_Store
+Thumbs.db
+
+### Arquivos auxiliares locais ###
+backend_logs.txt
+cheatsheet.md

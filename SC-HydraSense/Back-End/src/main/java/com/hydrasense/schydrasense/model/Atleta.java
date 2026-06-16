@@ -1,0 +1,103 @@
+package com.hydrasense.schydrasense.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
+@Entity
+@Table(name = "Atleta")
+public class Atleta {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String nome;
+
+    @Column(nullable = false)
+    private LocalDate dataNascimento;
+
+    @Column(length = 100, unique = true)
+    private String email;
+
+    @Column(length = 100)
+    private String modalidade;
+
+    @Column(nullable = false)
+    private Double pesoAtual;
+
+    @Column
+    private Float altura;
+
+    @Column(length = 20)
+    private String sexo;
+
+    private String senha;
+
+    @ManyToOne
+    @JoinColumn(name = "clube_id")
+    @JsonIgnoreProperties({"profissionais", "atletas"})
+    private Clube clube;
+
+    private String codigoAcesso;
+
+    private Boolean ativado = false;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String fotoPerfil;
+
+    @Column(name = "kit_principal_id")
+    private Long kitPrincipalId;
+
+    //Relação 1:M com Profissional
+    @ManyToOne
+    @JoinColumn(name = "profissional_id")
+    @JsonIgnore
+    private Profissional profissional;
+
+    // Relação 1:M com Registro de Hidratação
+    @OneToMany(mappedBy = "atleta", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<RegistroDeHidratacao> registrosDeHidratacao = new ArrayList<>();
+
+    // Relação sessões
+    @JsonIgnore
+    @OneToMany(mappedBy = "atleta", cascade = CascadeType.ALL)
+    private List<SessaoDeTreino> sessoes = new ArrayList<>();
+
+    // Relação com equipes (muitos-para-muitos)
+    @ManyToMany(mappedBy = "atletas")
+    @JsonIgnoreProperties("atletas")
+    private List<Equipe> equipes = new ArrayList<>();
+
+    // Construtor padrão JPA
+    public Atleta() {}
+
+    public Atleta(String nome,
+                  LocalDate dataNascimento,
+                  String email,
+                  String modalidade,
+                  Double pesoAtual,
+                  Float altura) {
+        this.nome = nome;
+        this.dataNascimento = dataNascimento;
+        this.email = email;
+        this.modalidade = modalidade;
+        this.pesoAtual = pesoAtual;
+        this.altura = altura;
+    }
+
+    public void adicionarSessao(SessaoDeTreino sessao) {
+        sessoes.add(sessao);
+        sessao.setAtleta(this);
+    }
+}

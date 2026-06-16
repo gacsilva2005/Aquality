@@ -1,0 +1,209 @@
+package com.hydrasense.schydrasense.service;
+
+import com.hydrasense.schydrasense.dto.RelatorioPdfDTO;
+import com.hydrasense.schydrasense.dto.RelatorioEquipeDTO;
+import com.hydrasense.schydrasense.dto.RelatorioGeralDTO;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import com.hydrasense.schydrasense.model.SessaoDeTreino;
+import com.hydrasense.schydrasense.model.Atleta;
+import com.hydrasense.schydrasense.model.Equipe;
+import com.hydrasense.schydrasense.repository.EstatisticasProjection;
+import com.hydrasense.schydrasense.repository.SessaoDeTreinoRepository;
+import com.hydrasense.schydrasense.repository.EquipeRepository;
+import org.springframework.stereotype.Service;
+import java.util.Comparator;
+import java.util.ArrayList;
+
+@Service
+public class RelatorioPdfService {
+
+    private final SessaoDeTreinoService sessaoService;
+    private final SessaoDeTreinoRepository sessaoRepository;
+    private final PdfResourceService pdfResourceService;
+    private final CalculadoraFisiologica calculadora;
+    private final EquipeRepository equipeRepository;
+
+    public RelatorioPdfService(
+            SessaoDeTreinoService sessaoService,
+            SessaoDeTreinoRepository sessaoRepository,
+            PdfResourceService pdfResourceService,
+            CalculadoraFisiologica calculadora,
+            EquipeRepository equipeRepository) {
+        this.sessaoService = sessaoService;
+        this.sessaoRepository = sessaoRepository;
+        this.pdfResourceService = pdfResourceService;
+        this.calculadora = calculadora;
+        this.equipeRepository = equipeRepository;
+    }
+
+    public RelatorioPdfDTO gerarPayloadRelatorio(Long sessaoId) {
+        // 1. Busca os dados brutos
+        SessaoDeTreino sessao = sessaoRepository.findById(sessaoId)
+                .orElseThrow(() -> new RuntimeException("Sessão não encontrada para PDF"));
+        
+        Atleta atleta = sessao.getAtleta();
+        Long atletaId = atleta.getId();
+
+        // 2. Cálculo Exato de Variação (Segurança Fisiológica)
+        Float pesoPre = sessao.getPesagemPre() != null ? sessao.getPesagemPre().getPeso() : 0f;
+        Float pesoPos = sessao.getPesagemPos() != null ? sessao.getPesagemPos().getPeso() : 0f;
+        Float variacaoPercentual = calculadora.calcularPercentualVariacaoMassa(pesoPre, pesoPos);
+        String statusRisco = calculadora.classificarStatusHidratacao(pesoPre, pesoPos);
+
+        Boolean isSuperingestao = variacaoPercentual > 0.0f;
+        Boolean isDesidratacaoSevera = variacaoPercentual <= -2.0f;
+
+        // 3. Imagens Offline (Base64) - Fallback transparente embutido de 2.5s timeout
+        String fotoAtletaBase64 = pdfResourceService.convertUrlToBase64(atleta.getFotoPerfil());
+
+        // 4. Estatísticas Agregadas Direto no MySQL (Prevenção OOM)
+        EstatisticasProjection estatisticaBD = sessaoRepository.getEstatisticasAtleta(atletaId);
+        
+        // Tratar dados ausentes para evitar NullPointerException e falhas de renderização
+        Float mediaTaxa = estatisticaBD != null && estatisticaBD.getMediaTaxaSudorese() != null ? estatisticaBD.getMediaTaxaSudorese() : 0f;
+        Float desvioPadrao = estatisticaBD != null && estatisticaBD.getDesvioPadraoTaxaSudorese() != null ? estatisticaBD.getDesvioPadraoTaxaSudorese() : 0f;
+
+        // Montagem do Contrato Aninhado Estrito
+        RelatorioPdfDTO.PreSessaoRecord preSessao = new RelatorioPdfDTO.PreSessaoRecord(
+                pesoPre,
+                sessao.getCondicaoAmbiental() != null && sessao.getCondicaoAmbiental().getTemperatura() != null ? sessao.getCondicaoAmbiental().getTemperatura() : 25f,
+                sessao.getCondicaoAmbiental() != null && sessao.getCondicaoAmbiental().getUmidade() != null ? sessao.getCondicaoAmbiental().getUmidade().intValue() : 50,
+                sessao.getAvaliacaoBasalPre() != null ? (sessao.getAvaliacaoBasalPre().getUrina() != null ? String.valueOf(sessao.getAvaliacaoBasalPre().getUrina()) : sessao.getAvaliacaoBasalPre().getCorUrina()) : "3",
+                sessao.getChecklistVestimentaCorreta(),
+                sessao.getChecklistBexiga(),
+                sessao.getChecklistBalancaCorreta()
+        );
+
+        RelatorioPdfDTO.DuranteRecord durante = new RelatorioPdfDTO.DuranteRecord(
+                (int) sessao.calcularDuracaoTotal() * 60,
+                sessao.getRegistroDeHidratacao() != null ? sessao.getRegistroDeHidratacao().getVolume().intValue() : 0,
+                sessao.getIntensidadePercebida() != null ? Integer.parseInt(sessao.getIntensidadePercebida().replaceAll("\\D", "")) : 5,
+                0 // Volume urinário fixo em zero por enquanto
+        );
+
+        RelatorioPdfDTO.PosSessaoRecord pos = new RelatorioPdfDTO.PosSessaoRecord(
+                pesoPos,
+                sessao.getBalancoHidrico(),
+                sessao.getRegistroDeSintomaPos() != null ? sessao.getRegistroDeSintomaPos().getSintomas() : (sessao.getRegistroDeSintomaPre() != null ? sessao.getRegistroDeSintomaPre().getSintomas() : "Nenhum"),
+                "Boa" // Placeholder
+        );
+
+        RelatorioPdfDTO.MotorSudoreseRecord motor = new RelatorioPdfDTO.MotorSudoreseRecord(
+                sessao.getTaxaSudorese(),
+                variacaoPercentual,
+                sessao.getBalancoHidrico(),
+                statusRisco,
+                isSuperingestao,
+                isDesidratacaoSevera,
+                "Recomendada ingestão hídrica imediata."
+        );
+
+        RelatorioPdfDTO.EstatisticaLongitudinalRecord estatisticas = new RelatorioPdfDTO.EstatisticaLongitudinalRecord(
+                mediaTaxa,
+                mediaTaxa, // Mediana aproximada temporária
+                desvioPadrao,
+                new String[]{"10 Jun", "11 Jun", "12 Jun", "14 Jun", "15 Jun"}, // Stub Chart.js
+                new Float[]{1.1f, 1.2f, 1.4f, 1.0f, sessao.getTaxaSudorese()} // Stub Chart.js
+        );
+
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String dataGeracao = java.time.LocalDateTime.now().format(formatter);
+
+        RelatorioPdfDTO.AtletaRecord atletaRecord = new RelatorioPdfDTO.AtletaRecord(
+                atleta.getNome() != null ? atleta.getNome() : "Desconhecido",
+                "ID-" + atleta.getId(),
+                atleta.getModalidade() != null ? atleta.getModalidade() : sessao.getModalidade(),
+                fotoAtletaBase64
+        );
+
+        return new RelatorioPdfDTO(
+                sessao.getId(),
+                sessao.getModalidade(),
+                sessao.getDataHoraInicio(),
+                sessao.getDataHoraFim(),
+                preSessao,
+                durante,
+                pos,
+                motor,
+                estatisticas,
+                null, // Logo Equipe offline stub
+                atletaRecord,
+                dataGeracao
+        );
+    }
+
+    public RelatorioGeralDTO gerarPayloadGeral(Long clubeId) {
+        return new RelatorioGeralDTO(
+            System.currentTimeMillis(),
+            LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+            "1.5%",
+            "87%",
+            124,
+            8,
+            List.of(
+                new RelatorioGeralDTO.EquipeRankingRecord("Sub-20", 95),
+                new RelatorioGeralDTO.EquipeRankingRecord("Profissional B", 88),
+                new RelatorioGeralDTO.EquipeRankingRecord("Feminino A", 85)
+            )
+        );
+    }
+
+    public RelatorioEquipeDTO gerarPayloadEquipe(Long equipeId) {
+        Equipe equipe = equipeRepository.findById(equipeId)
+                .orElseThrow(() -> new RuntimeException("Equipe não encontrada"));
+
+        List<RelatorioEquipeDTO.AtletaResumoRecord> atletasRecords = new ArrayList<>();
+
+        if (equipe.getAtletas() != null) {
+            for (Atleta atleta : equipe.getAtletas()) {
+                List<SessaoDeTreino> sessoes = sessaoRepository.findByAtletaId(atleta.getId());
+                if (sessoes != null && !sessoes.isEmpty()) {
+                    SessaoDeTreino ultimaSessao = sessoes.stream()
+                            .filter(s -> s.getDataHoraFim() != null)
+                            .max(Comparator.comparing(SessaoDeTreino::getDataHoraFim))
+                            .orElse(null);
+
+                    if (ultimaSessao != null) {
+                        Float pesoPre = ultimaSessao.getPesagemPre() != null ? ultimaSessao.getPesagemPre().getPeso() : null;
+                        Float pesoPos = ultimaSessao.getPesagemPos() != null ? ultimaSessao.getPesagemPos().getPeso() : null;
+                        Float taxaSudorese = ultimaSessao.getTaxaSudorese() != null ? ultimaSessao.getTaxaSudorese() : 0f;
+
+                        if (pesoPre != null && pesoPos != null && pesoPre > 0) {
+                            Float variacao = calculadora.calcularPercentualVariacaoMassa(pesoPre, pesoPos);
+                            
+                            String status;
+                            if (variacao < -2.0) status = "Crítico";
+                            else if (variacao < -1.0) status = "Atenção";
+                            else status = "Ideal";
+
+                            atletasRecords.add(new RelatorioEquipeDTO.AtletaResumoRecord(
+                                    atleta.getId(),
+                                    atleta.getNome(),
+                                    status,
+                                    variacao,
+                                    taxaSudorese
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+
+        // Ordena por taxa de sudorese descrescente (para os gráficos do PDF e UI)
+        atletasRecords.sort((a, b) -> Float.compare(b.taxa(), a.taxa()));
+
+        return new RelatorioEquipeDTO(
+            System.currentTimeMillis(),
+            equipe.getNome(),
+            LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+            atletasRecords
+        );
+    }
+
+    public Object gerarPayloadSessao(Long sessaoId) {
+        // Delega para o método existente de sessão
+        return gerarPayloadRelatorio(sessaoId);
+    }
+}

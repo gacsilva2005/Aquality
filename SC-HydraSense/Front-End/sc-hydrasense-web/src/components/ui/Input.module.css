@@ -1,0 +1,68 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  flex: 1;
+}
+
+.label {
+  color: var(--hydro-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid var(--hydro-border);
+  transition: border-color 0.2s;
+}
+
+.inputWrapper:focus-within {
+  border-bottom-color: var(--hydro-action);
+}
+
+.inputElement {
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  width: 100%;
+  outline: none;
+  color: var(--hydro-text-primary);
+  font-size: 16px;
+  font-family: var(--font-body);
+}
+
+.inputElement::placeholder {
+  color: var(--hydro-text-muted);
+  opacity: 0.6;
+}
+
+.iconLeft, .iconRight {
+  color: var(--hydro-text-muted);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Tratamento de Erros */
+.hasError {
+  border-bottom-color: var(--hydro-critical);
+}
+
+.hasError:focus-within {
+  border-bottom-color: var(--hydro-critical);
+}
+
+.errorMessage {
+  color: var(--hydro-critical);
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 4px;
+  font-family: var(--font-body);
+}

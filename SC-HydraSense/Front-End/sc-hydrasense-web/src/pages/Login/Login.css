@@ -1,0 +1,513 @@
+/* =====================================================
+   LOGIN.CSS â€” Estilos compartilhados
+   Usado por: Login, Register, Identifier
+   NÃƒO redefinir :root aqui. Usar variÃ¡veis de index.css
+   ===================================================== */
+
+/* =====================================================
+   LAYOUT GERAL
+   ===================================================== */
+.tela-registro {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--hydro-bg-card);
+  font-family: var(--font-body);
+}
+
+.tela-registro.layout-reverso {
+  flex-direction: row-reverse;
+}
+
+/* =====================================================
+   PAINEL LATERAL (vermelho escuro)
+   ===================================================== */
+.painel-lateral {
+  width: 30%;
+  background-color: var(--hydro-critical);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 50px 40px;
+  box-sizing: border-box;
+  color: var(--hydro-bg-card);
+}
+
+.lateral-topo {
+  text-align: center;
+}
+
+.lateral-titulo {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0 0 8px 0;
+  font-family: var(--font-display);
+}
+
+.lateral-subtitulo {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.6);
+  display: block;
+  font-family: var(--font-display);
+}
+
+.lateral-meio {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.lateral-textos-meio {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.lateral-destaque {
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 6px 0;
+}
+
+.lateral-texto {
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Barra de progresso lateral (Novo Modelo Fluido) */
+.signup-progress-track {
+  width: 100%;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.signup-progress-fill {
+  height: 100%;
+  background-color: var(--hydro-bg-card);
+  border-radius: 3px;
+  transition: width 450ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width;
+}
+
+.legendas-progresso {
+  display: flex;
+  gap: 8px;
+}
+
+.legenda-progresso {
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  flex: 1;
+  text-align: center;
+}
+
+.legenda-progresso.ativa {
+  color: var(--hydro-bg-card);
+}
+
+/* =====================================================
+   PAINEL PRINCIPAL (conteÃºdo/formulÃ¡rio)
+   ===================================================== */
+.painel-principal {
+  width: 70%;
+  background-color: var(--hydro-bg-main);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 10%;
+  box-sizing: border-box;
+}
+
+.texto-passo {
+  color: var(--hydro-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.titulo-pagina {
+  color: var(--hydro-text-primary);
+  font-size: 44px;
+  font-weight: 800;
+  margin: 10px 0 40px 0;
+  letter-spacing: -1px;
+  font-family: var(--font-display);
+}
+
+.titulo-secao {
+  color: var(--hydro-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* =====================================================
+   FORMULÃRIO
+   ===================================================== */
+.formulario-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.linha-dupla {
+  display: flex;
+  gap: 20px;
+}
+
+.campo-entrada {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-align: left;
+}
+
+.campo-entrada label {
+  color: var(--hydro-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.campo-entrada input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--hydro-border);
+  padding: 10px 0;
+  font-size: 16px;
+  outline: none;
+  color: var(--hydro-text-primary);
+  transition: border-color 0.2s;
+  font-family: var(--font-body);
+}
+
+.campo-entrada input:focus {
+  border-bottom-color: var(--hydro-action);
+}
+
+/* Inputs com Ã­cone lateral */
+.input-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid var(--hydro-border);
+  transition: border-color 0.2s;
+}
+
+.input-with-icon:focus-within {
+  border-bottom-color: var(--hydro-action);
+}
+
+.input-with-icon svg {
+  color: var(--hydro-text-muted);
+  flex-shrink: 0;
+}
+
+.container-input-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid var(--hydro-border);
+  transition: border-color 0.2s;
+}
+
+.container-input-linha:focus-within {
+  border-bottom-color: var(--hydro-action);
+}
+
+.container-input-linha input,
+.container-input-linha select {
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  width: 100%;
+  outline: none;
+  color: var(--hydro-text-primary);
+  font-size: 16px;
+  font-family: var(--font-body);
+}
+
+/* Select e Textarea */
+.select-custom,
+.textarea-custom {
+  color: var(--hydro-text-primary);
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.select-custom {
+  padding: 10px 0;
+  border-bottom: 2px solid var(--hydro-border);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.select-custom:focus {
+  border-bottom-color: var(--hydro-action);
+}
+
+/* =====================================================
+   SELEÃ‡ÃƒO DE PERFIL (cards)
+   ===================================================== */
+.grade-perfis {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 40px;
+}
+
+.botao-perfil {
+  flex: 1;
+  background-color: var(--hydro-bg-card);
+  border: 1px solid var(--hydro-border);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  color: var(--hydro-text-primary);
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+.botao-perfil:hover {
+  border-color: var(--hydro-action);
+  transform: translateY(-2px);
+}
+
+.botao-perfil.ativo {
+  background-color: var(--hydro-critical);
+  border-color: var(--hydro-critical);
+  color: var(--hydro-bg-card);
+  transform: none;
+}
+
+.botao-perfil .icone-perfil {
+  color: var(--hydro-text-primary);
+  margin-bottom: 8px;
+  display: flex;
+}
+
+.botao-perfil.ativo .icone-perfil {
+  color: var(--hydro-bg-card);
+}
+
+.legenda-perfil {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* =====================================================
+   RODAPÃ‰ DO FORMULÃRIO (botÃµes de aÃ§Ã£o)
+   ===================================================== */
+.acoes-formulario {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.botao-acao-principal {
+  background-color: var(--hydro-action);
+  color: var(--hydro-bg-card);
+  border: none;
+  border-radius: 4px;
+  padding: 18px 40px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(217, 4, 41, 0.2);
+  transition: filter 0.2s, transform 0.2s;
+  font-family: var(--font-display);
+}
+
+.botao-acao-principal:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.bloco-login {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pergunta-login {
+  color: var(--hydro-text-muted);
+  font-size: 12px;
+}
+
+.botao-acao-secundario {
+  background: none;
+  border: none;
+  color: var(--hydro-action);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  transition: filter 0.2s;
+  font-family: var(--font-body);
+}
+
+.botao-acao-secundario:hover {
+  filter: brightness(1.2);
+}
+
+/* =====================================================
+   SUGESTÃ•ES DE CLUBES (autocomplete)
+   ===================================================== */
+.sugestoes-clubes {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--hydro-bg-card);
+  border: 1px solid var(--hydro-border);
+  border-radius: 0 0 6px 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.sugestoes-clubes li {
+  padding: 10px 15px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sugestoes-clubes li:hover {
+  background-color: var(--hydro-bg-main);
+  color: var(--hydro-action);
+}
+
+/* =====================================================
+   RESPONSIVIDADE â€” TABLET E MOBILE (Max 900px)
+   ===================================================== */
+@media (max-width: 900px) {
+  /* Empilha o layout lado-a-lado */
+  .tela-registro,
+  .tela-registro.layout-reverso {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* O painel vermelho vira cabeÃ§alho */
+  .painel-lateral {
+    width: 100%;
+    padding: 30px 24px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .lateral-meio {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .lateral-textos-meio {
+    text-align: center;
+  }
+
+  /* O formulÃ¡rio ocupa 100% */
+  .painel-principal {
+    width: 100%;
+    padding: 40px 24px;
+    border-radius: 24px 24px 0 0;
+    margin-top: -20px;
+    background-color: var(--hydro-bg-main);
+    z-index: 10;
+  }
+
+  .titulo-pagina {
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .texto-passo {
+    text-align: center;
+    display: block;
+  }
+
+  /* Inputs lado a lado â†’ empilha */
+  .linha-dupla {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Cards de perfil empilhados */
+  .grade-perfis {
+    flex-direction: column;
+  }
+
+  /* BotÃµes do formulÃ¡rio */
+  .acoes-formulario {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .botao-acao-principal {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .bloco-login {
+    justify-content: center;
+    margin-top: 10px;
+  }
+}
+
+/* =====================================================
+   ANIMAÃ‡Ã•ES CINEMÃTICAS (UX PREMIUM)
+   ===================================================== */
+.login-step-container {
+  animation: fluentEntrance 400ms ease-out forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes fluentEntrance {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
