@@ -165,6 +165,10 @@ export default function AthleteDetails() {
     const finishedSessions = sessions.filter((s: any) => s.dataHoraFim !== null && s.taxaSudorese !== null);
     const sortedFinished = [...finishedSessions].sort((a: any, b: any) => new Date(a.dataHoraFim).getTime() - new Date(b.dataHoraFim).getTime());
     const chartData = sortedFinished.map((s: any) => s.taxaSudorese);
+    const chartLabels = sortedFinished.map((s: any) => {
+        const d = new Date(s.dataHoraFim);
+        return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+    });
 
     const latestSweatRate = sortedFinished.length > 0 ? sortedFinished[sortedFinished.length - 1].taxaSudorese : null;
 
@@ -263,22 +267,25 @@ export default function AthleteDetails() {
 
                     {chartData.length > 0 ? (
                         <View style={{ marginVertical: 8 }}>
+                            <Text style={{ fontSize: 10, color: '#666', marginBottom: 8, marginLeft: 8, fontFamily: theme.fonts.bodyBold }}>TAXA DE SUDORESE (L/h)</Text>
                             <LineChart
                                 data={{
-                                    labels: [],
+                                    labels: chartLabels.length > 1 ? chartLabels : [chartLabels[0], chartLabels[0]],
                                     datasets: [{ data: chartData.length > 1 ? chartData : [...chartData, ...chartData] }],
                                 }}
                                 width={Dimensions.get('window').width - 64}
-                                height={160}
+                                height={180}
+                                yAxisSuffix=" L/h"
                                 withDots={true}
-                                withInnerLines={false}
+                                withInnerLines={true}
                                 withOuterLines={false}
-                                withVerticalLabels={false}
-                                withHorizontalLabels={false}
+                                withVerticalLabels={true}
+                                withHorizontalLabels={true}
                                 chartConfig={{
                                     backgroundGradientFrom: '#FFFFFF',
                                     backgroundGradientTo: '#FFFFFF',
                                     color: (opacity = 1) => `rgba(217, 4, 41, ${opacity})`,
+                                    labelColor: (opacity = 1) => `rgba(102, 102, 102, ${opacity})`,
                                     strokeWidth: 2,
                                     fillShadowGradientFrom: '#D90429',
                                     fillShadowGradientTo: '#FFFFFF',
@@ -290,13 +297,13 @@ export default function AthleteDetails() {
                                         stroke: '#D90429',
                                         fill: '#FFFFFF',
                                     },
+                                    decimalPlaces: 1,
                                 }}
                                 bezier
                                 style={{ borderRadius: 16 }}
                             />
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 8, marginTop: 4 }}>
-                                <Text style={{ fontSize: 10, color: '#999' }}>PRIMEIRA SESSÃO</Text>
-                                <Text style={{ fontSize: 10, color: '#999' }}>ÚLTIMA SESSÃO</Text>
+                            <View style={{ alignItems: 'center', marginTop: 4 }}>
+                                <Text style={{ fontSize: 10, color: '#666', fontFamily: theme.fonts.bodyBold }}>DATA DA SESSÃO</Text>
                             </View>
                         </View>
                     ) : (
