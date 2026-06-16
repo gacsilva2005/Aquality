@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { NovoAtleta } from './NovoAtleta';
-import { SideBarAtleta } from './SideBarAtleta';
+import { AthleteDetailModal } from '../../components/ui/AthleteDetailModal';
 import { useUser } from '../../context/UserContext';
 
 export function Atletas() {
@@ -253,14 +253,10 @@ export function Atletas() {
                 </table>
             </section>
 
-            {/* Precisamos buscar o objeto atleta completo (ou as partes necessárias) para a SideBar? 
-                Sim, a sidebar espera o objeto atleta. Vamos passar o AtletaSelecionado, que aqui é o AtletaResumoDTO. 
-                Se a SideBarAtleta quebrar por faltar dados, idealmente ela faria fetch `/Atleta/${atleta.id}` internamente. 
-                Vou passar como está. */}
-            <SideBarAtleta 
-                aberto={!!atletaSelecionado} 
-                onFechar={() => setAtletaSelecionado(null)} 
-                atleta={atletaSelecionado} 
+            <AthleteDetailModal 
+                isOpen={!!atletaSelecionado} 
+                onClose={() => setAtletaSelecionado(null)} 
+                atletaId={atletaSelecionado?.id || null} 
             />
         </>
     );
