@@ -26,7 +26,9 @@ os.environ["GOOGLE_API_KEY"] = api_key
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 caminho_dos_pdfs = os.path.join(diretorio_atual, "..", "PDFs")
 
-histórico = SqliteDb(db_url="sqlite:///agno.db", session_table="sessões")
+# Cria a pasta db se não existir para o volume funcionar localmente
+os.makedirs("db", exist_ok=True)
+histórico = SqliteDb(db_url="sqlite:///db/agno.db", session_table="sessões")
 vector_db = ChromaDb(
     collection="camilo",
     path="./chroma_data",
@@ -97,7 +99,7 @@ def criar_agente(session_id: Optional[str] = None, athlete_context: Optional[str
         description = _PROMPT_BASE
 
     return Agent(
-        model=Gemini(id="gemini-2.5-flash", api_key=api_key),
+        model=Gemini(id="gemini-2.5-flash-lite", api_key=api_key),
         knowledge=base_conhecimento,
         search_knowledge=True,
         db=histórico,

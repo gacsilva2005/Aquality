@@ -25,8 +25,9 @@ TIMEOUT = 5.0  # segundos — não travar o chat esperando backend
 def _get(endpoint: str) -> Optional[dict | list]:
     """GET genérico com tratamento de erro robusto."""
     url = f"{BACKEND_URL}{endpoint}"
+    disable_ssl = os.getenv("DISABLE_SSL_VERIFY", "false").lower() == "true"
     try:
-        with httpx.Client(timeout=TIMEOUT) as client:
+        with httpx.Client(timeout=TIMEOUT, verify=not disable_ssl) as client:
             resp = client.get(url)
             if resp.status_code == 200:
                 return resp.json()
