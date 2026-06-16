@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '../../context/UserContext';
+import { AthleteDetailModal } from '../../components/ui/AthleteDetailModal';
 
 interface Equipe {
   id: number;
@@ -48,6 +49,7 @@ export function Dashboard() {
   const [selectedDias, setSelectedDias] = useState<number>(7);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedAthleteId, setSelectedAthleteId] = useState<number | null>(null);
 
   const clubeId = user?.clube?.id || 1;
 
@@ -182,7 +184,7 @@ export function Dashboard() {
                   <tbody>
                     {(dashboardData?.mapaRisco ?? []).length > 0 ? (
                       (dashboardData?.mapaRisco ?? []).map((atleta) => (
-                        <tr key={atleta.id}>
+                        <tr key={atleta.id} onClick={() => setSelectedAthleteId(atleta.id)} style={{ cursor: 'pointer' }} title="Clique para ver os detalhes do atleta">
                           <td className="td-bold">{atleta.nome}</td>
                           <td>
                             <span className={`badge-variacao ${atleta.status.toLowerCase().replace(' ', '-')}`}>
@@ -265,6 +267,12 @@ export function Dashboard() {
               <span className="dashboard-quality-dot">●</span> Dados atualizados
             </div>
           </footer>
+
+          <AthleteDetailModal 
+            isOpen={!!selectedAthleteId} 
+            onClose={() => setSelectedAthleteId(null)} 
+            atletaId={selectedAthleteId} 
+          />
         </>
       )}
     </>

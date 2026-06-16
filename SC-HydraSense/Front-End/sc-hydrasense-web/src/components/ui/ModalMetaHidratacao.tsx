@@ -15,13 +15,10 @@ interface ModalMetaHidratacaoProps {
 
 export function ModalMetaHidratacao({ isOpen, onClose, atletaNome, ultimaTaxa, onSave }: ModalMetaHidratacaoProps) {
   const [meta, setMeta] = useState('');
-  const [vigencia, setVigencia] = useState('');
-  const [condicao, setCondicao] = useState('Normal');
-  const [tipoSessao, setTipoSessao] = useState('Treino Tático');
   const [observacao, setObservacao] = useState('');
 
   const handleSave = () => {
-    onSave({ meta: parseFloat(meta), vigencia, condicao, tipoSessao, observacao });
+    onSave({ meta: parseFloat(meta), observacao });
     onClose();
   };
 
@@ -55,41 +52,7 @@ export function ModalMetaHidratacao({ isOpen, onClose, atletaNome, ultimaTaxa, o
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: '16px' }}>
-            <div style={{ flex: 1 }}>
-                <Input 
-                  label="Período de Vigência" 
-                  type="date"
-                  value={vigencia}
-                  onChange={(e) => setVigencia(e.target.value)}
-                  iconLeft={<Calendar size={18} color="#6C757D" />}
-                />
-            </div>
-            <div style={{ flex: 1 }}>
-                <Select 
-                  label="Condição Ambiental"
-                  value={condicao}
-                  onChange={(e) => setCondicao(e.target.value)}
-                  iconLeft={<Cloud size={18} color="#6C757D" />}
-                >
-                  <option value="Normal">Normal</option>
-                  <option value="Calor Intenso">Calor Intenso</option>
-                  <option value="Frio">Frio</option>
-                </Select>
-            </div>
-        </div>
 
-        <Select 
-          label="Tipo de Sessão"
-          value={tipoSessao}
-          onChange={(e) => setTipoSessao(e.target.value)}
-          iconLeft={<Activity size={18} color="#6C757D" />}
-        >
-          <option value="Treino Tático">Treino Tático</option>
-          <option value="Regenerativo">Regenerativo</option>
-          <option value="Jogo Oficial">Jogo Oficial</option>
-          <option value="Musculação">Musculação</option>
-        </Select>
 
         <Input 
           label="Observação Clínica (Opcional)" 
