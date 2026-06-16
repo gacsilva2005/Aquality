@@ -316,4 +316,34 @@ export const styles = StyleSheet.create({
     color: '#666',
     textTransform: 'uppercase',
   },
+  observacaoBox: {
+    flexDirection: 'row',
+    backgroundColor: '#F7FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 20,
+    alignItems: 'flex-start',
+  },
+  observacaoIcon: {
+    marginRight: 12,
+    marginTop: 2,
+  },
+  observacaoTextContainer: {
+    flex: 1,
+  },
+  observacaoTitle: {
+    fontFamily: theme.fonts.headingBold,
+    fontSize: 10,
+    color: theme.colors.primary,
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  observacaoText: {
+    fontFamily: theme.fonts.bodyRegular,
+    fontSize: 13,
+    color: '#4A5568',
+    lineHeight: 18,
+  },
 });

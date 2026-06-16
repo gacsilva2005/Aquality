@@ -31,6 +31,7 @@ export default function Hydration() {
   const { user } = useUser();
   const [consumed, setConsumed] = useState(0);
   const [goal, setGoal] = useState(3000); // Meta: 3000ml (padrão)
+  const [observacoes, setObservacoes] = useState('');
 
   const [history, setHistory] = useState<HydrationRecord[]>([]);
 
@@ -46,8 +47,11 @@ export default function Hydration() {
         const goalResponse = await fetch(`${API_URL}/meta-hidratacao/atleta/${user.id}`);
         if (goalResponse.ok) {
           const goalData = await goalResponse.json();
-          if (goalData && goalData.metaVolumeMl) {
-            setGoal(goalData.metaVolumeMl);
+          if (goalData) {
+            if (goalData.metaVolumeMl) {
+              setGoal(goalData.metaVolumeMl);
+            }
+            setObservacoes(goalData.observacoes || '');
           }
         }
       } catch (goalErr) {
@@ -279,6 +283,16 @@ export default function Hydration() {
               </Text>
             </View>
           </View>
+
+          {observacoes ? (
+            <View style={styles.observacaoBox}>
+              <MaterialCommunityIcons name="message-text-outline" size={20} color={theme.colors.primary} style={styles.observacaoIcon} />
+              <View style={styles.observacaoTextContainer}>
+                <Text style={styles.observacaoTitle}>RECOMENDAÇÃO DO PROFISSIONAL</Text>
+                <Text style={styles.observacaoText}>{observacoes}</Text>
+              </View>
+            </View>
+          ) : null}
 
           {/* ... O RESTO DOS SEUS CARDS CONTINUA IGUAL AQUI ... */}
           <View style={styles.card}>
