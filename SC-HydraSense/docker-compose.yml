@@ -7,6 +7,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: hydrasense
+      TZ: America/Sao_Paulo
     ports:
       - "3307:3306"
     volumes:
@@ -23,6 +24,8 @@ services:
     container_name: hydrasense-backend
     env_file:
       - .env
+    environment:
+      - TZ=America/Sao_Paulo
     ports:
       - "8080:8080"
     depends_on:
@@ -44,6 +47,8 @@ services:
     container_name: hydrasense-pdf-engine
     ports:
       - "3000:3000"
+    environment:
+      - TZ=America/Sao_Paulo
 
   assistente-ia:
     profiles: ["ai"]
@@ -54,6 +59,7 @@ services:
       - .env
     environment:
       - BACKEND_API_URL=http://hydrasense-backend:8080
+      - TZ=America/Sao_Paulo
     ports:
       - "8000:8000"
     dns:
