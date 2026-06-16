@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Microscope, Utensils, Activity, BriefcaseMedical, MapPin, Award, User, Hash, Trophy, ArrowLeft } from 'lucide-react';
+import { Input } from '../../components/ui/Input';
+import { Button } from '../../components/ui/Button';
 import './Login.css';
 
 const PERFIS = [
@@ -126,20 +128,16 @@ export function Register() {
 
         <form className="formulario-corpo" onSubmit={handleSubmit}>
           <div className="linha-dupla">
-            <div className="campo-entrada">
-              <label>NOME COMPLETO</label>
-              <div className="container-input-linha">
-                <User size={18} color="#6C757D" />
-                <input
-                  type="text"
-                  name="nome"
-                  placeholder="Nome Completo"
-                  value={formData.nome}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
+            <Input
+              label="NOME COMPLETO"
+              iconLeft={<User size={18} color="#6C757D" />}
+              type="text"
+              name="nome"
+              placeholder="Nome Completo"
+              value={formData.nome}
+              onChange={handleChange}
+              required
+            />
 
             <div className="campo-entrada">
               <label>SEXO BIOLÓGICO</label>
@@ -161,20 +159,16 @@ export function Register() {
           </div>
 
           <div className="linha-dupla">
-            <div className="campo-entrada">
-              <label>REGISTRO PROFISSIONAL (CRN/CRM/CREF)</label>
-              <div className="container-input-linha">
-                <Hash size={18} color="#6C757D" />
-                <input
-                  type="text"
-                  name="registro"
-                  placeholder="Ex: CRM-12345"
-                  value={formData.registro}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
+            <Input
+              label="REGISTRO PROFISSIONAL (CRN/CRM/CREF)"
+              iconLeft={<Hash size={18} color="#6C757D" />}
+              type="text"
+              name="registro"
+              placeholder="Ex: CRM-12345"
+              value={formData.registro}
+              onChange={handleChange}
+              required
+            />
 
             <div className="campo-entrada">
               <label>UF DA FILIAÇÃO</label>
@@ -195,37 +189,31 @@ export function Register() {
           </div>
 
           <div className="linha-dupla">
-            <div className="campo-entrada">
-              <label>ESPECIALIDADE</label>
-              <div className="container-input-linha">
-                <Award size={18} color="#6C757D" />
-                <input
-                  type="text"
-                  name="especialidade"
-                  placeholder="Ex: Fisiologia"
-                  value={formData.especialidade}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
+            <Input
+              label="ESPECIALIDADE"
+              iconLeft={<Award size={18} color="#6C757D" />}
+              type="text"
+              name="especialidade"
+              placeholder="Ex: Fisiologia"
+              value={formData.especialidade}
+              onChange={handleChange}
+              required
+            />
 
-            <div className="campo-entrada" style={{ position: 'relative' }}>
-              <label>INSTITUIÇÃO/CLUBE</label>
-              <div className="container-input-linha">
-                <Trophy size={18} color="#6C757D" />
-                <input
-                  type="text"
-                  placeholder="Pesquisar Clube..."
-                  value={buscaClube}
-                  onChange={(e) => {
-                    setBuscaClube(e.target.value);
-                    setMostrarSugestoes(true);
-                  }}
-                  onFocus={() => setMostrarSugestoes(true)}
-                  required
-                />
-              </div>
+            <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <Input
+                label="INSTITUIÇÃO/CLUBE"
+                iconLeft={<Trophy size={18} color="#6C757D" />}
+                type="text"
+                placeholder="Pesquisar Clube..."
+                value={buscaClube}
+                onChange={(e) => {
+                  setBuscaClube(e.target.value);
+                  setMostrarSugestoes(true);
+                }}
+                onFocus={() => setMostrarSugestoes(true)}
+                required
+              />
 
               {mostrarSugestoes && buscaClube.length > 0 && (
                 <ul className="sugestoes-clubes">
@@ -254,9 +242,9 @@ export function Register() {
           </div>
 
           <footer className="acoes-formulario">
-            <button type="submit" className="botao-acao-principal">
+            <Button type="submit" variant="primary">
               PRÓXIMO PASSO
-            </button>
+            </Button>
             <div className="bloco-login">
               <span className="pergunta-login">Já tem uma conta?</span>
               <button type="button" className="botao-acao-secundario" onClick={() => navigate('/')}>
