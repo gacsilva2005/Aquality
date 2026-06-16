@@ -81,7 +81,7 @@ export default function LoginScreen() {
   };
 
   const performLogin = async (loginEmail: string, loginPassword: string) => {
-    const cleanEmail = loginEmail.trim();
+    const cleanEmail = loginEmail.trim().toLowerCase();
     const cleanPassword = loginPassword.trim();
 
     if (!cleanEmail || !cleanPassword) {
@@ -91,7 +91,7 @@ export default function LoginScreen() {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (cleanEmail !== 'dev' && !emailRegex.test(cleanEmail)) {
+    if (cleanEmail !== 'dev' && cleanEmail !== 'devpro' && !emailRegex.test(cleanEmail)) {
       // 🌟 Usando o aviso laranja
       alert.warning('E-mail Inválido', 'Por favor, insira um formato de e-mail válido (ex: atleta@performance.com).');
       return;
