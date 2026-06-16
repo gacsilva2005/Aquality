@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './styles';
@@ -9,17 +9,48 @@ interface ModalTreinoProps {
   visible: boolean;
   onClose: () => void;
   onStart: (treinoSelecionado: string) => void;
+  modalidades?: string[];
 }
 
-// Opções de treino
-const TREINOS = [
-  { id: '1', nome: 'Cardio', icone: 'heart-pulse' },
-  { id: '2', nome: 'Musculação', icone: 'dumbbell' },
-];
+const getModalityIcon = (modalidade: string): string => {
+  const lower = modalidade.toLowerCase();
+  if (lower.includes('cardio')) return 'heart-pulse';
+  if (lower.includes('musculação') || lower.includes('musculacao')) return 'dumbbell';
+  if (lower.includes('futebol')) return 'soccer';
+  if (lower.includes('natação') || lower.includes('natacao')) return 'swim';
+  if (lower.includes('corrida')) return 'run';
+  if (lower.includes('ciclismo')) return 'bike';
+  return 'timer';
+};
 
-export function ModalTreino({ visible, onClose, onStart }: ModalTreinoProps) {
+export function ModalTreino({ visible, onClose, onStart, modalidades }: ModalTreinoProps) {
   // Estado para guardar qual treino está selecionado no momento
   const [selected, setSelected] = useState<string | null>(null);
+
+  // Lista de treinos dinâmicos
+  const treinosDisponiveis = useMemo(() => {
+    const list = [
+      { id: 'cardio', nome: 'Cardio', icone: 'heart-pulse' },
+      { id: 'musculacao', nome: 'Musculação', icone: 'dumbbell' },
+    ];
+
+    if (modalidades && modalidades.length > 0) {
+      modalidades.forEach((mod, index) => {
+        if (!mod) return;
+        const normalized = mod.trim();
+        const alreadyExists = list.some(item => item.nome.toLowerCase() === normalized.toLowerCase());
+        
+        if (!alreadyExists) {
+          list.push({
+            id: `user-mod-${index}`,
+            nome: normalized,
+            icone: getModalityIcon(normalized)
+          });
+        }
+      });
+    }
+    return list;
+  }, [modalidades]);
 
   const handleStart = () => {
     if (selected) {
@@ -48,9 +79,13 @@ export function ModalTreino({ visible, onClose, onStart }: ModalTreinoProps) {
             </TouchableOpacity>
           </View>
 
-          {/* LISTA DE TREINOS */}
-          <View style={styles.listContainer}>
-            {TREINOS.map((treino) => {
+          {/* LISTA DE TREINOS COM SUPORTE A ROLAGEM SE FOR LONGA */}
+          <ScrollView 
+            style={{ maxHeight: 300, marginBottom: 20 }}
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+          >
+            {treinosDisponiveis.map((treino) => {
               const isActive = selected === treino.nome;
               return (
                 <TouchableOpacity
@@ -79,7 +114,7 @@ export function ModalTreino({ visible, onClose, onStart }: ModalTreinoProps) {
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </ScrollView>
 
           {/* BOTÃO DE COMEÇAR COM A SETINHA */}
           <TouchableOpacity 
