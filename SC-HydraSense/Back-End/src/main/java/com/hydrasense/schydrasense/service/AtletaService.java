@@ -22,6 +22,9 @@ public class AtletaService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private com.hydrasense.schydrasense.repository.MetaHidratacaoRepository metaRepository;
+
     private final AtletaRepository repository;
     private final ClubeRepository clubeRepository;
     private final SessaoDeTreinoRepository sessaoDeTreinoRepository;
@@ -71,6 +74,16 @@ public class AtletaService {
         atleta.setCodigoAcesso(codigo);
 
         Atleta atletaSalvo = repository.save(atleta);
+
+        try {
+            com.hydrasense.schydrasense.model.MetaHidratacao metaPadrao = new com.hydrasense.schydrasense.model.MetaHidratacao();
+            metaPadrao.setAtleta(atletaSalvo);
+            metaPadrao.setMetaVolumeMl(3000);
+            metaPadrao.setObservacoes("Meta padrão inicial");
+            metaRepository.save(metaPadrao);
+        } catch (Exception e) {
+            System.err.println("Erro ao criar meta de hidratação padrão: " + e.getMessage());
+        }
 
         try {
             emailService.enviarCodigo(

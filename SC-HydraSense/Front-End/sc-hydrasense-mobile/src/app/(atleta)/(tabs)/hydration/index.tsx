@@ -30,7 +30,8 @@ export default function Hydration() {
 
   const { user } = useUser();
   const [consumed, setConsumed] = useState(0);
-  const goal = 3000; // Meta: 3000ml
+  const [goal, setGoal] = useState(3000); // Meta: 3000ml (padrão)
+  const [observacoes, setObservacoes] = useState('');
 
   const [history, setHistory] = useState<HydrationRecord[]>([]);
 
@@ -41,6 +42,23 @@ export default function Hydration() {
       const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
       const API_URL = `http://${ip}:8080`;
 
+      // 1. Buscar meta do atleta
+      try {
+        const goalResponse = await fetch(`${API_URL}/meta-hidratacao/atleta/${user.id}`);
+        if (goalResponse.ok) {
+          const goalData = await goalResponse.json();
+          if (goalData) {
+            if (goalData.metaVolumeMl) {
+              setGoal(goalData.metaVolumeMl);
+            }
+            setObservacoes(goalData.observacoes || '');
+          }
+        }
+      } catch (goalErr) {
+        console.error('Erro ao buscar meta de hidratação:', goalErr);
+      }
+
+      // 2. Buscar histórico
       const response = await fetch(`${API_URL}/hidratacao/atleta/${user.id}`);
       if (response.ok) {
         const data = await response.json();
@@ -265,6 +283,16 @@ export default function Hydration() {
               </Text>
             </View>
           </View>
+
+          {observacoes ? (
+            <View style={styles.observacaoBox}>
+              <MaterialCommunityIcons name="message-text-outline" size={20} color={theme.colors.primary} style={styles.observacaoIcon} />
+              <View style={styles.observacaoTextContainer}>
+                <Text style={styles.observacaoTitle}>RECOMENDAÇÃO DO PROFISSIONAL</Text>
+                <Text style={styles.observacaoText}>{observacoes}</Text>
+              </View>
+            </View>
+          ) : null}
 
           {/* ... O RESTO DOS SEUS CARDS CONTINUA IGUAL AQUI ... */}
           <View style={styles.card}>

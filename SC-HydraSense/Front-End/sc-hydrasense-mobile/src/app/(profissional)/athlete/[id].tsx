@@ -17,6 +17,8 @@ export default function AthleteDetails() {
     const [athleteData, setAthleteData] = useState<any>(null);
     const [sessions, setSessions] = useState<any[]>([]);
     const [hydrationVal, setHydrationVal] = useState<number>(0);
+    const [metaVolume, setMetaVolume] = useState<number>(3000);
+    const [metaObservacao, setMetaObservacao] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [modalVisible, setModalVisible] = useState(false);
     
@@ -106,6 +108,14 @@ export default function AthleteDetails() {
                         .reduce((sum: number, item: any) => sum + item.volume, 0);
                     setHydrationVal(totalToday);
                 }
+
+                // 4. Fetch hydration goal
+                const metaRes = await fetch(`${API_URL}/meta-hidratacao/atleta/${id}`);
+                if (metaRes.ok) {
+                    const data = await metaRes.json();
+                    setMetaVolume(data.metaVolumeMl || 3000);
+                    setMetaObservacao(data.observacoes || '');
+                }
             } catch (error) {
                 console.error('Erro ao buscar dados do atleta:', error);
             } finally {
@@ -155,6 +165,10 @@ export default function AthleteDetails() {
     const finishedSessions = sessions.filter((s: any) => s.dataHoraFim !== null && s.taxaSudorese !== null);
     const sortedFinished = [...finishedSessions].sort((a: any, b: any) => new Date(a.dataHoraFim).getTime() - new Date(b.dataHoraFim).getTime());
     const chartData = sortedFinished.map((s: any) => s.taxaSudorese);
+    const chartLabels = sortedFinished.map((s: any) => {
+        const d = new Date(s.dataHoraFim);
+        return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+    });
 
     const latestSweatRate = sortedFinished.length > 0 ? sortedFinished[sortedFinished.length - 1].taxaSudorese : null;
 
@@ -229,7 +243,7 @@ export default function AthleteDetails() {
 
                         <View style={styles.hydrationContainer}>
                             <Text style={styles.hydrationLabel}>HIDRATAÇÃO HOJE</Text>
-                            <Text style={styles.hydrationValue}>{hydrationVal} ml</Text>
+                            <Text style={styles.hydrationValue}>{hydrationVal} / {metaVolume} ml</Text>
                         </View>
                     </View>
 
@@ -253,22 +267,25 @@ export default function AthleteDetails() {
 
                     {chartData.length > 0 ? (
                         <View style={{ marginVertical: 8 }}>
+                            <Text style={{ fontSize: 10, color: '#666', marginBottom: 8, marginLeft: 8, fontFamily: theme.fonts.bodyBold }}>TAXA DE SUDORESE (L/h)</Text>
                             <LineChart
                                 data={{
-                                    labels: [],
+                                    labels: chartLabels.length > 1 ? chartLabels : [chartLabels[0], chartLabels[0]],
                                     datasets: [{ data: chartData.length > 1 ? chartData : [...chartData, ...chartData] }],
                                 }}
                                 width={Dimensions.get('window').width - 64}
-                                height={160}
+                                height={180}
+                                yAxisSuffix=" L/h"
                                 withDots={true}
-                                withInnerLines={false}
+                                withInnerLines={true}
                                 withOuterLines={false}
-                                withVerticalLabels={false}
-                                withHorizontalLabels={false}
+                                withVerticalLabels={true}
+                                withHorizontalLabels={true}
                                 chartConfig={{
                                     backgroundGradientFrom: '#FFFFFF',
                                     backgroundGradientTo: '#FFFFFF',
                                     color: (opacity = 1) => `rgba(217, 4, 41, ${opacity})`,
+                                    labelColor: (opacity = 1) => `rgba(102, 102, 102, ${opacity})`,
                                     strokeWidth: 2,
                                     fillShadowGradientFrom: '#D90429',
                                     fillShadowGradientTo: '#FFFFFF',
@@ -280,13 +297,13 @@ export default function AthleteDetails() {
                                         stroke: '#D90429',
                                         fill: '#FFFFFF',
                                     },
+                                    decimalPlaces: 1,
                                 }}
                                 bezier
                                 style={{ borderRadius: 16 }}
                             />
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 8, marginTop: 4 }}>
-                                <Text style={{ fontSize: 10, color: '#999' }}>PRIMEIRA SESSÃO</Text>
-                                <Text style={{ fontSize: 10, color: '#999' }}>ÚLTIMA SESSÃO</Text>
+                            <View style={{ alignItems: 'center', marginTop: 4 }}>
+                                <Text style={{ fontSize: 10, color: '#666', fontFamily: theme.fonts.bodyBold }}>DATA DA SESSÃO</Text>
                             </View>
                         </View>
                     ) : (
@@ -348,10 +365,35 @@ export default function AthleteDetails() {
                 onClose={() => setModalVisible(false)}
                 atletaNome={athleteData?.nome || 'Atleta'}
                 ultimaTaxa={latestSweatRate}
-                onSave={(data) => {
-                    console.log('Salvar meta:', data);
+                metaInicial={metaVolume}
+                observacaoInicial={metaObservacao}
+                onSave={async (data) => {
+                    try {
+                        const hostUri = Constants?.expoConfig?.hostUri;
+                        const ip = hostUri ? hostUri.split(':')[0] : 'localhost';
+                        const API_URL = `http://${ip}:8080`;
+
+                        const response = await fetch(`${API_URL}/meta-hidratacao`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                atletaId: parseInt(id as string, 10),
+                                metaVolumeMl: data.metaVolumeMl,
+                                observacoes: data.observacoes
+                            })
+                        });
+
+                        if (response.ok) {
+                            const updated = await response.json();
+                            setMetaVolume(updated.metaVolumeMl);
+                            setMetaObservacao(updated.observacoes || '');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao salvar meta:', error);
+                    }
                     setModalVisible(false);
-                    // Aqui iria a integração com a API
                 }}
             />
         </View>
