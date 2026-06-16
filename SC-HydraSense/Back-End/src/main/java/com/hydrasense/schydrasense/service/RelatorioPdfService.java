@@ -8,9 +8,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import com.hydrasense.schydrasense.model.SessaoDeTreino;
 import com.hydrasense.schydrasense.model.Atleta;
+import com.hydrasense.schydrasense.model.Equipe;
 import com.hydrasense.schydrasense.repository.EstatisticasProjection;
 import com.hydrasense.schydrasense.repository.SessaoDeTreinoRepository;
+import com.hydrasense.schydrasense.repository.EquipeRepository;
 import org.springframework.stereotype.Service;
+import java.util.Comparator;
+import java.util.ArrayList;
 
 @Service
 public class RelatorioPdfService {
@@ -19,16 +23,19 @@ public class RelatorioPdfService {
     private final SessaoDeTreinoRepository sessaoRepository;
     private final PdfResourceService pdfResourceService;
     private final CalculadoraFisiologica calculadora;
+    private final EquipeRepository equipeRepository;
 
     public RelatorioPdfService(
             SessaoDeTreinoService sessaoService,
             SessaoDeTreinoRepository sessaoRepository,
             PdfResourceService pdfResourceService,
-            CalculadoraFisiologica calculadora) {
+            CalculadoraFisiologica calculadora,
+            EquipeRepository equipeRepository) {
         this.sessaoService = sessaoService;
         this.sessaoRepository = sessaoRepository;
         this.pdfResourceService = pdfResourceService;
         this.calculadora = calculadora;
+        this.equipeRepository = equipeRepository;
     }
 
     public RelatorioPdfDTO gerarPayloadRelatorio(Long sessaoId) {
@@ -144,18 +151,54 @@ public class RelatorioPdfService {
     }
 
     public RelatorioEquipeDTO gerarPayloadEquipe(Long equipeId) {
-        // Retornando os dados mockados que seguem o formato do novo DTO de Equipe
-        List<RelatorioEquipeDTO.AtletaResumoRecord> atletas = List.of(
-            new RelatorioEquipeDTO.AtletaResumoRecord("João Silva", "Ideal", 0.5f, 1.1f),
-            new RelatorioEquipeDTO.AtletaResumoRecord("Carlos Souza", "Atenção", -1.2f, 1.5f),
-            new RelatorioEquipeDTO.AtletaResumoRecord("Fernando Reis", "Crítico", -2.5f, 2.1f)
-        );
+        Equipe equipe = equipeRepository.findById(equipeId)
+                .orElseThrow(() -> new RuntimeException("Equipe não encontrada"));
+
+        List<RelatorioEquipeDTO.AtletaResumoRecord> atletasRecords = new ArrayList<>();
+
+        if (equipe.getAtletas() != null) {
+            for (Atleta atleta : equipe.getAtletas()) {
+                List<SessaoDeTreino> sessoes = sessaoRepository.findByAtletaId(atleta.getId());
+                if (sessoes != null && !sessoes.isEmpty()) {
+                    SessaoDeTreino ultimaSessao = sessoes.stream()
+                            .filter(s -> s.getDataHoraFim() != null)
+                            .max(Comparator.comparing(SessaoDeTreino::getDataHoraFim))
+                            .orElse(null);
+
+                    if (ultimaSessao != null) {
+                        Float pesoPre = ultimaSessao.getPesagemPre() != null ? ultimaSessao.getPesagemPre().getPeso() : null;
+                        Float pesoPos = ultimaSessao.getPesagemPos() != null ? ultimaSessao.getPesagemPos().getPeso() : null;
+                        Float taxaSudorese = ultimaSessao.getTaxaSudorese() != null ? ultimaSessao.getTaxaSudorese() : 0f;
+
+                        if (pesoPre != null && pesoPos != null && pesoPre > 0) {
+                            Float variacao = calculadora.calcularPercentualVariacaoMassa(pesoPre, pesoPos);
+                            
+                            String status;
+                            if (variacao < -2.0) status = "Crítico";
+                            else if (variacao < -1.0) status = "Atenção";
+                            else status = "Ideal";
+
+                            atletasRecords.add(new RelatorioEquipeDTO.AtletaResumoRecord(
+                                    atleta.getId(),
+                                    atleta.getNome(),
+                                    status,
+                                    variacao,
+                                    taxaSudorese
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+
+        // Ordena por taxa de sudorese descrescente (para os gráficos do PDF e UI)
+        atletasRecords.sort((a, b) -> Float.compare(b.taxa(), a.taxa()));
 
         return new RelatorioEquipeDTO(
             System.currentTimeMillis(),
-            "Equipe Principal " + equipeId,
+            equipe.getNome(),
             LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-            atletas
+            atletasRecords
         );
     }
 

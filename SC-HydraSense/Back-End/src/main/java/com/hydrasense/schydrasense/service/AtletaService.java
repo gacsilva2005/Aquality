@@ -13,6 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.hydrasense.schydrasense.dto.AtletaResumoDTO;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,12 +32,14 @@ public class AtletaService {
     private final AtletaRepository repository;
     private final ClubeRepository clubeRepository;
     private final SessaoDeTreinoRepository sessaoDeTreinoRepository;
+    private final CalculadoraFisiologica calculadoraFisiologica;
 
     public AtletaService(AtletaRepository repository, ClubeRepository clubeRepository,
-            SessaoDeTreinoRepository sessaoDeTreinoRepository) {
+            SessaoDeTreinoRepository sessaoDeTreinoRepository, CalculadoraFisiologica calculadoraFisiologica) {
         this.repository = repository;
         this.clubeRepository = clubeRepository;
         this.sessaoDeTreinoRepository = sessaoDeTreinoRepository;
+        this.calculadoraFisiologica = calculadoraFisiologica;
     }
 
     private String gerarCodigo() {
@@ -161,5 +167,58 @@ public class AtletaService {
 
     public List<SessaoDeTreino> listarPorAtleta(Long atletaId) {
         return sessaoDeTreinoRepository.findByAtletaId(atletaId);
+    }
+
+    public List<AtletaResumoDTO> listarResumosPorClube(Long clubeId) {
+        List<Atleta> atletas = repository.findByClubeId(clubeId);
+        
+        return atletas.stream().map(atleta -> {
+            AtletaResumoDTO dto = new AtletaResumoDTO();
+            dto.setId(atleta.getId());
+            dto.setNome(atleta.getNome());
+            dto.setFotoPerfil(atleta.getFotoPerfil());
+            dto.setModalidade(atleta.getModalidade());
+            
+            String equipeNomes = atleta.getEquipes() != null && !atleta.getEquipes().isEmpty()
+                ? atleta.getEquipes().stream().map(e -> e.getNome()).collect(Collectors.joining(", "))
+                : "Sem Equipe";
+            dto.setEquipeNome(equipeNomes);
+            
+            dto.setAdesao("Alta"); // Valor mockado temporário conforme definido no plano
+            
+            List<SessaoDeTreino> sessoes = sessaoDeTreinoRepository.findByAtletaId(atleta.getId());
+            if (sessoes != null && !sessoes.isEmpty()) {
+                SessaoDeTreino ultimaSessao = sessoes.stream()
+                        .filter(s -> s.getDataHoraFim() != null)
+                        .max(Comparator.comparing(SessaoDeTreino::getDataHoraFim))
+                        .orElse(null);
+                        
+                if (ultimaSessao != null) {
+                    dto.setUltimaSessao(ultimaSessao.getDataHoraFim());
+                    
+                    Float pesoPre = ultimaSessao.getPesagemPre() != null ? ultimaSessao.getPesagemPre().getPeso() : null;
+                    Float pesoPos = ultimaSessao.getPesagemPos() != null ? ultimaSessao.getPesagemPos().getPeso() : null;
+                    
+                    if (pesoPre != null && pesoPos != null && pesoPre > 0) {
+                        double variacao = calculadoraFisiologica.calcularPercentualVariacaoMassa(pesoPre, pesoPos);
+                        if (variacao < -2.0) {
+                            dto.setStatus("Crítico");
+                        } else if (variacao < -1.0) {
+                            dto.setStatus("Atenção");
+                        } else {
+                            dto.setStatus("Ideal");
+                        }
+                    } else {
+                        dto.setStatus("Sem Dados");
+                    }
+                } else {
+                    dto.setStatus("Sem Dados");
+                }
+            } else {
+                dto.setStatus("Sem Dados");
+            }
+            
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

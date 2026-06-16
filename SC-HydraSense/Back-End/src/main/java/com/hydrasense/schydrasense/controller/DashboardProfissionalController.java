@@ -18,9 +18,11 @@ public class DashboardProfissionalController {
     @GetMapping("/{clubeId}")
     public ResponseEntity<DashboardProfissionalDTO> getDashboard(
             @PathVariable Long clubeId,
+            @RequestParam(required = false) Long equipeId,
+            @RequestParam(required = false, defaultValue = "7") Integer dias,
             @RequestParam(required = false) Double lat,
             @RequestParam(required = false) Double lon) {
-        DashboardProfissionalDTO dto = dashboardService.gerarDashboard(clubeId, lat, lon);
+        DashboardProfissionalDTO dto = dashboardService.gerarDashboard(clubeId, equipeId, dias, lat, lon);
         return ResponseEntity.ok(dto);
     }
 }

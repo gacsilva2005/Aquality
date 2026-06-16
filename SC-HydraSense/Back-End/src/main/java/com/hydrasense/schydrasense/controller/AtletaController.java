@@ -1,6 +1,7 @@
 package com.hydrasense.schydrasense.controller;
 
 import com.hydrasense.schydrasense.dto.AtletaRequestDTO;
+import com.hydrasense.schydrasense.dto.AtletaResumoDTO;
 import com.hydrasense.schydrasense.dto.ConviteAtletaDTO;
 import com.hydrasense.schydrasense.dto.LoginDTO;
 import com.hydrasense.schydrasense.model.Atleta;
@@ -71,4 +72,8 @@ public class AtletaController {
         return ResponseEntity.ok(atletas);
     }
 
+    @GetMapping("/clube/{clubeId}/resumo")
+    public ResponseEntity<List<AtletaResumoDTO>> listarResumosPorClube(@PathVariable Long clubeId) {
+        return ResponseEntity.ok(service.listarResumosPorClube(clubeId));
+    }
 }

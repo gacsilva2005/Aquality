@@ -1,4 +1,101 @@
+import { useState, useEffect } from 'react';
+import { useUser } from '../../context/UserContext';
+import { AthleteDetailModal } from '../../components/ui/AthleteDetailModal';
+
+interface Equipe {
+  id: number;
+  nome: string;
+}
+
+interface DashboardData {
+  totalAtletas: number;
+  sessoesUltimos7Dias: number;
+  taxaMediaSudorese: number;
+  variacaoMediaMassa: number;
+  temperaturaAtual: number | null;
+  umidadeAtual: number | null;
+  descricaoClima: string | null;
+  rankingPerformance: {
+    id: number;
+    nome: string;
+    avatar: string | null;
+    totalSessoes: number;
+    sessoesIdeais: number;
+    percentualIdeal: number;
+  }[];
+  mapaRisco: {
+    id: number;
+    nome: string;
+    avatar: string | null;
+    status: string;
+    statusColor: string;
+    variacaoMassa: number;
+    taxaSudorese: number;
+    alerta: string;
+  }[];
+  sintomasRecorrentes: any[];
+  alertasOutliers: {
+    sessaoId: number;
+    atletaId: number;
+    nomeAtleta: string;
+    tipo: string;
+    descricao: string;
+    dataHora: string;
+  }[];
+  tendenciaSemanal: any[];
+  atletasCriticos: number;
+  atletasAtencao: number;
+  atletasIdeais: number;
+  atletasSuperingestao: number;
+}
+
 export function Dashboard() {
+  const { user } = useUser();
+  const [equipes, setEquipes] = useState<Equipe[]>([]);
+  const [selectedEquipe, setSelectedEquipe] = useState<number | ''>('');
+  const [selectedDias, setSelectedDias] = useState<number>(7);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedAthleteId, setSelectedAthleteId] = useState<number | null>(null);
+
+  const clubeId = user?.clube?.id || 1;
+
+  useEffect(() => {
+    fetch(`http://localhost:8080/Equipe/clube/${clubeId}`)
+      .then(res => res.json())
+      .then(data => setEquipes(data))
+      .catch(err => console.error("Erro ao buscar equipes:", err));
+  }, [clubeId]);
+
+  useEffect(() => {
+    setLoading(true);
+    let url = `http://localhost:8080/api/dashboard/profissional/${clubeId}?dias=${selectedDias}`;
+    if (selectedEquipe !== '') {
+      url += `&equipeId=${selectedEquipe}`;
+    }
+    
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        setDashboardData(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Erro ao buscar dashboard:", err);
+        setLoading(false);
+      });
+  }, [clubeId, selectedEquipe, selectedDias]);
+
+  const getTimeAgo = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffInHours = Math.round((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 24) return `há ${diffInHours}h`;
+    const diffInDays = Math.round(diffInHours / 24);
+    return `há ${diffInDays}d`;
+  };
+
   return (
     <>
       {/* === CABEÇALHO E FILTROS === */}
@@ -8,181 +105,198 @@ export function Dashboard() {
         </div>
         <div className="filtros-container dashboard-filtros-inline">
           <div className="filtro-grupo">
-            <select>
-              <option>Equipe: Primeiro Esquadrão</option>
+            <select 
+              value={selectedEquipe} 
+              onChange={(e) => setSelectedEquipe(e.target.value === '' ? '' : Number(e.target.value))}
+            >
+              <option value="">Equipe: Todas</option>
+              {equipes.map(eq => (
+                <option key={eq.id} value={eq.id}>{eq.nome}</option>
+              ))}
             </select>
           </div>
           <div className="filtro-grupo">
-            <select>
-              <option>Período: Últimos 7 Dias</option>
-            </select>
-          </div>
-          <div className="filtro-grupo">
-            <select>
-              <option>Modalidade: Campo</option>
-            </select>
-          </div>
-          <div className="filtro-grupo">
-            <select>
-              <option>Amb: Quente/Úmido</option>
+            <select 
+              value={selectedDias} 
+              onChange={(e) => setSelectedDias(Number(e.target.value))}
+            >
+              <option value={7}>Período: Últimos 7 Dias</option>
+              <option value={14}>Período: Últimos 14 Dias</option>
+              <option value={30}>Período: Últimos 30 Dias</option>
             </select>
           </div>
         </div>
       </header>
 
-      {/* === CARTÕES DE RESUMO (KPIs) === */}
-      <section className="dashboard-kpi-grid">
-        <div className="dashboard-kpi-card">
-          <p className="dashboard-kpi-label">SESSÕES REGISTRADAS</p>
-          <h2 className="dashboard-kpi-value">124</h2>
-        </div>
-
-        <div className="dashboard-kpi-card">
-          <p className="dashboard-kpi-label">PERDA MÉDIA DE MASSA %</p>
-          <h2 className="dashboard-kpi-value">1.84<span className="dashboard-kpi-unit">%</span></h2>
-        </div>
-
-        <div className="dashboard-kpi-card">
-          <p className="dashboard-kpi-label">TAXA MÉDIA DE SUDORESE</p>
-          <h2 className="dashboard-kpi-value">1.12 <span className="dashboard-kpi-unit">L/h</span></h2>
-        </div>
-
-        <div className="dashboard-kpi-card dashboard-kpi-alert">
-          <p className="dashboard-kpi-label">ATLETAS &gt;2% PERDA</p>
-          <h2 className="dashboard-kpi-value">14 ⚠️</h2>
-        </div>
-
-        <div className="dashboard-kpi-card dashboard-kpi-warning">
-          <p className="dashboard-kpi-label">ALERTAS DE GANHO DE PESO</p>
-          <h2 className="dashboard-kpi-value">3</h2>
-        </div>
-
-        <div className="dashboard-kpi-card">
-          <p className="dashboard-kpi-label">AMBIENTE MÉDIO</p>
-          <h2 className="dashboard-kpi-value dashboard-kpi-value-sm">28°C</h2>
-          <p className="dashboard-kpi-sub">65% UR</p>
-        </div>
-      </section>
-
-      {/* === ÁREA CENTRAL (Tabela + Alertas) === */}
-      <div className="dashboard-middle-area">
-
-        <section className="atletas-tabela-container">
-          <h3 className="dashboard-section-title">
-            📊 MAPA DE RISCO
-          </h3>
-          <table className="atletas-table">
-            <thead>
-              <tr>
-                <th>CÓDIGO</th>
-                <th>EQUIPE</th>
-                <th>% VAR MASSA</th>
-                <th>SUOR L/H</th>
-                <th>URINA/SINT</th>
-                <th>ALERTA</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="td-bold">ATH-042</td>
-                <td className="td-muted">ZAG</td>
-                <td><span className="badge-variacao critico">-2.3%</span></td>
-                <td>1.85</td>
-                <td><span className="dot-inline moderado">●</span> 4</td>
-                <td><span className="alert-icon">🛑</span></td>
-              </tr>
-              <tr>
-                <td className="td-bold">ATH-018</td>
-                <td className="td-muted">MEI</td>
-                <td><span className="badge-variacao estavel">-0.8%</span></td>
-                <td>0.95</td>
-                <td><span className="dot-inline atencao">●</span> 2</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td className="td-bold">ATH-009</td>
-                <td className="td-muted">ATA</td>
-                <td><span className="badge-variacao moderado">-1.4%</span></td>
-                <td>1.40</td>
-                <td><span className="dot-inline moderado">●</span> 6</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td className="td-bold">ATH-088</td>
-                <td className="td-muted">GOL</td>
-                <td><span className="badge-variacao critico">-2.1%</span></td>
-                <td>0.60</td>
-                <td><span className="dot-inline atencao">●</span> 1</td>
-                <td><span className="alert-icon">⚠️</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-        <aside className="dashboard-alerts-aside">
-          <h3 className="dashboard-section-title">
-            ⏱️ INCONSISTÊNCIAS ATIVAS
-          </h3>
-
-          <div className="dashboard-alert-card dashboard-alert-critico">
-            <div className="dashboard-alert-header">
-              <span className="dashboard-alert-code">ATH-042</span>
-              <span className="dashboard-alert-time">há 1d</span>
+      {loading ? (
+        <div style={{ padding: 40, textAlign: 'center' }}>Carregando dados...</div>
+      ) : (
+        <>
+          {/* === CARTÕES DE RESUMO (KPIs) === */}
+          <section className="dashboard-kpi-grid">
+            <div className="dashboard-kpi-card">
+              <p className="dashboard-kpi-label">SESSÕES REGISTRADAS</p>
+              <h2 className="dashboard-kpi-value">{dashboardData?.sessoesUltimos7Dias ?? 0}</h2>
             </div>
-            <p className="dashboard-alert-desc">Taxa de sudorese &gt; 2.5 L/h.<br />Outlier extremo para as condições ambientais atuais.</p>
-          </div>
 
-          <div className="dashboard-alert-card dashboard-alert-moderado">
-            <div className="dashboard-alert-header">
-              <span className="dashboard-alert-code">ATH-088</span>
-              <span className="dashboard-alert-time">há 1d</span>
+            <div className="dashboard-kpi-card">
+              <p className="dashboard-kpi-label">PERDA MÉDIA DE MASSA %</p>
+              <h2 className="dashboard-kpi-value">{dashboardData?.variacaoMediaMassa?.toFixed(2) ?? 0}<span className="dashboard-kpi-unit">%</span></h2>
             </div>
-            <p className="dashboard-alert-desc">Taxa de sudorese &gt; 2.5 L/h.<br />Outlier extremo para as condições ambientais atuais.</p>
-          </div>
 
-          <div className="dashboard-alert-card dashboard-alert-critico">
-            <div className="dashboard-alert-header">
-              <span className="dashboard-alert-code">ATH-012</span>
-              <span className="dashboard-alert-time">há 1d</span>
+            <div className="dashboard-kpi-card">
+              <p className="dashboard-kpi-label">TAXA MÉDIA DE SUDORESE</p>
+              <h2 className="dashboard-kpi-value">{dashboardData?.taxaMediaSudorese?.toFixed(2) ?? 0} <span className="dashboard-kpi-unit">L/h</span></h2>
             </div>
-            <p className="dashboard-alert-desc">Taxa de sudorese &gt; 2.5 L/h.<br />Outlier extremo para as condições ambientais atuais.</p>
-          </div>
-        </aside>
 
-      </div>
+            <div className={`dashboard-kpi-card ${(dashboardData?.atletasCriticos ?? 0) > 0 ? 'dashboard-kpi-alert' : ''}`}>
+              <p className="dashboard-kpi-label">ATLETAS &gt;2% PERDA</p>
+              <h2 className="dashboard-kpi-value">{dashboardData?.atletasCriticos ?? 0} {(dashboardData?.atletasCriticos ?? 0) > 0 && '⚠️'}</h2>
+            </div>
 
-      {/* === GRÁFICOS === */}
-      <section className="dashboard-charts-grid">
-        <div className="dashboard-chart-card">
-          <h4 className="dashboard-chart-title">PERDA DE MASSA VS TEMPERATURA</h4>
-          <div className="dashboard-chart-placeholder">
-            ÁREA DE VISUALIZAÇÃO DO GRÁFICO DE LINHA DUPLA
-          </div>
-        </div>
+            <div className={`dashboard-kpi-card ${(dashboardData?.atletasSuperingestao ?? 0) > 0 ? 'dashboard-kpi-warning' : ''}`}>
+              <p className="dashboard-kpi-label">ALERTAS DE GANHO DE PESO</p>
+              <h2 className="dashboard-kpi-value">{dashboardData?.atletasSuperingestao ?? 0}</h2>
+            </div>
 
-        <div className="dashboard-chart-card">
-          <h4 className="dashboard-chart-title">MAPA DE CALOR — TAXA DE SUDORESE</h4>
-          <div className="dashboard-chart-placeholder">
-            ÁREA DO MAPA DE CALOR POR HORA DO DIA
-          </div>
-        </div>
-      </section>
+            <div className="dashboard-kpi-card">
+              <p className="dashboard-kpi-label">AMBIENTE MÉDIO</p>
+              <h2 className="dashboard-kpi-value dashboard-kpi-value-sm">
+                {dashboardData?.temperaturaAtual ? `${Math.round(dashboardData.temperaturaAtual)}°C` : '--'}
+              </h2>
+              <p className="dashboard-kpi-sub">
+                {dashboardData?.umidadeAtual ? `${Math.round(dashboardData.umidadeAtual)}% UR` : '--'}
+              </p>
+            </div>
+          </section>
 
-      {/* === RODAPÉ DE QUALIDADE DE DADOS === */}
-      <footer className="dashboard-quality-footer">
-        <div className="dashboard-quality-left">
-          <div className="dashboard-quality-icon">
-            📋
+          {/* === ÁREA CENTRAL (Tabela + Alertas) === */}
+          <div className="dashboard-middle-area">
+
+            <section className="atletas-tabela-container">
+              <h3 className="dashboard-section-title">
+                📊 MAPA DE RISCO
+              </h3>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="atletas-table">
+                  <thead>
+                    <tr>
+                      <th>ATLETA</th>
+                      <th>% VAR MASSA</th>
+                      <th>SUOR L/H</th>
+                      <th>STATUS</th>
+                      <th>ALERTA</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(dashboardData?.mapaRisco ?? []).length > 0 ? (
+                      (dashboardData?.mapaRisco ?? []).map((atleta) => (
+                        <tr key={atleta.id} onClick={() => setSelectedAthleteId(atleta.id)} style={{ cursor: 'pointer' }} title="Clique para ver os detalhes do atleta">
+                          <td className="td-bold">{atleta.nome}</td>
+                          <td>
+                            <span className={`badge-variacao ${atleta.status.toLowerCase().replace(' ', '-')}`}>
+                              {atleta.variacaoMassa?.toFixed(2)}%
+                            </span>
+                          </td>
+                          <td>{atleta.taxaSudorese?.toFixed(2)}</td>
+                          <td>
+                            <span className={`dot-inline ${atleta.status.toLowerCase().replace(' ', '-')}`}>●</span> {atleta.status}
+                          </td>
+                          <td>
+                            {atleta.alerta ? <span className="alert-icon" title={atleta.alerta}>⚠️</span> : '-'}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} style={{ textAlign: 'center', padding: 20 }}>Nenhum dado encontrado</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside className="dashboard-alerts-aside">
+              <h3 className="dashboard-section-title">
+                ⏱️ INCONSISTÊNCIAS ATIVAS
+              </h3>
+
+              {(dashboardData?.alertasOutliers ?? []).length > 0 ? (
+                (dashboardData?.alertasOutliers ?? []).map((alerta) => (
+                  <div key={alerta.sessaoId} className={`dashboard-alert-card ${alerta.tipo.includes('MUITO_ALTA') || alerta.tipo.includes('MUITO_BAIXA') ? 'dashboard-alert-critico' : 'dashboard-alert-moderado'}`}>
+                    <div className="dashboard-alert-header">
+                      <span className="dashboard-alert-code">{alerta.nomeAtleta}</span>
+                      <span className="dashboard-alert-time">{getTimeAgo(alerta.dataHora)}</span>
+                    </div>
+                    <p className="dashboard-alert-desc">
+                      <strong>{alerta.tipo.replace(/_/g, ' ')}</strong><br />
+                      {alerta.descricao}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div style={{ textAlign: 'center', color: '#999', marginTop: 20 }}>Nenhuma inconsistência.</div>
+              )}
+            </aside>
+
           </div>
-          <div>
-            <h4 className="dashboard-quality-title">Qualidade de Dados &amp; Adesão</h4>
-            <p className="dashboard-quality-desc">Taxa de conclusão do checklist: <span className="dashboard-quality-highlight">87%</span></p>
-          </div>
-        </div>
-        <div className="dashboard-quality-badge">
-          <span className="dashboard-quality-dot">●</span> 5 Atletas ausentes &gt;7 dias
-        </div>
-      </footer>
+
+          {/* === RANKING DE ADESÃO HÍDRICA === */}
+          <section style={{ marginTop: '24px' }}>
+            <h3 className="dashboard-section-title">
+              🏆 RANKING — ADESÃO HÍDRICA
+            </h3>
+            <div style={{ backgroundColor: '#fff', borderRadius: '12px', border: '1px solid var(--hydro-border)', padding: '8px 24px' }}>
+              {(dashboardData?.rankingPerformance ?? []).length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#999', padding: '20px' }}>Sem dados suficientes para ranking</div>
+              ) : (
+                (dashboardData?.rankingPerformance ?? []).map((atleta, index) => (
+                  <div 
+                    key={atleta.id} 
+                    onClick={() => setSelectedAthleteId(atleta.id)}
+                    style={{ display: 'flex', alignItems: 'center', padding: '16px 0', borderBottom: index !== dashboardData!.rankingPerformance.length - 1 ? '1px solid var(--hydro-border)' : 'none', cursor: 'pointer' }}
+                    className="hover-row"
+                  >
+                    <div style={{ width: '40px', fontWeight: 700, color: 'var(--hydro-text-muted)', fontSize: '18px' }}>
+                      {index + 1}º
+                    </div>
+                    <img 
+                      src={atleta.avatar ? (atleta.avatar.startsWith('data:image') ? atleta.avatar : `data:image/jpeg;base64,${atleta.avatar}`) : 'https://via.placeholder.com/150?text=Atleta'} 
+                      alt={atleta.nome} 
+                      style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', marginRight: '16px' }} 
+                    />
+                    <div style={{ flex: 1, paddingRight: '24px' }}>
+                      <div style={{ fontWeight: 600, color: 'var(--hydro-text)', marginBottom: '8px', fontSize: '15px' }}>{atleta.nome}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+                        <div style={{ height: '10px', backgroundColor: '#E2E8F0', borderRadius: '5px', overflow: 'hidden', flex: 1, maxWidth: '400px', display: 'flex' }}>
+                          <div style={{ 
+                            height: '100%', 
+                            backgroundColor: (atleta.percentualIdeal || 0) >= 80 ? '#16A34A' : (atleta.percentualIdeal || 0) >= 50 ? '#D97706' : '#DC2626', 
+                            width: `${Math.min(atleta.percentualIdeal || 0, 100)}%`, 
+                            borderRadius: '5px',
+                            transition: 'width 0.5s ease-in-out'
+                          }}></div>
+                        </div>
+                        <span style={{ fontSize: '12px', color: 'var(--hydro-text-muted)', whiteSpace: 'nowrap' }}>{atleta.sessoesIdeais} de {atleta.totalSessoes} sessões ideais</span>
+                      </div>
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: '20px', color: 'var(--hydro-text)' }}>
+                      {atleta.percentualIdeal.toFixed(0)}%
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+
+          <AthleteDetailModal 
+            isOpen={!!selectedAthleteId} 
+            onClose={() => setSelectedAthleteId(null)} 
+            atletaId={selectedAthleteId} 
+          />
+        </>
+      )}
     </>
   );
 }
