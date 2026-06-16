@@ -204,7 +204,7 @@ export default function DashboardHidratacao() {
               ? (athlete.avatar.startsWith('data:image') || athlete.avatar.startsWith('http')
                   ? { uri: athlete.avatar }
                   : { uri: `data:image/jpeg;base64,${athlete.avatar}` })
-              : require('../../../assets/images/karate.jpeg');
+              : require('../../../assets/images/anonymous_avatar.png');
 
             return (
               <TouchableOpacity 
