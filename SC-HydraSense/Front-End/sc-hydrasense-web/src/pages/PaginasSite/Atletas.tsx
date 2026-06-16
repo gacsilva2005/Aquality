@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { NovoAtleta } from './NovoAtleta';
+import { SideBarAtleta } from './SideBarAtleta';
 import { useUser } from '../../context/UserContext';
 
 export function Atletas() {
     const [verFormulario, setVerFormulario] = useState(false);
     const [atletas, setAtletas] = useState([]);
+    const [atletaSelecionado, setAtletaSelecionado] = useState<any>(null);
     const { user } = useUser();
 
     const handleNovoAtleta = () => {
@@ -125,7 +127,7 @@ export function Atletas() {
                     </thead>
                     <tbody>
                         {atletas.map((atleta: any) => (
-                            <tr key={atleta.id}>
+                            <tr key={atleta.id} onClick={() => setAtletaSelecionado(atleta)} style={{ cursor: 'pointer' }} className="tr-clicavel">
                                 <td>
                                     <div className="td-atleta">
                                         <div className="avatar-placeholder" />
@@ -176,6 +178,12 @@ export function Atletas() {
                     </tbody>
                 </table>
             </section>
+
+            <SideBarAtleta 
+                aberto={!!atletaSelecionado} 
+                onFechar={() => setAtletaSelecionado(null)} 
+                atleta={atletaSelecionado} 
+            />
         </>
     );
 }

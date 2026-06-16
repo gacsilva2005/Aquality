@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator, Animated } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Screen } from '../../../components/Screen';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import { theme } from '@/src/global/themas';
 import { styles } from './styles';
 import { LineChart } from 'react-native-chart-kit';
 import { RecordCard, RecordItem } from '../../../components/recordCard';
+import { ModalMetaHidratacao } from '../../../components/ModalMetaHidratacao';
 import Constants from 'expo-constants';
 
 export default function AthleteDetails() {
@@ -17,6 +18,14 @@ export default function AthleteDetails() {
     const [sessions, setSessions] = useState<any[]>([]);
     const [hydrationVal, setHydrationVal] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
+    const [modalVisible, setModalVisible] = useState(false);
+    
+    const scrollY = useRef(new Animated.Value(0)).current;
+    const diffClamp = Animated.diffClamp(scrollY, 0, 80);
+    const fabTranslateY = diffClamp.interpolate({
+        inputRange: [0, 80],
+        outputRange: [0, 80],
+    });
 
     const calcularIdade = (dataNascimento: string) => {
         if (!dataNascimento) return '--';
@@ -189,12 +198,20 @@ export default function AthleteDetails() {
         });
 
     return (
-        <Screen backgroundColor="#F7F7F7" scrollable={true}>
-            {/* Botão de Voltar */}
-            <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => router.back()}
+        <View style={{ flex: 1, backgroundColor: '#F7F7F7' }}>
+            <Animated.ScrollView 
+                contentContainerStyle={{ paddingBottom: 100 }}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    { useNativeDriver: true }
+                )}
+                scrollEventThrottle={16}
             >
+                {/* Botão de Voltar */}
+                <TouchableOpacity
+                    style={[styles.backButton, { marginTop: 40 }]}
+                    onPress={() => router.back()}
+                >
                 <Feather name="arrow-left" size={24} color="#1A1A1A" />
             </TouchableOpacity>
 
@@ -294,7 +311,49 @@ export default function AthleteDetails() {
                     )}
                 </View>
 
-            </View>
-        </Screen>
+                </View>
+            </Animated.ScrollView>
+
+            <Animated.View style={{
+                position: 'absolute',
+                bottom: 24,
+                right: 24,
+                transform: [{ translateY: fabTranslateY }]
+            }}>
+                <TouchableOpacity 
+                    style={{
+                        backgroundColor: theme.colors.primary,
+                        width: 56,
+                        height: 56,
+                        borderRadius: 28,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        elevation: 5,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84
+                    }}
+                    onPress={() => setModalVisible(true)}
+                >
+                    <Feather name="droplet" size={24} color="#FFF" />
+                    <View style={{ position: 'absolute', top: 12, right: 12 }}>
+                        <Feather name="plus" size={10} color="#FFF" />
+                    </View>
+                </TouchableOpacity>
+            </Animated.View>
+
+            <ModalMetaHidratacao 
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                atletaNome={athleteData?.nome || 'Atleta'}
+                ultimaTaxa={latestSweatRate}
+                onSave={(data) => {
+                    console.log('Salvar meta:', data);
+                    setModalVisible(false);
+                    // Aqui iria a integração com a API
+                }}
+            />
+        </View>
     );
 }
