@@ -21,7 +21,7 @@ export function Team() {
   const isCodeValid = teamCode.length === 8;
 
   return (
-    <div className="tela-registro-full">
+    <div className="tela-registro-full login-step-container">
       <main className="painel-principal-central" style={{ position: 'relative' }}>
         <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ position: 'absolute', top: '0', left: '0' }}>
           <ArrowLeft size={16} /> Voltar
@@ -95,22 +95,14 @@ export function Team() {
       </main>
 
       <footer className="progresso-footer-compacto">
-        <div className="barra-progresso-container">
-          <div className="fluxo-progresso-wrapper">
-            <div className="item-progresso">
-              <div className="trilha-mini ativa"></div>
-              <span className="legenda-mini">CREDENCIAIS</span>
-            </div>
-
-            <div className="item-progresso">
-              <div className="trilha-mini ativa"></div>
-              <span className="legenda-mini">IDENTIDADE</span>
-            </div>
-
-            <div className="item-progresso">
-              <div className="trilha-mini ativa"></div>
-              <span className="legenda-mini ativa">EQUIPE</span>
-            </div>
+        <div className="barra-progresso-container" style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+          <div className="signup-progress-track">
+            <div className="signup-progress-fill" style={{ width: '100%' }}></div>
+          </div>
+          <div className="fluxo-progresso-wrapper" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+            <span className="legenda-mini ativa">CREDENCIAIS</span>
+            <span className="legenda-mini ativa">IDENTIDADE</span>
+            <span className="legenda-mini ativa">EQUIPE</span>
           </div>
         </div>
       </footer>

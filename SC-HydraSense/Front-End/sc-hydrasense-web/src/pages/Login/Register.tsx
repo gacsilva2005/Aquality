@@ -62,7 +62,7 @@ export function Register() {
   };
 
   return (
-    <div className="tela-registro">
+    <div className="tela-registro login-step-container">
       <aside className="painel-lateral">
         <div className="lateral-topo">
           <h2 className="lateral-titulo">SÃO CAMILO WEB</h2>
@@ -84,10 +84,8 @@ export function Register() {
         </div>
 
         <div className="lateral-rodape">
-          <div className="trilhas-progresso">
-            <div className="trilha ativa"></div>
-            <div className="trilha"></div>
-            <div className="trilha"></div>
+          <div className="signup-progress-track">
+            <div className="signup-progress-fill" style={{ width: '33%' }}></div>
           </div>
           <div className="legendas-progresso">
             <span className="legenda-progresso ativa">CREDENCIAIS</span>

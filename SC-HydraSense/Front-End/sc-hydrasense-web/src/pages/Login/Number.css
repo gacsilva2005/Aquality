@@ -1,4 +1,4 @@
-.number-page {
+﻿.number-page {
     display: flex;
     width: 100vw;
     min-height: 100vh;
@@ -210,7 +210,7 @@
 
 .number-btn-primary {
     min-width: 130px;
-    background-color: var(--cor-vermelho-critico);
+    background-color: var(--hydro-critical);
     color: #FFFFFF;
     border: none;
     border-radius: 6px;
@@ -228,7 +228,7 @@
 }
 
 .number-btn-primary:hover {
-    background-color: var(--cor-vermelho-acao);
+    background-color: var(--hydro-action);
     transform: translateY(-1px);
 }
 
