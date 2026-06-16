@@ -26,6 +26,8 @@ services:
       - .env
     environment:
       - TZ=America/Sao_Paulo
+      - DB_HOST=hydrasense-mysql
+      - DB_PORT=3306
     ports:
       - "8080:8080"
     depends_on:

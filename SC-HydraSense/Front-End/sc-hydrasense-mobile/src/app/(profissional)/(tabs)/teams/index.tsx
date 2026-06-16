@@ -126,7 +126,7 @@ export default function TeamsScreen() {
                         <TeamCard 
                             key={team.id} 
                             team={team} 
-                            onPress={() => router.push('/dashboard')} 
+                            onPress={() => router.push({ pathname: '/(profissional)/team/[id]', params: { id: team.id, name: team.name } })} 
                         />
                     ))}
 
