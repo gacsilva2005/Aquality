@@ -3,6 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Modal } from './Modal';
 import { Button } from './Button';
 import { ModalMetaHidratacao } from './ModalMetaHidratacao';
+import { SessaoDetailModal } from './SessaoDetailModal';
 
 interface AthleteDetailModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export function AthleteDetailModal({ isOpen, onClose, atletaId }: AthleteDetailM
   const [metaVolume, setMetaVolume] = useState<number>(3000);
   const [loading, setLoading] = useState<boolean>(true);
   const [modalMetaVisible, setModalMetaVisible] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<any>(null);
 
   useEffect(() => {
     if (!atletaId || !isOpen) return;
@@ -185,7 +187,13 @@ export function AthleteDetailModal({ isOpen, onClose, atletaId }: AthleteDetailM
                   const duracaoMin = Math.round((end.getTime() - start.getTime()) / 60000);
 
                   return (
-                    <div key={session.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#F8FAFC', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--hydro-border)' }}>
+                    <div 
+                      key={session.id} 
+                      onClick={() => setSelectedSession(session)}
+                      style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#F8FAFC', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--hydro-border)', cursor: 'pointer', transition: 'background-color 0.2s' }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F8FAFC'}
+                    >
                       <div>
                         <div style={{ fontWeight: 600, color: 'var(--hydro-text)' }}>{session.modalidade || 'Treino'}</div>
                         <div style={{ fontSize: '12px', color: 'var(--hydro-text-muted)' }}>{formatTime(session.dataHoraFim)}</div>
@@ -220,6 +228,12 @@ export function AthleteDetailModal({ isOpen, onClose, atletaId }: AthleteDetailM
         atletaNome={athleteData?.nome || 'Atleta'}
         ultimaTaxa={latestSweatRate}
         onSave={handleSaveMeta}
+      />
+
+      <SessaoDetailModal 
+        isOpen={!!selectedSession}
+        onClose={() => setSelectedSession(null)}
+        session={selectedSession}
       />
     </>
   );

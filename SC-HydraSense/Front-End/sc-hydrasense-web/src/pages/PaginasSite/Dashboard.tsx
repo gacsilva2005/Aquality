@@ -15,7 +15,14 @@ interface DashboardData {
   temperaturaAtual: number | null;
   umidadeAtual: number | null;
   descricaoClima: string | null;
-  rankingPerformance: any[];
+  rankingPerformance: {
+    id: number;
+    nome: string;
+    avatar: string | null;
+    totalSessoes: number;
+    sessoesIdeais: number;
+    percentualIdeal: number;
+  }[];
   mapaRisco: {
     id: number;
     nome: string;
@@ -235,38 +242,53 @@ export function Dashboard() {
 
           </div>
 
-          {/* === GRÁFICOS === */}
-          <section className="dashboard-charts-grid">
-            <div className="dashboard-chart-card">
-              <h4 className="dashboard-chart-title">PERDA DE MASSA VS TEMPERATURA</h4>
-              <div className="dashboard-chart-placeholder">
-                ÁREA DE VISUALIZAÇÃO DO GRÁFICO DE LINHA DUPLA
-              </div>
-            </div>
-
-            <div className="dashboard-chart-card">
-              <h4 className="dashboard-chart-title">MAPA DE CALOR — TAXA DE SUDORESE</h4>
-              <div className="dashboard-chart-placeholder">
-                ÁREA DO MAPA DE CALOR POR HORA DO DIA
-              </div>
+          {/* === RANKING DE ADESÃO HÍDRICA === */}
+          <section style={{ marginTop: '24px' }}>
+            <h3 className="dashboard-section-title">
+              🏆 RANKING — ADESÃO HÍDRICA
+            </h3>
+            <div style={{ backgroundColor: '#fff', borderRadius: '12px', border: '1px solid var(--hydro-border)', padding: '8px 24px' }}>
+              {(dashboardData?.rankingPerformance ?? []).length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#999', padding: '20px' }}>Sem dados suficientes para ranking</div>
+              ) : (
+                (dashboardData?.rankingPerformance ?? []).map((atleta, index) => (
+                  <div 
+                    key={atleta.id} 
+                    onClick={() => setSelectedAthleteId(atleta.id)}
+                    style={{ display: 'flex', alignItems: 'center', padding: '16px 0', borderBottom: index !== dashboardData!.rankingPerformance.length - 1 ? '1px solid var(--hydro-border)' : 'none', cursor: 'pointer' }}
+                    className="hover-row"
+                  >
+                    <div style={{ width: '40px', fontWeight: 700, color: 'var(--hydro-text-muted)', fontSize: '18px' }}>
+                      {index + 1}º
+                    </div>
+                    <img 
+                      src={atleta.avatar ? (atleta.avatar.startsWith('data:image') ? atleta.avatar : `data:image/jpeg;base64,${atleta.avatar}`) : 'https://via.placeholder.com/150?text=Atleta'} 
+                      alt={atleta.nome} 
+                      style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', marginRight: '16px' }} 
+                    />
+                    <div style={{ flex: 1, paddingRight: '24px' }}>
+                      <div style={{ fontWeight: 600, color: 'var(--hydro-text)', marginBottom: '8px', fontSize: '15px' }}>{atleta.nome}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+                        <div style={{ height: '10px', backgroundColor: '#E2E8F0', borderRadius: '5px', overflow: 'hidden', flex: 1, maxWidth: '400px', display: 'flex' }}>
+                          <div style={{ 
+                            height: '100%', 
+                            backgroundColor: (atleta.percentualIdeal || 0) >= 80 ? '#16A34A' : (atleta.percentualIdeal || 0) >= 50 ? '#D97706' : '#DC2626', 
+                            width: `${Math.min(atleta.percentualIdeal || 0, 100)}%`, 
+                            borderRadius: '5px',
+                            transition: 'width 0.5s ease-in-out'
+                          }}></div>
+                        </div>
+                        <span style={{ fontSize: '12px', color: 'var(--hydro-text-muted)', whiteSpace: 'nowrap' }}>{atleta.sessoesIdeais} de {atleta.totalSessoes} sessões ideais</span>
+                      </div>
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: '20px', color: 'var(--hydro-text)' }}>
+                      {atleta.percentualIdeal.toFixed(0)}%
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </section>
-
-          {/* === RODAPÉ DE QUALIDADE DE DADOS === */}
-          <footer className="dashboard-quality-footer">
-            <div className="dashboard-quality-left">
-              <div className="dashboard-quality-icon">
-                📋
-              </div>
-              <div>
-                <h4 className="dashboard-quality-title">Qualidade de Dados &amp; Adesão</h4>
-                <p className="dashboard-quality-desc">Monitoramento contínuo baseado em {dashboardData?.totalAtletas} atletas.</p>
-              </div>
-            </div>
-            <div className="dashboard-quality-badge">
-              <span className="dashboard-quality-dot">●</span> Dados atualizados
-            </div>
-          </footer>
 
           <AthleteDetailModal 
             isOpen={!!selectedAthleteId} 

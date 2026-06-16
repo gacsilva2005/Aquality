@@ -36,8 +36,19 @@ public class SessaoDeTreinoService {
     private SessaoTreinoResponseDTO mapToResponseDTO(SessaoDeTreino sessao) {
         Float pesoPre = (sessao.getPesagemPre() != null) ? sessao.getPesagemPre().getPeso() : null;
         Float pesoPos = (sessao.getPesagemPos() != null) ? sessao.getPesagemPos().getPeso() : null;
-        String sintomas = sessao.getRegistroDeSintomaPre() != null ? sessao.getRegistroDeSintomaPre().getSintomas()
-                : null;
+        String sintomasPre = sessao.getRegistroDeSintomaPre() != null ? sessao.getRegistroDeSintomaPre().getSintomas() : null;
+        String sintomasPos = sessao.getRegistroDeSintomaPos() != null ? sessao.getRegistroDeSintomaPos().getSintomas() : null;
+        
+        Integer urinaPre = sessao.getAvaliacaoBasalPre() != null ? (sessao.getAvaliacaoBasalPre().getUrina() != null ? sessao.getAvaliacaoBasalPre().getUrina() : (sessao.getAvaliacaoBasalPre().getCorUrina() != null ? Integer.parseInt(sessao.getAvaliacaoBasalPre().getCorUrina()) : null)) : null;
+        Integer urinaPos = sessao.getAvaliacaoBasalPro() != null ? (sessao.getAvaliacaoBasalPro().getUrina() != null ? sessao.getAvaliacaoBasalPro().getUrina() : (sessao.getAvaliacaoBasalPro().getCorUrina() != null ? Integer.parseInt(sessao.getAvaliacaoBasalPro().getCorUrina()) : null)) : null;
+        
+        Integer sedePre = sessao.getAvaliacaoBasalPre() != null ? (sessao.getAvaliacaoBasalPre().getSede() != null ? sessao.getAvaliacaoBasalPre().getSede() : (Boolean.TRUE.equals(sessao.getAvaliacaoBasalPre().getSensacaoSede()) ? 9 : 3)) : null;
+        Integer sedePos = sessao.getAvaliacaoBasalPro() != null ? (sessao.getAvaliacaoBasalPro().getSede() != null ? sessao.getAvaliacaoBasalPro().getSede() : (Boolean.TRUE.equals(sessao.getAvaliacaoBasalPro().getSensacaoSede()) ? 9 : 3)) : null;
+
+        Boolean usouEquipamento = sessao.getUsouEquipamento();
+        Float pesoKitKg = sessao.getDescontoKitKg();
+        String nomeKit = sessao.getKit() != null ? sessao.getKit().getNome() : null;
+
         Integer hidratacaoMl = (sessao.getRegistroDeHidratacao() != null)
                 ? sessao.getRegistroDeHidratacao().getVolume().intValue()
                 : null;
@@ -62,7 +73,15 @@ public class SessaoDeTreinoService {
                 sessao.getTaxaSudorese(),
                 sessao.getBalancoHidrico(),
                 statusHidratacao,
-                sintomas,
+                sintomasPre,
+                sintomasPos,
+                urinaPre,
+                urinaPos,
+                sedePre,
+                sedePos,
+                usouEquipamento,
+                pesoKitKg,
+                nomeKit,
                 sessao.getChecklistBexiga(),
                 sessao.getChecklistBalancaCorreta(),
                 sessao.getChecklistSuperficiePlana(),
