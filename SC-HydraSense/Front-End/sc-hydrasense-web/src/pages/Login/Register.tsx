@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Microscope, Utensils, Activity, BriefcaseMedical, MapPin, Award, User, Hash, Trophy, ArrowLeft } from 'lucide-react';
 import { Input } from '../../components/ui/Input';
@@ -35,6 +35,12 @@ export function Register() {
   const [perfilAtivo, setPerfilAtivo] = useState('nutricionista');
   const [buscaClube, setBuscaClube] = useState('');
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
+  const [progressWidth, setProgressWidth] = useState('0%');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgressWidth('33%'), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
     const [formData, setFormData] = useState({
         nome: '',
@@ -65,7 +71,7 @@ export function Register() {
   };
 
   return (
-    <div className="tela-registro login-step-container">
+    <div className="tela-registro">
       <aside className="painel-lateral">
         <div className="lateral-topo">
           <h2 className="lateral-titulo">SÃO CAMILO WEB</h2>
@@ -88,7 +94,7 @@ export function Register() {
 
         <div className="lateral-rodape">
           <div className="signup-progress-track">
-            <div className="signup-progress-fill" style={{ width: '33%' }}></div>
+            <div className="signup-progress-fill" style={{ width: progressWidth }}></div>
           </div>
           <div className="legendas-progresso">
             <span className="legenda-progresso ativa">CREDENCIAIS</span>
@@ -98,7 +104,7 @@ export function Register() {
         </div>
       </aside>
 
-      <main className="painel-principal">
+      <main className="painel-principal login-step-container">
         <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ alignSelf: 'flex-start', marginBottom: '24px', marginLeft: '-12px' }}>
           <ArrowLeft size={16} /> Voltar
         </button>

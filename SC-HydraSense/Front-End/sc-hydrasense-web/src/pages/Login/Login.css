@@ -1,4 +1,4 @@
-﻿/* =====================================================
+/* =====================================================
    LOGIN.CSS â€” Estilos compartilhados
    Usado por: Login, Register, Identifier
    NÃƒO redefinir :root aqui. Usar variÃ¡veis de index.css
@@ -497,17 +497,17 @@
    ANIMAÃ‡Ã•ES CINEMÃTICAS (UX PREMIUM)
    ===================================================== */
 .login-step-container {
-  animation: fluentEntrance 380ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fluentEntrance 400ms ease-out forwards;
   will-change: transform, opacity;
 }
 
 @keyframes fluentEntrance {
   0% {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateX(10px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
