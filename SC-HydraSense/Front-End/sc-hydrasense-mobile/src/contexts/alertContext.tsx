@@ -18,15 +18,20 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
       title, 
       message, 
       type, 
-      onOk: onOk || (() => setModalData(prev => ({ ...prev, visible: false }))) 
+      onOk: () => {
+        setModalData(prev => ({ ...prev, visible: false }));
+        if (onOk) {
+          onOk();
+        }
+      }
     });
   };
 
   return (
     <AlertContext.Provider value={{ 
-      error: (t: string, m: string) => show('error', t, m), 
+      error: (t: string, m: string, cb?: () => void) => show('error', t, m, cb), 
       success: (t: string, m: string, cb?: () => void) => show('success', t, m, cb),
-      warning: (t: string, m: string) => show('warning', t, m) 
+      warning: (t: string, m: string, cb?: () => void) => show('warning', t, m, cb) 
     }}>
       {children}
       
