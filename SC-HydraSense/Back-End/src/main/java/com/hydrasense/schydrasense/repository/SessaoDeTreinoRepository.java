@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface SessaoDeTreinoRepository extends JpaRepository<SessaoDeTreino, Long> {
     List<SessaoDeTreino> findByAtletaId(Long atletaId);
 
+    List<SessaoDeTreino> findByAtletaIdInAndDataHoraFimBetween(List<Long> atletaIds, java.time.LocalDateTime start, java.time.LocalDateTime end);
+
     Optional<SessaoDeTreino> findFirstByAtletaIdAndDataHoraFimIsNotNullAndTaxaSudoreseIsNotNullOrderByDataHoraFimDesc(Long atletaId);
     @Query(value = "SELECT COALESCE(AVG(taxa_sudorese), 0.0) as mediaTaxaSudorese, " +
                    "COALESCE(STDDEV(taxa_sudorese), 0.0) as desvioPadraoTaxaSudorese, " +

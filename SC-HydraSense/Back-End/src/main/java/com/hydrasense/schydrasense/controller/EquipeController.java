@@ -55,6 +55,11 @@ public class EquipeController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{id}/dashboard")
+    public ResponseEntity<com.hydrasense.schydrasense.dto.EquipeDashboardResponseDTO> obterDashboard(@PathVariable Long id) {
+        return ResponseEntity.ok(equipeService.obterDashboardEquipe(id));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         equipeService.deletar(id);

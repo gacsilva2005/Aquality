@@ -1,6 +1,7 @@
 package com.hydrasense.schydrasense.service;
 
 import com.hydrasense.schydrasense.dto.EquipeResponseDTO;
+import com.hydrasense.schydrasense.dto.EquipeDashboardResponseDTO;
 import com.hydrasense.schydrasense.model.Atleta;
 import com.hydrasense.schydrasense.model.Clube;
 import com.hydrasense.schydrasense.model.Equipe;
@@ -30,19 +31,22 @@ public class EquipeService {
     private final AtletaRepository atletaRepository;
     private final RegistroDeHidratacaoRepository registroDeHidratacaoRepository;
     private final SessaoDeTreinoRepository sessaoDeTreinoRepository;
+    private final CalculadoraFisiologica calculadoraFisiologica;
 
     public EquipeService(
             EquipeRepository equipeRepository,
             ClubeRepository clubeRepository,
             AtletaRepository atletaRepository,
             RegistroDeHidratacaoRepository registroDeHidratacaoRepository,
-            SessaoDeTreinoRepository sessaoDeTreinoRepository
+            SessaoDeTreinoRepository sessaoDeTreinoRepository,
+            CalculadoraFisiologica calculadoraFisiologica
     ) {
         this.equipeRepository = equipeRepository;
         this.clubeRepository = clubeRepository;
         this.atletaRepository = atletaRepository;
         this.registroDeHidratacaoRepository = registroDeHidratacaoRepository;
         this.sessaoDeTreinoRepository = sessaoDeTreinoRepository;
+        this.calculadoraFisiologica = calculadoraFisiologica;
     }
 
     public Equipe criarEquipe(String nome, String categoria, Integer limiteAtletas, Long clubeId, List<Long> atletasIds) {
@@ -196,6 +200,163 @@ public class EquipeService {
             atletaRepository.save(atleta);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public EquipeDashboardResponseDTO obterDashboardEquipe(Long equipeId) {
+        Equipe equipe = equipeRepository.findById(equipeId)
+                .orElseThrow(() -> new RuntimeException("Equipe não encontrada"));
+
+        EquipeDashboardResponseDTO dto = new EquipeDashboardResponseDTO();
+        dto.setId(equipe.getId());
+        dto.setNome(equipe.getNome());
+
+        List<Atleta> atletas = equipe.getAtletas();
+
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfToday = today.atStartOfDay();
+        LocalDateTime endOfToday = today.plusDays(1).atStartOfDay();
+
+        LocalDate yesterday = today.minusDays(1);
+        LocalDateTime startOfYesterday = yesterday.atStartOfDay();
+        LocalDateTime endOfYesterday = today.atStartOfDay();
+
+        double totalTodayVolume = 0.0;
+        double totalYesterdayVolume = 0.0;
+
+        for (Atleta atleta : atletas) {
+            Double athleteTodayVolume = registroDeHidratacaoRepository.sumVolumeByAtletaIdAndDateRange(atleta.getId(), startOfToday, endOfToday);
+            if (athleteTodayVolume != null) {
+                totalTodayVolume += athleteTodayVolume;
+            }
+
+            Double athleteYesterdayVolume = registroDeHidratacaoRepository.sumVolumeByAtletaIdAndDateRange(atleta.getId(), startOfYesterday, endOfYesterday);
+            if (athleteYesterdayVolume != null) {
+                totalYesterdayVolume += athleteYesterdayVolume;
+            }
+        }
+
+        dto.setHidratacaoTotalHoje(Math.round((totalTodayVolume / 1000.0) * 10.0) / 10.0);
+
+        double variacao = 0.0;
+        if (totalYesterdayVolume > 0) {
+            variacao = ((totalTodayVolume - totalYesterdayVolume) / totalYesterdayVolume) * 100.0;
+        } else if (totalTodayVolume > 0) {
+            variacao = 100.0;
+        }
+        dto.setHidratacaoVariacaoOntem(Math.round(variacao * 10.0) / 10.0);
+
+        double totalSweatRate = 0.0;
+        int athletesWithSweatRate = 0;
+        int criticoCount = 0;
+
+        EquipeDashboardResponseDTO.StatusDistDTO statusDist = new EquipeDashboardResponseDTO.StatusDistDTO();
+        java.util.List<EquipeDashboardResponseDTO.AtletaDashboardDTO> atletasList = new java.util.ArrayList<>();
+
+        for (Atleta atleta : atletas) {
+            EquipeDashboardResponseDTO.AtletaDashboardDTO atletaDTO = new EquipeDashboardResponseDTO.AtletaDashboardDTO();
+            atletaDTO.setId(atleta.getId());
+            atletaDTO.setNome(atleta.getNome());
+            atletaDTO.setRole(formatarModalidade(atleta.getModalidade()));
+            atletaDTO.setAvatar(atleta.getFotoPerfil());
+
+            Double athleteTodayVolume = registroDeHidratacaoRepository.sumVolumeByAtletaIdAndDateRange(atleta.getId(), startOfToday, endOfToday);
+            double volL = athleteTodayVolume != null ? athleteTodayVolume / 1000.0 : 0.0;
+            atletaDTO.setVol(Math.round(volL * 10.0) / 10.0);
+            atletaDTO.setMaxVol("3.0L");
+            double progress = (volL / 3.0) * 100.0;
+            atletaDTO.setProgress(Math.min(100.0, Math.round(progress * 10.0) / 10.0));
+
+            Optional<SessaoDeTreino> latestSessionOpt = sessaoDeTreinoRepository.findFirstByAtletaIdAndDataHoraFimIsNotNullAndTaxaSudoreseIsNotNullOrderByDataHoraFimDesc(atleta.getId());
+            String rawStatus = "OPTIMAL";
+            if (latestSessionOpt.isPresent()) {
+                SessaoDeTreino s = latestSessionOpt.get();
+                if (s.getTaxaSudorese() != null) {
+                    totalSweatRate += s.getTaxaSudorese();
+                    athletesWithSweatRate++;
+                }
+
+                Float pesoPre = s.getPesagemPre() != null ? s.getPesagemPre().getPeso() : null;
+                Float pesoPos = s.getPesagemPos() != null ? s.getPesagemPos().getPeso() : null;
+                rawStatus = calculadoraFisiologica.classificarStatusHidratacao(pesoPre, pesoPos);
+            }
+
+            if ("CRITICAL".equals(rawStatus) || "OVER_HYDRATION_CRITICAL".equals(rawStatus)) {
+                atletaDTO.setStatus("CRÍTICO");
+                atletaDTO.setStatusColor("#D90429");
+                statusDist.setCritico(statusDist.getCritico() + 1);
+                criticoCount++;
+            } else if ("WARNING".equals(rawStatus) || "OVER_HYDRATION_WARNING".equals(rawStatus)) {
+                atletaDTO.setStatus("ATENÇÃO");
+                atletaDTO.setStatusColor("#F5A623");
+                statusDist.setAtencao(statusDist.getAtencao() + 1);
+            } else {
+                atletaDTO.setStatus("ÓTIMO");
+                atletaDTO.setStatusColor("#27AE60");
+                statusDist.setOtimo(statusDist.getOtimo() + 1);
+            }
+
+            atletasList.add(atletaDTO);
+        }
+
+        dto.setAtletas(atletasList);
+        dto.setStatusCriticoCount(criticoCount);
+        dto.setStatusDist(statusDist);
+
+        double avgSweatRate = athletesWithSweatRate > 0 ? totalSweatRate / athletesWithSweatRate : 0.0;
+        dto.setTaxaMediaSudorese(Math.round(avgSweatRate * 10.0) / 10.0);
+
+        java.util.List<EquipeDashboardResponseDTO.GraficoPontoDTO> grafico = new java.util.ArrayList<>();
+        List<Long> atletaIds = atletas.stream().map(Atleta::getId).collect(Collectors.toList());
+
+        for (int i = 6; i >= 0; i--) {
+            LocalDate date = today.minusDays(i);
+            String label = getDiaSemanaAbreviado(date);
+
+            double balance = 0.0;
+            if (!atletaIds.isEmpty()) {
+                LocalDateTime dayStart = date.atStartOfDay();
+                LocalDateTime dayEnd = date.plusDays(1).atStartOfDay();
+
+                List<SessaoDeTreino> sessoes = sessaoDeTreinoRepository.findByAtletaIdInAndDataHoraFimBetween(atletaIds, dayStart, dayEnd);
+                double sum = 0.0;
+                int count = 0;
+                for (SessaoDeTreino s : sessoes) {
+                    if (s.getBalancoHidrico() != null) {
+                        sum += s.getBalancoHidrico();
+                        count++;
+                    }
+                }
+                balance = count > 0 ? sum / count : 0.0;
+            }
+            balance = Math.round(balance * 100.0) / 100.0;
+            grafico.add(new EquipeDashboardResponseDTO.GraficoPontoDTO(label, balance));
+        }
+        dto.setGraficoBalanco(grafico);
+
+        return dto;
+    }
+
+    private String formatarModalidade(String rawModalidade) {
+        if (rawModalidade == null || rawModalidade.isBlank()) {
+            return "Atleta";
+        }
+        if (rawModalidade.startsWith("[")) {
+            return rawModalidade.replaceAll("[\\[\\]\"']", "").replace(",", ", ");
+        }
+        return rawModalidade;
+    }
+
+    private String getDiaSemanaAbreviado(LocalDate date) {
+        switch (date.getDayOfWeek()) {
+            case MONDAY: return "SEG";
+            case TUESDAY: return "TER";
+            case WEDNESDAY: return "QUA";
+            case THURSDAY: return "QUI";
+            case FRIDAY: return "SEX";
+            case SATURDAY: return "SÁB";
+            case SUNDAY: return "DOM";
+            default: return "";
         }
     }
 }
