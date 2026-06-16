@@ -1,18 +1,58 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, SafeAreaView, ActivityIndicator, Dimensions, Alert, Modal } from 'react-native';
 import { Feather, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { theme } from '../../../global/themas';
 import { styles } from './styles';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
 import Constants from 'expo-constants';
+import { File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 export default function DashboardHidratacao() {
   const router = useRouter();
   const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
-  
+
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [exportLoading, setExportLoading] = useState(false);
+
+  const handleExportEquipePdf = async () => {
+    if (!id) {
+        Alert.alert("Erro", "ID da equipe não encontrado.");
+        return;
+    }
+    
+    setExportLoading(true);
+    try {
+      const hostIp = Constants.expoConfig?.hostUri?.split(':')[0] || '10.0.2.2';
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || `http://${hostIp}:8080`;
+      const url = `${API_URL}/api/relatorios/equipe/${id}/pdf`;
+      const destino = new File(Paths.document, `relatorio_equipe_${id}.pdf`);
+      
+      const resultFile = await File.downloadFileAsync(url, destino, { idempotent: true });
+      
+      if (resultFile.size === 0) {
+        Alert.alert("Aviso", "Sem dados no período");
+        setExportLoading(false);
+        return;
+      }
+
+      setExportLoading(false);
+      
+      // Dispara o compartilhamento automaticamente assim que baixar
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (isAvailable) {
+          await Sharing.shareAsync(resultFile.uri, { mimeType: 'application/pdf', dialogTitle: 'Compartilhar Relatório da Equipe' });
+      } else {
+          Alert.alert("Não Suportado", "O compartilhamento não está disponível neste dispositivo.");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erro", "Não foi possível exportar o relatório.");
+      setExportLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -140,9 +180,15 @@ export default function DashboardHidratacao() {
         <View style={styles.chartSection}>
           <View style={styles.chartHeader}>
             <Text style={styles.sectionTitle}>TENDÊNCIA DE HIDRATAÇÃO{'\n'}DA EQUIPE</Text>
-            <TouchableOpacity style={styles.exportButton}>
-              <Text style={styles.exportButtonText}>EXPORTAR{'\n'}RELATÓRIO</Text>
-              <Feather name="upload" size={16} color={theme.colors.primary} />
+            <TouchableOpacity style={styles.exportButton} onPress={handleExportEquipePdf} disabled={exportLoading}>
+              {exportLoading ? (
+                <ActivityIndicator size="small" color={theme.colors.primary} />
+              ) : (
+                <>
+                  <Text style={styles.exportButtonText}>EXPORTAR{'\n'}RELATÓRIO</Text>
+                  <Feather name="upload" size={16} color={theme.colors.primary} />
+                </>
+              )}
             </TouchableOpacity>
           </View>
           
@@ -210,7 +256,7 @@ export default function DashboardHidratacao() {
               <TouchableOpacity 
                 key={athlete.id} 
                 style={styles.athleteCard}
-                onPress={() => router.push(`/(profissional)/athlete/${athlete.id}`)}
+                onPress={() => router.push(`/(profissional)/athlete/${athlete.id}` as any)}
               >
                 <View style={styles.athleteInfoRow}>
                   <Image source={photoSource} style={styles.athleteAvatar} />

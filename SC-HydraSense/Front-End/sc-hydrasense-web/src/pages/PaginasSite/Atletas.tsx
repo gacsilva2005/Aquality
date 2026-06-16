@@ -21,7 +21,7 @@ export function Atletas() {
         try {
             const clubeId = user?.clube?.id;
 
-            const response = await fetch(`http://localhost:8080/Atleta/clube/${clubeId}`);
+            const response = await fetch(`http://127.0.0.1:8080/Atleta/clube/${clubeId}`);
 
             if (!response.ok) {
                 throw new Error('Erro ao buscar atletas do clube');

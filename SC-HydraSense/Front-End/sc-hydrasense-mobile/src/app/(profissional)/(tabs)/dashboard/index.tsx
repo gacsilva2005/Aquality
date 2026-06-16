@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Modal } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, Modal, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Importando as bibliotecas
-import * as FileSystem from 'expo-file-system';
+import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import Constants from 'expo-constants';
 
 // Importando os estilos e o tema
 import { theme } from '../../../../global/themas';
@@ -23,53 +24,56 @@ export default function ReportsScreen() {
     isError: false,
   });
 
+  // Novos estados para o fluxo do PDF
+  const [loading, setLoading] = useState(false);
+
+  // Em um cenário real, viria do AuthContext (ex: const { user } = useAuth(); const clubeId = user.clubeId;)
+  const clubeId = "1";
+
   // Função auxiliar para chamar o pop-up facilmente
   const showPopUp = (title: string, message: string, isError: boolean = false) => {
     setModalConfig({ title, message, isError });
     setModalVisible(true);
   };
 
-  // Função que será chamada ao clicar em EXPORTAR
   const handleExport = async () => {
+    if (!clubeId) {
+        showPopUp("Erro", "Clube ID não encontrado no contexto.", true);
+        return;
+    }
+    
+    setLoading(true);
     try {
-      const cabecalho = 'Nome do Atleta,Status de Risco,Pontuacao\n';
-      const linha1 = 'Silva L.,SOBRECARGA AGUDA,92%\n';
-      const linha2 = 'Costa M.,FADIGA ALTA,85%\n';
-      const linha3 = 'Santos P.,DEFICIT DE SONO,78%\n';
+      const hostIp = Constants.expoConfig?.hostUri?.split(':')[0] || '10.0.2.2';
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || `http://${hostIp}:8080`;
+      const url = `${API_URL}/api/relatorios/geral/${clubeId}/pdf`;
+      const destino = new File(Paths.document, `relatorio_geral_${clubeId}.pdf`);
       
-      const conteudoCSV = cabecalho + linha1 + linha2 + linha3;
-
-      // @ts-ignore: Forçando o TS a aceitar que essa propriedade existe no Expo
-        // eslint-disable-next-line import/namespace
-      const diretorio = FileSystem.documentDirectory;
-
-      if (!diretorio) {
-        showPopUp('Erro de Sistema', 'Diretório não encontrado no dispositivo.', true);
+      const resultFile = await File.downloadFileAsync(url, destino, { idempotent: true });
+      
+      if (resultFile.size === 0) {
+        Alert.alert("Aviso", "Sem dados no período");
+        setLoading(false);
         return;
       }
 
-      const fileUri = diretorio + 'Relatorio_Equipe_HydraSense.csv';
-
-      // @ts-ignore: Forçando o TS a ignorar o erro de tipagem
-      await FileSystem.writeAsStringAsync(fileUri, conteudoCSV, {
-        encoding: 'utf8',
-      });
-
+      setLoading(false);
+      
       const isAvailable = await Sharing.isAvailableAsync();
       if (isAvailable) {
-        await Sharing.shareAsync(fileUri, {
-          mimeType: 'text/csv',
-          dialogTitle: 'Exportar Relatório de Atletas',
-        });
+          await Sharing.shareAsync(resultFile.uri, { mimeType: 'application/pdf', dialogTitle: 'Compartilhar Relatório Geral' });
       } else {
-        showPopUp('Não Suportado', 'O compartilhamento não está disponível neste dispositivo.', true);
+          showPopUp('Não Suportado', 'O compartilhamento não está disponível neste dispositivo.', true);
       }
 
     } catch (error) {
       console.error(error);
       showPopUp('Ops, algo deu errado', 'Não foi possível gerar o arquivo para exportação.', true);
+      setLoading(false);
     }
   };
+
+
 
     return (
       <Screen
@@ -85,9 +89,15 @@ export default function ReportsScreen() {
                 <Text style={styles.headerTitle}>RELATÓRIOS</Text>
                 <Text style={styles.headerSubtitle}>Visão Geral da Equipe</Text>
               </View>
-              <TouchableOpacity style={styles.exportButton} onPress={handleExport}>
-                <Feather name="download" size={16} color={theme.colors.textWhite} />
-                <Text style={styles.exportButtonText}>EXPORTAR</Text>
+              <TouchableOpacity style={styles.exportButton} onPress={handleExport} disabled={loading}>
+                {loading ? (
+                    <ActivityIndicator size="small" color={theme.colors.textWhite} />
+                ) : (
+                    <>
+                        <Feather name="download" size={16} color={theme.colors.textWhite} />
+                        <Text style={styles.exportButtonText}>EXPORTAR</Text>
+                    </>
+                )}
               </TouchableOpacity>
             </View>
 
@@ -211,6 +221,7 @@ export default function ReportsScreen() {
             </View>
           </Modal>
               </ScrollView>
+
           </SafeAreaView>
       </Screen>
   );

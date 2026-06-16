@@ -11,7 +11,7 @@ export function GoogleCallback() {
     const [usuario, setUsuario] = useState<any>(null);
 
     useEffect(() => {
-        fetch("http://localhost:8080/auth/user", {
+        fetch("http://127.0.0.1:8080/auth/user", {
             method: "GET",
             credentials: "include"
         })
@@ -52,7 +52,7 @@ export function Home() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const handleGoogleLogin = () => {
-      window.location.href = "http://localhost:8080/oauth2/authorization/google";
+      window.location.href = "http://127.0.0.1:8080/oauth2/authorization/google";
   };
 
   const { success, error } = useToast();
@@ -61,7 +61,7 @@ export function Home() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
+      const response = await fetch("http://127.0.0.1:8080/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
