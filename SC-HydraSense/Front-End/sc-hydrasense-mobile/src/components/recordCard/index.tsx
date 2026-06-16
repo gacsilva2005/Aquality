@@ -11,6 +11,7 @@ export interface RecordItem {
     time: string;
     icon: keyof typeof MaterialCommunityIcons.glyphMap; // Garante que o ícone exista na biblioteca
     isAlert: boolean;
+    session?: any;
 }
 
 interface RecordCardProps {

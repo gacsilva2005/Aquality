@@ -8,6 +8,7 @@ import { styles } from './styles';
 import { LineChart } from 'react-native-chart-kit';
 import { RecordCard, RecordItem } from '../../../components/recordCard';
 import { ModalMetaHidratacao } from '../../../components/ModalMetaHidratacao';
+import { SessaoDetailModal } from '../../../components/SessaoDetailModal';
 import Constants from 'expo-constants';
 
 export default function AthleteDetails() {
@@ -21,6 +22,7 @@ export default function AthleteDetails() {
     const [metaObservacao, setMetaObservacao] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const [selectedSession, setSelectedSession] = useState<any | null>(null);
     
     const scrollY = useRef(new Animated.Value(0)).current;
     const diffClamp = Animated.diffClamp(scrollY, 0, 80);
@@ -207,7 +209,8 @@ export default function AthleteDetails() {
                 subtitle,
                 time,
                 icon,
-                isAlert
+                isAlert,
+                session
             };
         });
 
@@ -319,7 +322,11 @@ export default function AthleteDetails() {
 
                     {recentRecords.length > 0 ? (
                         recentRecords.map((record) => (
-                            <RecordCard key={record.id} record={record} />
+                            <RecordCard 
+                                key={record.id} 
+                                record={record} 
+                                onPress={() => setSelectedSession(record.session)}
+                            />
                         ))
                     ) : (
                         <View style={{ padding: 20, alignItems: 'center', backgroundColor: '#FFF', borderRadius: 8 }}>
@@ -395,6 +402,12 @@ export default function AthleteDetails() {
                     }
                     setModalVisible(false);
                 }}
+            />
+
+            <SessaoDetailModal 
+                visible={!!selectedSession}
+                session={selectedSession}
+                onClose={() => setSelectedSession(null)}
             />
         </View>
     );
