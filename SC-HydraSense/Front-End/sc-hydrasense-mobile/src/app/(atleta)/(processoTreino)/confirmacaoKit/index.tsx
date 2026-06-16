@@ -7,6 +7,7 @@ import { Button } from '../../../../components/Button';
 import { theme } from '../../../../global/themas';
 import { styles } from './styles';
 import Constants from "expo-constants";
+import { useUser } from '../../../../contexts/UserContext';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -30,6 +31,7 @@ const getWorkoutIcon = (type: string | string[] | undefined) => {
 };
 
 export default function ConfirmacaoKit() {
+    const { user } = useUser();
     const [preference, setPreference] = useState<'session' | 'default'>('session');
     const [kit, setKit] = useState<Kit | null>(null);
     const [loading, setLoading] = useState(true);
@@ -64,7 +66,8 @@ export default function ConfirmacaoKit() {
 
                 const kits: Kit[] = await response.json();
 
-                setKit(kits.length > 0 ? kits[0] : null);
+                const principal = kits.find(k => k.id === user?.kitPrincipalId);
+                setKit(principal || (kits.length > 0 ? kits[0] : null));
             } catch (err) {
                 console.error('Erro ao carregar kit:', err);
                 setKit(null);
@@ -73,7 +76,7 @@ export default function ConfirmacaoKit() {
             }
         };
         fetchKit();
-    }, [atletaId, type]);
+    }, [atletaId, type, user?.kitPrincipalId]);
 
     // ── Avança COM equipamento ─────────────────────────────────────────────────
     const handleConfirmarComKit = async () => {
@@ -139,6 +142,7 @@ export default function ConfirmacaoKit() {
                     type,
                     sessaoId: sessao.id,
                     descontoKitGramas: usarEquipamento && kit ? kit.pesoTotal : 0,
+                    kitNome: usarEquipamento && kit ? kit.nome : '',
                 },
             });
         } catch (err) {

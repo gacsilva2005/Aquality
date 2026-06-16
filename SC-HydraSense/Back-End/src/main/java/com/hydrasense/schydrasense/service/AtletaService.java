@@ -26,7 +26,8 @@ public class AtletaService {
     private final ClubeRepository clubeRepository;
     private final SessaoDeTreinoRepository sessaoDeTreinoRepository;
 
-    public AtletaService(AtletaRepository repository, ClubeRepository clubeRepository,SessaoDeTreinoRepository sessaoDeTreinoRepository) {
+    public AtletaService(AtletaRepository repository, ClubeRepository clubeRepository,
+            SessaoDeTreinoRepository sessaoDeTreinoRepository) {
         this.repository = repository;
         this.clubeRepository = clubeRepository;
         this.sessaoDeTreinoRepository = sessaoDeTreinoRepository;
@@ -34,7 +35,7 @@ public class AtletaService {
 
     private String gerarCodigo() {
 
-        int numero = (int)(Math.random() * 900000) + 100000;
+        int numero = (int) (Math.random() * 900000) + 100000;
 
         return String.valueOf(numero);
     }
@@ -44,15 +45,13 @@ public class AtletaService {
         if (request.getCodigoEquipe() == null || request.getCodigoEquipe().trim().isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Código de equipe é obrigatório."
-            );
+                    "Código de equipe é obrigatório.");
         }
 
         Clube clube = clubeRepository.findByCodigo(request.getCodigoEquipe())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Código de equipe inválido ou inexistente."
-                ));
+                        "Código de equipe inválido ou inexistente."));
 
         Atleta atleta = new Atleta();
 
@@ -76,8 +75,7 @@ public class AtletaService {
         try {
             emailService.enviarCodigo(
                     atleta.getEmail(),
-                    codigo
-            );
+                    codigo);
         } catch (Exception e) {
             System.err.println("Erro ao enviar email: " + e.getMessage());
         }
@@ -116,20 +114,19 @@ public class AtletaService {
     public void enviarConvite(ConviteAtletaDTO dto) {
 
         String mensagem = """
-            Oi %s!
-            
-            Parabéns, atleta!
-            Você foi convidado para participar da equipe Engenharia Mauá.
+                Oi %s!
 
-            O seu código da equipe para cadastro no nosso aplicativo é: %s
-            """
+                Parabéns, atleta!
+                Você foi convidado para participar da equipe Engenharia Mauá.
+
+                O seu código da equipe para cadastro no nosso aplicativo é: %s
+                """
                 .formatted(dto.getNome(), dto.getCodigoEquipe());
 
         emailService.enviarEmail(
                 dto.getEmail(),
                 "Convite HydraSense",
-                mensagem
-        );
+                mensagem);
     }
 
     // Atualizar dados do atleta
@@ -141,6 +138,9 @@ public class AtletaService {
                     atleta.setPesoAtual(atletaAtualizado.getPesoAtual());
                     atleta.setSexo(atletaAtualizado.getSexo());
                     atleta.setFotoPerfil(atletaAtualizado.getFotoPerfil());
+                    atleta.setModalidade(atletaAtualizado.getModalidade());
+                    atleta.setAltura(atletaAtualizado.getAltura());
+                    atleta.setKitPrincipalId(atletaAtualizado.getKitPrincipalId());
                     return repository.save(atleta);
                 })
                 .orElseThrow(() -> new RuntimeException("Atleta não encontrado"));

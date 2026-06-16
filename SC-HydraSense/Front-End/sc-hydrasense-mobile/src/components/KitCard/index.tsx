@@ -32,13 +32,14 @@ interface KitCardProps {
     onSaveEditing: () => void;
     onCopy: (kit: Kit) => void;
     onDelete: (id: string, name: string) => void;
+    modalidades?: string[];
 }
 
 export function KitCard({
     kit, isEditing, editName, setEditName, editModality, setEditModality,
     editWeight, setEditWeight, showDropdown, setShowDropdown,
     onSetDefault, onStartEditing, onCancelEditing, onSaveEditing,
-    onCopy, onDelete
+    onCopy, onDelete, modalidades
 }: KitCardProps) {
 
     const animatedBorderStyle = useAnimatedStyle(() => {
@@ -87,14 +88,14 @@ export function KitCard({
 
                         {showDropdown && (
                             <View style={styles.dropdownMiniList}>
-                                {MODALIDADES.map(mod => (
+                                {(modalidades || MODALIDADES).map(mod => (
                                     <TouchableOpacity 
                                         key={mod} 
                                         style={styles.dropdownMiniOption}
                                         onPress={() => { setEditModality(mod); setShowDropdown(false); }}
                                     >
-                                        <Text style={[styles.dropdownMiniOptionText, editModality === mod && { color: theme.colors.primary, fontWeight: 'bold' }]}>
-                                            {mod}
+                                        <Text style={[styles.dropdownMiniOptionText, editModality.toUpperCase() === mod.toUpperCase() && { color: theme.colors.primary, fontWeight: 'bold' }]}>
+                                            {mod.toUpperCase()}
                                         </Text>
                                     </TouchableOpacity>
                                 ))}

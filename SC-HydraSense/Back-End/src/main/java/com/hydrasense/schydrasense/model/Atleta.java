@@ -55,6 +55,9 @@ public class Atleta {
     @Column(columnDefinition = "LONGTEXT")
     private String fotoPerfil;
 
+    @Column(name = "kit_principal_id")
+    private Long kitPrincipalId;
+
     //Relação 1:M com Profissional
     @ManyToOne
     @JoinColumn(name = "profissional_id")
