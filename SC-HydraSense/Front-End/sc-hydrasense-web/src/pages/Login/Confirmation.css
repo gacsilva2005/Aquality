@@ -1,4 +1,4 @@
-.confirmation-page {
+﻿.confirmation-page {
     display: flex;
     width: 100vw;
     min-height: 100vh;
@@ -42,7 +42,7 @@
     color: #111111;
 }
 
-/* Ícone */
+/* Ãcone */
 
 .confirmation-icon {
     display: flex;
@@ -52,11 +52,11 @@
     height: 110px;
     border-radius: 999px;
     background-color: rgba(217, 4, 41, 0.08);
-    color: var(--cor-vermelho-critico);
+    color: var(--hydro-critical);
     margin-bottom: 34px;
 }
 
-/* Título */
+/* TÃ­tulo */
 
 .confirmation-title {
     font-size: 36px;
@@ -77,11 +77,11 @@
     margin: 0 0 38px 0;
 }
 
-/* Botão */
+/* BotÃ£o */
 
 .confirmation-btn {
     min-width: 260px;
-    background-color: var(--cor-vermelho-critico);
+    background-color: var(--hydro-critical);
     color: #FFFFFF;
     border: none;
     border-radius: 8px;
@@ -99,7 +99,7 @@
 }
 
 .confirmation-btn:hover {
-    background-color: var(--cor-vermelho-acao);
+    background-color: var(--hydro-action);
     transform: translateY(-1px);
     box-shadow: 0 10px 24px rgba(217, 4, 41, 0.18);
 }

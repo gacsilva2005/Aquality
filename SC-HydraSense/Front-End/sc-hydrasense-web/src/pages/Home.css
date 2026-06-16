@@ -1,6 +1,6 @@
-/* =====================================================
-   HOME.CSS — Página de Login principal
-   Depende de: index.css (variáveis globais)
+﻿/* =====================================================
+   HOME.CSS â€” PÃ¡gina de Login principal
+   Depende de: index.css (variÃ¡veis globais)
    ===================================================== */
 
 /* Layout Geral */
@@ -8,7 +8,7 @@
   display: flex;
   width: 100vw;
   height: 100vh;
-  background-color: var(--cor-branco);
+  background-color: var(--hydro-bg-card);
   overflow: hidden;
 }
 
@@ -26,7 +26,7 @@
   padding: 60px 0;
   position: relative;
   overflow: hidden;
-  color: var(--cor-branco);
+  color: var(--hydro-bg-card);
 }
 
 .logo-section {
@@ -56,7 +56,7 @@
   line-height: 0.85;
   margin-bottom: 20px;
   letter-spacing: -2px;
-  color: var(--cor-branco);
+  color: var(--hydro-bg-card);
 }
 
 .hero-subtitle {
@@ -65,7 +65,7 @@
   opacity: 0.9;
   line-height: 1.4;
   max-width: 400px;
-  color: var(--cor-branco);
+  color: var(--hydro-bg-card);
 }
 
 .branding-footer {
@@ -82,7 +82,7 @@
   margin: 0 0 15px 0;
   letter-spacing: 12px;
   line-height: 1;
-  color: var(--cor-branco);
+  color: var(--hydro-bg-card);
 }
 
 .brand-name {
@@ -91,15 +91,15 @@
   font-family: var(--font-display);
   margin: 0;
   line-height: 1;
-  color: var(--cor-branco);
+  color: var(--hydro-bg-card);
 }
 
 /* =====================================================
-   LADO DIREITO: FORMULÁRIO
+   LADO DIREITO: FORMULÃRIO
    ===================================================== */
 .login-form-side {
   width: 45%;
-  background-color: var(--cor-branco);
+  background-color: var(--hydro-bg-card);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,12 +119,12 @@
   font-size: 24px;
   font-family: var(--font-display);
   font-weight: 700;
-  color: var(--cor-vermelho-critico);
+  color: var(--hydro-critical);
   margin-bottom: 8px;
 }
 
 .form-header p {
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   font-size: 14px;
   margin-bottom: 40px;
 }
@@ -138,7 +138,7 @@
   display: block;
   font-size: 10px;
   font-weight: 700;
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -147,13 +147,13 @@
 .input-field {
   display: flex;
   align-items: center;
-  border-bottom: 1.5px solid var(--cor-borda);
+  border-bottom: 1.5px solid var(--hydro-border);
   padding-bottom: 8px;
   transition: border-color 0.2s;
 }
 
 .input-field:focus-within {
-  border-bottom-color: var(--cor-vermelho-acao);
+  border-bottom-color: var(--hydro-action);
 }
 
 .input-field input {
@@ -163,10 +163,10 @@
   font-size: 16px;
   font-family: var(--font-body);
   background: transparent;
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
 }
 
-/* Opções do formulário */
+/* OpÃ§Ãµes do formulÃ¡rio */
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -177,7 +177,7 @@
 .forgot-password {
   background: none;
   border: none;
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
   font-weight: 600;
   font-family: var(--font-body);
   cursor: pointer;
@@ -189,11 +189,11 @@
   filter: brightness(1.2);
 }
 
-/* Botão primário de login */
+/* BotÃ£o primÃ¡rio de login */
 .btn-login-primary {
   width: 100%;
-  background-color: var(--cor-vermelho-critico);
-  color: var(--cor-branco);
+  background-color: var(--hydro-critical);
+  color: var(--hydro-bg-card);
   padding: 16px;
   border: none;
   border-radius: 6px;
@@ -212,11 +212,11 @@
 }
 
 .btn-login-primary:hover {
-  background-color: var(--cor-vermelho-acao);
+  background-color: var(--hydro-action);
   transform: translateY(-1px);
 }
 
-/* Botões sociais */
+/* BotÃµes sociais */
 .social-login {
   display: flex;
   gap: 15px;
@@ -225,13 +225,13 @@
 .btn-social {
   flex: 1;
   padding: 12px;
-  border: 1px solid var(--cor-borda);
-  background: var(--cor-branco);
+  border: 1px solid var(--hydro-border);
+  background: var(--hydro-bg-card);
   border-radius: 8px;
   font-size: 12px;
   font-weight: 700;
   font-family: var(--font-body);
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -241,13 +241,13 @@
 }
 
 .btn-social:hover {
-  border-color: var(--cor-vermelho-acao);
-  color: var(--cor-vermelho-acao);
+  border-color: var(--hydro-action);
+  color: var(--hydro-action);
   background-color: rgba(217, 4, 41, 0.04);
 }
 
 .btn-social:hover svg {
-  stroke: var(--cor-vermelho-acao);
+  stroke: var(--hydro-action);
 }
 
 /* Divisor */
@@ -264,15 +264,15 @@
   left: 0;
   right: 0;
   height: 1px;
-  background-color: var(--cor-borda);
+  background-color: var(--hydro-border);
 }
 
 .divider span {
   position: relative;
-  background: var(--cor-branco);
+  background: var(--hydro-bg-card);
   padding: 0 15px;
   font-size: 10px;
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   font-family: var(--font-body);
 }
 
@@ -281,12 +281,12 @@
   text-align: center;
   margin-top: 30px;
   font-size: 13px;
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
   font-family: var(--font-body);
 }
 
 .signup-prompt span {
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
   font-weight: 700;
   cursor: pointer;
   text-decoration: underline;
@@ -297,7 +297,7 @@
   filter: brightness(1.2);
 }
 
-/* Botão de mostrar senha */
+/* BotÃ£o de mostrar senha */
 .btn-show-password {
   background: none;
   border: none;
@@ -306,12 +306,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   transition: color 0.2s, transform 0.1s;
 }
 
 .btn-show-password:hover {
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
 }
 
 .btn-show-password:active {
@@ -324,7 +324,7 @@
     top: 30px;
     right: -450px; /* Aumentado para garantir que fique fora da tela */
     width: 380px;
-    background-color: var(--cor-branco);
+    background-color: var(--hydro-bg-card);
     border-radius: 8px;
     box-shadow: var(--shadow);
     display: flex;
@@ -333,9 +333,9 @@
     gap: 16px;
     z-index: 9999;
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    opacity: 0; /* Totalmente invisível por padrão */
-    visibility: hidden; /* Impede interações e renderização residual */
-    overflow: hidden; /* Para a barra de progresso não vazar */
+    opacity: 0; /* Totalmente invisÃ­vel por padrÃ£o */
+    visibility: hidden; /* Impede interaÃ§Ãµes e renderizaÃ§Ã£o residual */
+    overflow: hidden; /* Para a barra de progresso nÃ£o vazar */
 }
 
 /* Classe que faz o toast aparecer */
@@ -347,11 +347,11 @@
 
 /* Cores por tipo de alerta */
 .toast-notification.error .toast-icon {
-    color: var(--cor-vermelho-acao); /* Vermelho do sistema */
+    color: var(--hydro-action); /* Vermelho do sistema */
 }
 
 .toast-notification.success .toast-icon {
-    color: var(--cor-sucesso); /* Verde do sistema */
+    color: var(--hydro-success); /* Verde do sistema */
 }
 
 .toast-content {
@@ -364,21 +364,21 @@
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 16px;
-    color: var(--cor-texto-principal);
+    color: var(--hydro-text-primary);
     margin-bottom: 4px;
 }
 
 .toast-message {
     font-family: var(--font-body);
     font-size: 14px;
-    color: var(--cor-texto-muted);
+    color: var(--hydro-text-muted);
     line-height: 1.4;
 }
 
 .toast-close {
     background: transparent;
     border: none;
-    color: var(--cor-texto-muted);
+    color: var(--hydro-text-muted);
     cursor: pointer;
     padding: 4px;
     display: flex;
@@ -390,7 +390,7 @@
 
 .toast-close:hover {
     background-color: var(--bg-main);
-    color: var(--cor-texto-principal);
+    color: var(--hydro-text-primary);
 }
 
 /* Barra de progresso animada na parte inferior */
@@ -403,14 +403,14 @@
 }
 
 .toast-notification.error .toast-progress-bar {
-    background-color: var(--cor-vermelho-acao);
+    background-color: var(--hydro-action);
 }
 
 .toast-notification.success .toast-progress-bar {
-    background-color: var(--cor-sucesso);
+    background-color: var(--hydro-success);
 }
 
-/* A animação só roda quando a classe 'show' está ativa */
+/* A animaÃ§Ã£o sÃ³ roda quando a classe 'show' estÃ¡ ativa */
 .toast-notification.show .toast-progress-bar {
     animation: progress 3s linear forwards;
 }
@@ -422,7 +422,7 @@
 }
 
 /* =====================================================
-   RESPONSIVIDADE — TABLET (Max 1024px)
+   RESPONSIVIDADE â€” TABLET (Max 1024px)
    ===================================================== */
 @media (max-width: 1024px) {
   .login-branding {
@@ -467,7 +467,7 @@
 }
 
 /* =====================================================
-   RESPONSIVIDADE — MOBILE (Max 768px)
+   RESPONSIVIDADE â€” MOBILE (Max 768px)
    ===================================================== */
 @media (max-width: 768px) {
   .login-container {
@@ -477,7 +477,7 @@
     overflow-y: auto;
   }
 
-  /* Branding vira cabeçalho compacto */
+  /* Branding vira cabeÃ§alho compacto */
   .login-branding {
     width: 100%;
     padding: 40px 30px 50px 30px;
@@ -510,7 +510,7 @@
     display: none;
   }
 
-  /* Formulário ocupa 100% */
+  /* FormulÃ¡rio ocupa 100% */
   .login-form-side {
     width: 100%;
     border-radius: 24px 24px 0 0;

@@ -1,6 +1,6 @@
-/* =====================================================
-   ATHLETE.CSS — Tela de cadastro de atleta
-   Depende de: index.css (variáveis globais)
+﻿/* =====================================================
+   ATHLETE.CSS â€” Tela de cadastro de atleta
+   Depende de: index.css (variÃ¡veis globais)
    ===================================================== */
 
 .tela-atleta-background {
@@ -19,7 +19,7 @@
   top: 0;
   width: 90px;
   height: 100%;
-  background-color: var(--cor-vermelho-critico);
+  background-color: var(--hydro-critical);
   z-index: 5;
 }
 
@@ -37,14 +37,14 @@
   align-items: center;
 }
 
-/* Cabeçalho */
+/* CabeÃ§alho */
 .header-atleta {
   margin-bottom: 50px;
   text-align: center;
 }
 
 .label-passo {
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   font-size: 14px;
   font-weight: 800;
   font-family: var(--font-body);
@@ -56,7 +56,7 @@
   font-size: 52px;
   font-weight: 800;
   font-family: var(--font-display);
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
   margin-top: 15px;
   letter-spacing: -1.5px;
 }
@@ -86,7 +86,7 @@
   font-size: 11px;
   font-weight: 800;
   font-family: var(--font-body);
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   text-align: left;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -98,14 +98,14 @@
   align-items: center;
   gap: 15px;
   background-color: var(--bg-card);
-  border: 1px solid var(--cor-borda);
+  border: 1px solid var(--hydro-border);
   border-radius: 8px;
   padding: 18px 25px;
   transition: border-color 0.2s;
 }
 
 .wrapper-input-atleta:focus-within {
-  border-color: var(--cor-vermelho-acao);
+  border-color: var(--hydro-action);
 }
 
 .wrapper-input-atleta input {
@@ -115,21 +115,21 @@
   font-size: 18px;
   font-family: var(--font-body);
   outline: none;
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
 }
 
 .wrapper-input-atleta svg {
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   flex-shrink: 0;
 }
 
-/* Erro de validação */
+/* Erro de validaÃ§Ã£o */
 .wrapper-input-atleta.input-error {
-  border-color: var(--cor-vermelho-acao);
+  border-color: var(--hydro-action);
 }
 
 .mensagem-erro-email {
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
   font-size: 13px;
   font-weight: 700;
   font-family: var(--font-body);
@@ -152,12 +152,12 @@
 .texto-informativo-atleta {
   font-size: 14px;
   font-family: var(--font-body);
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   font-style: italic;
   text-align: center;
 }
 
-/* Navegação vertical */
+/* NavegaÃ§Ã£o vertical */
 .navegacao-vertical-container {
   display: flex;
   flex-direction: column;
@@ -176,11 +176,11 @@
 }
 
 .seta-v-btn.ativa {
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
 }
 
 .seta-v-btn.desativada {
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   opacity: 0.2;
   cursor: default;
 }
@@ -188,7 +188,7 @@
 .ponto-estilo-minimal {
   width: 6px;
   height: 6px;
-  background-color: var(--cor-borda);
+  background-color: var(--hydro-border);
   border-radius: 50%;
   margin: 2px 0;
 }
@@ -196,7 +196,7 @@
 .link-voltar-atleta {
   background: none;
   border: none;
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   font-family: var(--font-body);
   font-weight: 800;
   font-size: 13px;
@@ -208,11 +208,11 @@
 }
 
 .link-voltar-atleta:hover {
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
 }
 
 /* =====================================================
-   RESPONSIVIDADE — TABLET (Max 1024px)
+   RESPONSIVIDADE â€” TABLET (Max 1024px)
    ===================================================== */
 @media (max-width: 1024px) {
   .barra-vinho {
@@ -229,7 +229,7 @@
 }
 
 /* =====================================================
-   RESPONSIVIDADE — MOBILE (Max 768px)
+   RESPONSIVIDADE â€” MOBILE (Max 768px)
    ===================================================== */
 @media (max-width: 768px) {
   .tela-atleta-background {

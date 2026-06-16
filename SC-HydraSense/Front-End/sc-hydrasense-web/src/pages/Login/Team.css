@@ -1,8 +1,8 @@
-/* =====================================================
-   TEAM.CSS — Tela de seleção/cadastro de equipe
-   Depende de: index.css (variáveis globais)
-   ATENÇÃO: .texto-passo e .titulo-pagina que existem
-   aqui também em Login.css foram unificados — use
+﻿/* =====================================================
+   TEAM.CSS â€” Tela de seleÃ§Ã£o/cadastro de equipe
+   Depende de: index.css (variÃ¡veis globais)
+   ATENÃ‡ÃƒO: .texto-passo e .titulo-pagina que existem
+   aqui tambÃ©m em Login.css foram unificados â€” use
    .cabecalho-fluxo como wrapper para escopo correto.
    ===================================================== */
 
@@ -25,14 +25,14 @@
   box-sizing: border-box;
 }
 
-/* Cabeçalho do fluxo (scoped para evitar conflito com Login.css) */
+/* CabeÃ§alho do fluxo (scoped para evitar conflito com Login.css) */
 .cabecalho-fluxo {
   text-align: center;
   margin-bottom: 40px;
 }
 
 .cabecalho-fluxo .texto-passo {
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   font-size: 12px;
   font-weight: 700;
   font-family: var(--font-body);
@@ -44,12 +44,12 @@
   font-size: 42px;
   font-weight: 800;
   font-family: var(--font-display);
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
   margin: 10px 0 0 0;
   letter-spacing: -1px;
 }
 
-/* Card de seleção */
+/* Card de seleÃ§Ã£o */
 .card-selecao-equipe {
   width: 100%;
   display: flex;
@@ -69,10 +69,10 @@
   gap: 15px;
 }
 
-/* Botão primário da equipe */
+/* BotÃ£o primÃ¡rio da equipe */
 .botao-equipe-primario {
-  background-color: var(--cor-vermelho-acao);
-  color: var(--cor-branco);
+  background-color: var(--hydro-action);
+  color: var(--hydro-bg-card);
   border: none;
   border-radius: 6px;
   padding: 18px;
@@ -98,10 +98,10 @@
   margin-top: 25px;
 }
 
-/* Botão avançar */
+/* BotÃ£o avanÃ§ar */
 .botao-avancar-fluxo {
   background: transparent;
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   border: none;
   padding: 16px;
   font-weight: 800;
@@ -115,14 +115,14 @@
 }
 
 .botao-avancar-fluxo:hover {
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
 }
 
-/* Botão voltar */
+/* BotÃ£o voltar */
 .botao-voltar-limpo {
   background: transparent;
   border: none;
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   font-size: 11px;
   font-weight: 800;
   font-family: var(--font-body);
@@ -137,15 +137,15 @@
 }
 
 .botao-voltar-limpo:hover {
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
 }
 
-/* Input de código */
+/* Input de cÃ³digo */
 .input-codigo-wrapper {
   display: flex;
   align-items: center;
   background-color: var(--bg-main);
-  border: 2px solid var(--cor-borda);
+  border: 2px solid var(--hydro-border);
   border-radius: 8px;
   padding: 12px 15px;
   gap: 12px;
@@ -153,7 +153,7 @@
 }
 
 .input-codigo-wrapper:focus-within {
-  border-color: var(--cor-vermelho-acao);
+  border-color: var(--hydro-action);
 }
 
 .input-codigo-equipe {
@@ -164,7 +164,7 @@
   font-weight: 800;
   font-family: var(--font-display);
   outline: none;
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
   letter-spacing: 4px;
 }
 
@@ -179,14 +179,14 @@
 .linha-divisor {
   flex: 1;
   height: 1px;
-  background-color: var(--cor-borda);
+  background-color: var(--hydro-border);
 }
 
 /* =====================================================
    BARRA DE PROGRESSO INFERIOR
    ===================================================== */
 .progresso-footer-compacto {
-  background-color: var(--cor-vermelho-critico);
+  background-color: var(--hydro-critical);
   width: 100%;
   padding: 30px 0;
   position: fixed;
@@ -223,7 +223,7 @@
 }
 
 .trilha-mini.ativa {
-  background-color: var(--cor-branco);
+  background-color: var(--hydro-bg-card);
 }
 
 .legenda-mini {
@@ -237,19 +237,19 @@
 }
 
 .legenda-mini.ativa {
-  color: var(--cor-branco);
+  color: var(--hydro-bg-card);
 }
 
 .legenda-avancar {
   font-size: 11px;
   font-family: var(--font-body);
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   text-align: center;
   margin-top: 15px;
 }
 
 /* =====================================================
-   RESPONSIVIDADE — MOBILE (Max 768px)
+   RESPONSIVIDADE â€” MOBILE (Max 768px)
    ===================================================== */
 @media (max-width: 768px) {
   .tela-registro-full {

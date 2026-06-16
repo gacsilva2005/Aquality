@@ -1,4 +1,4 @@
-/* =========================================
+﻿/* =========================================
    DESIGN TOKENS (complementa index.css)
    ========================================= */
 :root {
@@ -229,7 +229,7 @@
 }
 
 /* =========================================
-   CABEÇALHO DE PÁGINAS INTERNAS
+   CABEÃ‡ALHO DE PÃGINAS INTERNAS
    ========================================= */
 .atletas-header {
     display: flex;
@@ -263,7 +263,7 @@
 }
 
 /* =========================================
-   BOTÕES
+   BOTÃ•ES
    ========================================= */
 .btn-primary {
     background-color: var(--hydro-action);
@@ -547,7 +547,7 @@
     color: #c9601d;
 }
 
-/* CRÍTICO */
+/* CRÃTICO */
 .td-status.critico {
     background-color: #ffeaea;
 }
@@ -560,7 +560,7 @@
     color: #9d1b1b;
 }
 
-/* ESTÁVEL */
+/* ESTÃVEL */
 .td-status.estavel {
     background-color: #e8f9f0;
 }
@@ -629,7 +629,7 @@
 }
 
 /* =========================================
-   FORMULÁRIO NOVO ATLETA
+   FORMULÃRIO NOVO ATLETA
    ========================================= */
 .novo-atleta-wrapper {
     animation: fadeIn 0.3s ease;
@@ -659,7 +659,7 @@
 }
 
 /* =========================================
-   DASHBOARD — ÁREA CENTRAL (TABELA + ALERTAS)
+   DASHBOARD â€” ÃREA CENTRAL (TABELA + ALERTAS)
    ========================================= */
 .dashboard-middle-area {
     display: grid;
@@ -693,7 +693,7 @@
 }
 
 /* =========================================
-   ANIMAÇÕES
+   ANIMAÃ‡Ã•ES
    ========================================= */
 @keyframes fadeIn {
     from {
@@ -842,7 +842,7 @@
 }
 
 /* =========================================
-   TELA RELATÓRIO EQUIPE
+   TELA RELATÃ“RIO EQUIPE
    ========================================= */
 .relatorio-container {
     animation: fadeIn 0.3s ease;
@@ -1148,7 +1148,7 @@
 }
 
 /* =========================================
-   EQUIPES — SIDEBAR DE ATLETAS
+   EQUIPES â€” SIDEBAR DE ATLETAS
    ========================================= */
 .equipes-sidebar {
     background-color: var(--hydro-bg-card);
@@ -1492,7 +1492,7 @@
 }
 
 /* =========================================
-   PERFIL — AVATAR EDIT BADGE
+   PERFIL â€” AVATAR EDIT BADGE
    ========================================= */
 .perfil-avatar-wrapper {
     position: relative;
@@ -1524,7 +1524,7 @@
 }
 
 /* =========================================
-   PERFIL — DISPLAY ROW (valor + lápis)
+   PERFIL â€” DISPLAY ROW (valor + lÃ¡pis)
    ========================================= */
 .perfil-display-row {
     display: flex;
@@ -1561,7 +1561,7 @@
 }
 
 /* =========================================
-   PERFIL — EDIT ROW (input + check)
+   PERFIL â€” EDIT ROW (input + check)
    ========================================= */
 .perfil-edit-row {
     display: flex;
@@ -1614,7 +1614,7 @@
 }
 
 /* =========================================
-   SISTEMA DE TOAST (NOTIFICAÇÕES)
+   SISTEMA DE TOAST (NOTIFICAÃ‡Ã•ES)
    ========================================= */
 .toast-notification {
     position: fixed;
@@ -1715,7 +1715,7 @@
 }
 
 /* =========================================
-   DASHBOARD — COMPONENTES REFATORADOS
+   DASHBOARD â€” COMPONENTES REFATORADOS
    ========================================= */
 .dashboard-header-compact {
     margin-bottom: 32px;
@@ -1994,7 +1994,7 @@
 }
 
 /* =========================================
-   ONBOARDING (INÍCIO WEB)
+   ONBOARDING (INÃCIO WEB)
    ========================================= */
 .onboarding-container {
     padding-bottom: 40px;
@@ -2052,7 +2052,7 @@
 }
 
 .invite-card-info {
-    flex: 1; /* Permite que o texto ocupe o espaço disponível sem amassar a direita */
+    flex: 1; /* Permite que o texto ocupe o espaÃ§o disponÃ­vel sem amassar a direita */
 }
 
 .invite-card-info h2 {
@@ -2215,7 +2215,7 @@
 }
 
 /* =====================================================
-   RESPONSIVIDADE — TABLET (Max 1024px)
+   RESPONSIVIDADE â€” TABLET (Max 1024px)
    ===================================================== */
 @media (max-width: 1024px) {
     /* Grid: sidebar mais estreita */
@@ -2232,7 +2232,7 @@
         width: 180px;
     }
 
-    /* Cabeçalho de páginas */
+    /* CabeÃ§alho de pÃ¡ginas */
     .atletas-header__info h1 {
         font-size: 36px;
     }
@@ -2282,13 +2282,13 @@
         flex: 1 1 100%;
     }
 
-    /* Relatório title menor */
+    /* RelatÃ³rio title menor */
     .relatorio-title,
     .relatorio-subtitle {
         font-size: 30px;
     }
 
-    /* Relatório filtros empilhados */
+    /* RelatÃ³rio filtros empilhados */
     .relatorio-filtros {
         flex-direction: column;
         align-items: flex-start;
@@ -2313,7 +2313,7 @@
 }
 
 /* =====================================================
-   RESPONSIVIDADE — MOBILE (Max 768px)
+   RESPONSIVIDADE â€” MOBILE (Max 768px)
    ===================================================== */
 @media (max-width: 768px) {
     /* Grid: sidebar oculta, 1 coluna */
@@ -2322,7 +2322,7 @@
         grid-template-rows: 60px 1fr;
     }
 
-    /* Sidebar oculta por padrão (controlada via JS) */
+    /* Sidebar oculta por padrÃ£o (controlada via JS) */
     .hydro-sidebar {
         display: none;
         position: fixed;
@@ -2372,7 +2372,7 @@
         gap: 16px;
     }
 
-    /* Botão Hamburger */
+    /* BotÃ£o Hamburger */
     .btn-hamburger {
         background: none;
         border: none;
@@ -2401,7 +2401,7 @@
         font-size: 20px;
     }
 
-    /* Cabeçalho de páginas */
+    /* CabeÃ§alho de pÃ¡ginas */
     .atletas-header {
         flex-direction: column;
         gap: 20px;
@@ -2421,7 +2421,7 @@
         margin-top: 0;
     }
 
-    /* Botões: full width */
+    /* BotÃµes: full width */
     .btn-primary,
     .btn-secondary {
         width: 100%;
@@ -2480,7 +2480,7 @@
         height: 200px;
     }
 
-    /* Relatório */
+    /* RelatÃ³rio */
     .relatorio-title,
     .relatorio-subtitle {
         font-size: 24px;
@@ -2624,7 +2624,7 @@
         font-size: 13px;
     }
 
-    /* Dashboard KPIs — 2 per row on mobile */
+    /* Dashboard KPIs â€” 2 per row on mobile */
     .dashboard-kpi-grid {
         gap: 12px;
     }
@@ -2643,7 +2643,7 @@
         font-size: 20px;
     }
 
-    /* Dashboard charts — 1 column */
+    /* Dashboard charts â€” 1 column */
     .dashboard-charts-grid {
         grid-template-columns: 1fr;
     }

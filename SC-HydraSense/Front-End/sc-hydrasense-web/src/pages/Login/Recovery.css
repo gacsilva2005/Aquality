@@ -1,4 +1,4 @@
-.recovery-page {
+﻿.recovery-page {
     display: flex;
     width: 100vw;
     height: 100vh;
@@ -107,7 +107,7 @@
 
 .recovery-btn-primary {
     min-width: 130px;
-    background-color: var(--cor-vermelho-critico);
+    background-color: var(--hydro-critical);
     color: #FFFFFF;
     border: none;
     border-radius: 6px;
@@ -125,7 +125,7 @@
 }
 
 .recovery-btn-primary:hover {
-    background-color: var(--cor-vermelho-acao);
+    background-color: var(--hydro-action);
     transform: translateY(-1px);
 }
 

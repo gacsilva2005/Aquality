@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserPlus, ArrowRight, ShieldCheck, Hash, ChevronLeft, ArrowLeft } from 'lucide-react';
 import './Team.css';
@@ -7,6 +7,12 @@ export function Team() {
   const navigate = useNavigate();
   const [showCodeInput, setShowCodeInput] = useState(false);
   const [teamCode, setTeamCode] = useState('');
+  const [progressWidth, setProgressWidth] = useState('66%');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgressWidth('100%'), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, ''); 
@@ -22,7 +28,7 @@ export function Team() {
 
   return (
     <div className="tela-registro-full">
-      <main className="painel-principal-central" style={{ position: 'relative' }}>
+      <main className="painel-principal-central login-step-container" style={{ position: 'relative' }}>
         <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ position: 'absolute', top: '0', left: '0' }}>
           <ArrowLeft size={16} /> Voltar
         </button>
@@ -95,22 +101,14 @@ export function Team() {
       </main>
 
       <footer className="progresso-footer-compacto">
-        <div className="barra-progresso-container">
-          <div className="fluxo-progresso-wrapper">
-            <div className="item-progresso">
-              <div className="trilha-mini ativa"></div>
-              <span className="legenda-mini">CREDENCIAIS</span>
-            </div>
-
-            <div className="item-progresso">
-              <div className="trilha-mini ativa"></div>
-              <span className="legenda-mini">IDENTIDADE</span>
-            </div>
-
-            <div className="item-progresso">
-              <div className="trilha-mini ativa"></div>
-              <span className="legenda-mini ativa">EQUIPE</span>
-            </div>
+        <div className="barra-progresso-container" style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+          <div className="signup-progress-track">
+            <div className="signup-progress-fill" style={{ width: progressWidth }}></div>
+          </div>
+          <div className="fluxo-progresso-wrapper" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+            <span className="legenda-mini ativa">CREDENCIAIS</span>
+            <span className="legenda-mini ativa">IDENTIDADE</span>
+            <span className="legenda-mini ativa">EQUIPE</span>
           </div>
         </div>
       </footer>

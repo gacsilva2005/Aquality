@@ -1,5 +1,5 @@
-/* =====================================================
-   IDENTIFIER.CSS — Estilos exclusivos do Identifier
+﻿/* =====================================================
+   IDENTIFIER.CSS â€” Estilos exclusivos do Identifier
    Depende de: index.css + Login.css
    ===================================================== */
 
@@ -7,7 +7,7 @@
 .file-input {
   font-size: 12px;
   font-family: var(--font-body);
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
   padding: 10px 0;
 }
 
@@ -20,12 +20,12 @@
   font-size: 13px;
   font-family: var(--font-body);
   margin-top: 15px;
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
 }
 
 /* Textarea */
 .textarea-custom {
-  color: var(--cor-texto-principal);
+  color: var(--hydro-text-primary);
   width: 100%;
   background: transparent;
   border: none;
@@ -36,28 +36,28 @@
   font-size: 14px;
 }
 
-/* Botão olhinho (mostrar senha) */
+/* BotÃ£o olhinho (mostrar senha) */
 .botao-olhinho {
   background: none;
   border: none;
   cursor: pointer;
   padding: 5px;
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
   display: flex;
   align-items: center;
   transition: color 0.2s;
 }
 
 .botao-olhinho:hover {
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
 }
 
 /* Preview foto 3x4 */
 .preview-foto-3x4 {
   width: 75px;
   height: 100px;
-  background-color: var(--cor-branco);
-  border: 1px solid var(--cor-borda);
+  background-color: var(--hydro-bg-card);
+  border: 1px solid var(--hydro-border);
   border-radius: 4px;
   overflow: hidden;
   display: flex;
@@ -78,7 +78,7 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  color: var(--cor-texto-muted);
+  color: var(--hydro-text-muted);
 }
 
 .foto-placeholder-3x4 span {
@@ -89,11 +89,11 @@
 
 /* Erro de senha */
 .input-with-icon.erro {
-  border-bottom-color: var(--cor-vermelho-acao);
+  border-bottom-color: var(--hydro-action);
 }
 
 .msg-erro {
-  color: var(--cor-vermelho-acao);
+  color: var(--hydro-action);
   font-size: 10px;
   font-weight: 700;
   font-family: var(--font-body);
@@ -106,7 +106,7 @@
 }
 
 /* =====================================================
-   OVERRIDES de compactação para o layout Identifier
+   OVERRIDES de compactaÃ§Ã£o para o layout Identifier
    ===================================================== */
 .tela-registro .painel-principal {
   padding: 0 8%;
@@ -130,7 +130,7 @@
 }
 
 /* =====================================================
-   RESPONSIVIDADE — MOBILE (Max 900px)
+   RESPONSIVIDADE â€” MOBILE (Max 900px)
    ===================================================== */
 @media (max-width: 900px) {
   .tela-registro .painel-principal {

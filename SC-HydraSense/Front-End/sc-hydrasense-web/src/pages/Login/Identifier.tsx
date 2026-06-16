@@ -21,12 +21,19 @@ export function Identifier() {
   const [verSenha, setVerSenha] = useState(false);
   const [verConfirmarSenha, setVerConfirmarSenha] = useState(false);
   const [erroSenha, setErroSenha] = useState(false);
+  const [errors, setErrors] = useState<any>({});
+  const [progressWidth, setProgressWidth] = useState('33%');
 
   const [dadosAcesso, setDadosAcesso] = useState({
     email: '',
     telefone: '',
     resumo: ''
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgressWidth('66%'), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Validação visual de senha em tempo real
   useEffect(() => {
@@ -99,10 +106,8 @@ export function Identifier() {
           </div>
         </div>
         <div className="lateral-rodape">
-          <div className="trilhas-progresso">
-            <div className="trilha ativa"></div>
-            <div className="trilha ativa"></div>
-            <div className="trilha"></div>
+          <div className="signup-progress-track">
+            <div className="signup-progress-fill" style={{ width: progressWidth }}></div>
           </div>
           <div className="legendas-progresso">
             <span className="legenda-progresso ativa">IDENTIDADE</span>
@@ -112,7 +117,7 @@ export function Identifier() {
         </div>
       </aside>
 
-      <main className="painel-principal">
+      <main className="painel-principal login-step-container">
         <button className="btn-ghost-back" onClick={() => navigate(-1)} style={{ alignSelf: 'flex-start', marginBottom: '24px', marginLeft: '-12px' }}>
           <ArrowLeft size={16} /> Voltar
         </button>

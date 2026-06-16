@@ -1,0 +1,87 @@
+.btnBase {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 4px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s, background-color 0.2s, color 0.2s;
+  padding: 18px 40px;
+  border: none;
+}
+
+.btnBase:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  background-color: var(--hydro-action);
+  color: var(--hydro-bg-card);
+  box-shadow: 0 4px 12px rgba(217, 4, 41, 0.2);
+}
+
+.btnPrimary:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btnSecondary {
+  background-color: transparent;
+  color: var(--hydro-action);
+  border: 1px solid var(--hydro-action);
+}
+
+.btnSecondary:hover:not(:disabled) {
+  background-color: var(--hydro-action);
+  color: var(--hydro-bg-card);
+}
+
+.btnGhost {
+  background-color: transparent;
+  color: var(--hydro-text-muted);
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.btnGhost:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--hydro-text-primary);
+}
+
+.btnLogout {
+  background-color: transparent;
+  color: var(--hydro-critical);
+  font-family: var(--font-body);
+  font-weight: 600;
+  border: 1px solid var(--hydro-critical);
+  padding: 10px 20px;
+}
+
+.btnLogout:hover:not(:disabled) {
+  background-color: var(--hydro-critical);
+  color: var(--hydro-bg-card);
+}
+
+.loader {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
