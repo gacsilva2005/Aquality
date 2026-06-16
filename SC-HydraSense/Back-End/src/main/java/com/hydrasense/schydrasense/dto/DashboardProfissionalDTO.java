@@ -37,10 +37,6 @@ public class DashboardProfissionalDTO {
     // 6. ALERTAS OUTLIERS
     private List<AlertaOutlierRecord> alertasOutliers;
 
-    // 7. ACLIMATAÇÃO
-    private int atletasAclimatados;
-    private int atletasNaoAclimatados;
-    private List<AclimatacaoRecord> statusAclimatacao;
 
     // 8. TENDÊNCIA SEMANAL
     private List<TendenciaDiariaRecord> tendenciaSemanal;
@@ -121,20 +117,6 @@ public class DashboardProfissionalDTO {
         }
     }
 
-    @Getter @Setter
-    public static class AclimatacaoRecord {
-        private Long atletaId;
-        private String nome;
-        private boolean aclimatado;
-        private int sessoesCalor14Dias;
-
-        public AclimatacaoRecord(Long atletaId, String nome, boolean aclimatado, int sessoesCalor14Dias) {
-            this.atletaId = atletaId;
-            this.nome = nome;
-            this.aclimatado = aclimatado;
-            this.sessoesCalor14Dias = sessoesCalor14Dias;
-        }
-    }
 
     @Getter @Setter
     public static class TendenciaDiariaRecord {

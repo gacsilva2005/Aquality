@@ -10,6 +10,7 @@ import { styles } from './styles';
 import { Header } from "@/src/components/Header";
 import { Screen } from '../../../../components/Screen';
 import { useUser } from '../../../../contexts/UserContext';
+import { useRouter } from 'expo-router';
 
 interface DashboardData {
   totalAtletas: number;
@@ -25,18 +26,16 @@ interface DashboardData {
   mapaRisco: { id: number; nome: string; avatar: string | null; status: string; statusColor: string; variacaoMassa: number; taxaSudorese: number; alerta: string }[];
   sintomasRecorrentes: { sintoma: string; ocorrencias: number; percentual: number }[];
   alertasOutliers: { sessaoId: number; atletaId: number; nomeAtleta: string; tipo: string; descricao: string; dataHora: string }[];
-  statusAclimatacao: { atletaId: number; nome: string; aclimatado: boolean; sessoesCalor14Dias: number }[];
   tendenciaSemanal: { dia: string; mediaBalancoHidrico: number; mediaTaxaSudorese: number; totalSessoes: number }[];
   atletasCriticos: number;
   atletasAtencao: number;
   atletasIdeais: number;
   atletasSuperingestao: number;
-  atletasAclimatados: number;
-  atletasNaoAclimatados: number;
 }
 
 export default function DashboardProfissional() {
   const { user } = useUser();
+  const router = useRouter();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -150,7 +149,11 @@ export default function DashboardProfissional() {
               <Text style={styles.emptyText}>Sem dados suficientes para ranking</Text>
             ) : (
               (data?.rankingPerformance ?? []).map((atleta, index) => (
-                <View key={atleta.id} style={styles.rankingRow}>
+                <TouchableOpacity
+                  key={atleta.id}
+                  style={styles.rankingRow}
+                  onPress={() => router.push(`/(profissional)/athlete/${atleta.id}` as any)}
+                >
                   <Text style={styles.rankingPosition}>{index + 1}º</Text>
                   <Image source={getAvatarSource(atleta.avatar)} style={styles.rankingAvatar} />
                   <View style={{ flex: 1 }}>
@@ -160,7 +163,7 @@ export default function DashboardProfissional() {
                     </View>
                   </View>
                   <Text style={styles.rankingPercent}>{atleta.percentualIdeal.toFixed(0)}%</Text>
-                </View>
+                </TouchableOpacity>
               ))
             )}
           </View>
@@ -190,7 +193,11 @@ export default function DashboardProfissional() {
 
           {/* Lista de atletas de risco (só não-ideais) */}
           {(data?.mapaRisco ?? []).filter(a => a.status !== 'IDEAL').map(atleta => (
-            <View key={atleta.id} style={[styles.athleteCard, { borderLeftColor: atleta.statusColor }]}>
+            <TouchableOpacity
+              key={atleta.id}
+              style={[styles.athleteCard, { borderLeftColor: atleta.statusColor }]}
+              onPress={() => router.push(`/(profissional)/athlete/${atleta.id}` as any)}
+            >
               <Image source={getAvatarSource(atleta.avatar)} style={styles.avatar} />
               <View style={styles.athleteInfo}>
                 <Text style={styles.athleteName}>{atleta.nome}</Text>
@@ -203,7 +210,7 @@ export default function DashboardProfissional() {
                 <Text style={[styles.athleteScore, { color: atleta.statusColor }]}>{atleta.variacaoMassa?.toFixed(1)}%</Text>
                 <Text style={styles.athleteSubScore}>{atleta.taxaSudorese?.toFixed(1)} L/h</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
 
           {/* ═══ SEÇÃO 5: SINTOMAS RECORRENTES ═══ */}
@@ -243,30 +250,6 @@ export default function DashboardProfissional() {
             </>
           )}
 
-          {/* ═══ SEÇÃO 7: ACLIMATAÇÃO ═══ */}
-          <Text style={styles.sectionTitle}>🌡️ ACLIMATAÇÃO AO CALOR</Text>
-          <View style={styles.aclimatacaoSummary}>
-            <View style={[styles.aclimatacaoBadge, { backgroundColor: '#DCFCE7' }]}>
-              <Feather name="check-circle" size={14} color="#16A34A" />
-              <Text style={[styles.aclimatacaoText, { color: '#16A34A' }]}>{data?.atletasAclimatados ?? 0} Aclimatados</Text>
-            </View>
-            <View style={[styles.aclimatacaoBadge, { backgroundColor: '#FEF3C7' }]}>
-              <Feather name="x-circle" size={14} color="#D97706" />
-              <Text style={[styles.aclimatacaoText, { color: '#D97706' }]}>{data?.atletasNaoAclimatados ?? 0} Não Aclimatados</Text>
-            </View>
-          </View>
-          <View style={styles.card}>
-            {(data?.statusAclimatacao ?? []).map(a => (
-              <View key={a.atletaId} style={styles.aclimatacaoRow}>
-                <Text style={styles.aclimatacaoNome}>{a.nome}</Text>
-                <View style={[styles.aclimatacaoStatusBadge, { backgroundColor: a.aclimatado ? '#DCFCE7' : '#FEF3C7' }]}>
-                  <Text style={[styles.aclimatacaoStatusText, { color: a.aclimatado ? '#16A34A' : '#D97706' }]}>
-                    {a.aclimatado ? '✓ Aclimatado' : `✗ ${a.sessoesCalor14Dias}/5 sessões`}
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </View>
 
           {/* ═══ SEÇÃO 8: TENDÊNCIA SEMANAL ═══ */}
           <Text style={styles.sectionTitle}>📈 TENDÊNCIA SEMANAL</Text>

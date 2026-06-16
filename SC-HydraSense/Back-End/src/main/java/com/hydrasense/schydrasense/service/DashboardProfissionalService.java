@@ -53,7 +53,6 @@ public class DashboardProfissionalService {
             dto.setMapaRisco(List.of());
             dto.setSintomasRecorrentes(List.of());
             dto.setAlertasOutliers(List.of());
-            dto.setStatusAclimatacao(List.of());
             dto.setTendenciaSemanal(List.of());
             preencherClima(dto, lat, lon);
             return dto;
@@ -302,32 +301,6 @@ public class DashboardProfissionalService {
         }
         dto.setAlertasOutliers(outliers);
 
-        // ═══════════════════════════════════════════
-        // SEÇÃO 7: ACLIMATAÇÃO
-        // ═══════════════════════════════════════════
-        List<AclimatacaoRecord> aclimatacaoList = new ArrayList<>();
-        int aclimatados = 0, naoAclimatados = 0;
-
-        for (Atleta atleta : atletas) {
-            // Contar sessões dos últimos 14 dias com temperatura > 28°C
-            long sessoesCalor = sessoesTodas14d.stream()
-                    .filter(s -> s.getAtleta() != null && s.getAtleta().getId().equals(atleta.getId()))
-                    .filter(s -> s.getCondicaoAmbiental() != null
-                            && s.getCondicaoAmbiental().getTemperatura() != null
-                            && s.getCondicaoAmbiental().getTemperatura() > 28f)
-                    .count();
-
-            boolean isAclimatado = sessoesCalor >= 5;
-            if (isAclimatado) aclimatados++;
-            else naoAclimatados++;
-
-            aclimatacaoList.add(new AclimatacaoRecord(
-                    atleta.getId(), atleta.getNome(), isAclimatado, (int) sessoesCalor
-            ));
-        }
-        dto.setAtletasAclimatados(aclimatados);
-        dto.setAtletasNaoAclimatados(naoAclimatados);
-        dto.setStatusAclimatacao(aclimatacaoList);
 
         // ═══════════════════════════════════════════
         // SEÇÃO 8: TENDÊNCIA SEMANAL
@@ -392,17 +365,48 @@ public class DashboardProfissionalService {
 
     private List<String> parsearSintomasJson(String sintomasRaw) {
         if (sintomasRaw == null || sintomasRaw.isBlank()) return List.of();
-        try {
-            // Formato esperado: ["Cãibra", "Dores de cabeça"]
-            if (sintomasRaw.trim().startsWith("[")) {
-                return objectMapper.readValue(sintomasRaw, new TypeReference<List<String>>() {});
+        sintomasRaw = sintomasRaw.trim();
+        List<String> list = new ArrayList<>();
+
+        if (sintomasRaw.contains("{") || sintomasRaw.contains("[")) {
+            try {
+                if (sintomasRaw.startsWith("{")) {
+                    Map<String, Object> map = objectMapper.readValue(sintomasRaw, new TypeReference<Map<String, Object>>() {});
+                    if (map.containsKey("selecionados") && map.get("selecionados") instanceof List) {
+                        List<?> sel = (List<?>) map.get("selecionados");
+                        for (Object item : sel) {
+                            if (item != null) list.add(item.toString());
+                        }
+                    }
+                    if (map.containsKey("outros") && map.get("outros") != null) {
+                        String outros = map.get("outros").toString().trim();
+                        if (!outros.isEmpty()) list.add(outros);
+                    }
+                    return list;
+                } else if (sintomasRaw.startsWith("[")) {
+                    return objectMapper.readValue(sintomasRaw, new TypeReference<List<String>>() {});
+                }
+            } catch (Exception e) {
+                // Fallback robusto de regex se o JSON estiver truncado ou malformado
             }
-            // Fallback: texto simples separado por vírgula
-            return Arrays.asList(sintomasRaw.split(","));
-        } catch (Exception e) {
-            // Se falhar o parse, trata como texto simples
-            return List.of(sintomasRaw.trim());
+
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\"([^\"]+)\"");
+            java.util.regex.Matcher matcher = pattern.matcher(sintomasRaw);
+            while (matcher.find()) {
+                String match = matcher.group(1).trim();
+                if (!match.equals("selecionados") && !match.equals("outros") && !match.equals("selecionado") && !match.isEmpty()) {
+                    list.add(match);
+                }
+            }
+            if (!list.isEmpty()) {
+                return list;
+            }
         }
+
+        return Arrays.stream(sintomasRaw.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
     }
 
     private String getDiaSemana(LocalDate date) {

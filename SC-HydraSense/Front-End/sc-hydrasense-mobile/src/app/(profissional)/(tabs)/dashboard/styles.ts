@@ -307,46 +307,6 @@ export const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
 
-  // ═══ ACLIMATAÇÃO ═══
-  aclimatacaoSummary: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: theme.spacing.sm,
-  },
-  aclimatacaoBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: theme.borderRadius.full,
-  },
-  aclimatacaoText: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 12,
-  },
-  aclimatacaoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
-  aclimatacaoNome: {
-    fontFamily: theme.fonts.bodyMedium,
-    fontSize: 13,
-    color: theme.colors.textPrimary,
-  },
-  aclimatacaoStatusBadge: {
-    paddingVertical: 3,
-    paddingHorizontal: 10,
-    borderRadius: theme.borderRadius.full,
-  },
-  aclimatacaoStatusText: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: 11,
-  },
 
   // ═══ GRÁFICO ═══
   chartFooter: {
